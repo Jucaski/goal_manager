@@ -1,13 +1,27 @@
-$primary: #4f46e5;
-$secondary: #6b7280;
+$primary: #fbf2e8;
+$secondary: #b1e1e3;
 $success: #10b981;
 $danger: #ef4444;
 $warning: #f59e0b;
 $info: #3b82f6;
+$back: #f4d1d0;
 
 @use 'bootstrap/scss/bootstrap';
 @use 'bootstrap-icons/font/bootstrap-icons';
 
+body{
+background-color: $back;
+}
 .side-bar{
   background-color: $primary
+}
+
+.nav-link.active-square {
+  border: 10px solid #000;
+  border-radius: 0 !important; /* overrides Bootstrap's rounded style */
+  background-color: white;
+  color: #000;
+}
+nav-pills .nav-link.active{
+color: $secondary !important;
 }

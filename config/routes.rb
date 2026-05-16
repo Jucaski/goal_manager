@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get "dashboard/best_to"
+  # get "dashboard/best_to"
   root "home#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
