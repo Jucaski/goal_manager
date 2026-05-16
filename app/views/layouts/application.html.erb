@@ -24,6 +24,13 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div class="container-fluid body-container">
+      <div class="row flex-nowrap min-vh-100">
+        <%= render 'home/side_bar' %>
+        <div class="col py-5 px-4">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
