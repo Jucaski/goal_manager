@@ -4,24 +4,35 @@ $success: #10b981;
 $danger: #ef4444;
 $warning: #f59e0b;
 $info: #3b82f6;
-$back: #f4d1d0;
+$background: #f4d1d0;
+$highlight: #b1e1e3;
+$font-normal: #626262;
+$font-highlight: #000000;
 
 @use 'bootstrap/scss/bootstrap';
 @use 'bootstrap-icons/font/bootstrap-icons';
 
 body{
-background-color: $back;
+background-color: $background;
 }
 .side-bar{
   background-color: $primary
 }
 
-.nav-link.active-square {
-  border: 10px solid #000;
-  border-radius: 0 !important; /* overrides Bootstrap's rounded style */
-  background-color: white;
-  color: #000;
+#menu .nav-link {
+  color: $font-normal; /* Default unselected text/icon color */
+  border-radius: 4px; /* Optional: Adjust roundness of active block (0 for sharp square) */
+  transition: background-color 0.2s ease;
 }
-nav-pills .nav-link.active{
-color: $secondary !important;
+
+/* Hover state for inactive links */
+#menu .nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.05); 
+  color: #000000;
+}
+
+/* Custom Active State Colors */
+#menu .nav-link.active {
+  background-color: $highlight !important; /* Change this hex value to your desired active background color */
+  color: $font-highlight !important;            /* Text and icon color when active */
 }
