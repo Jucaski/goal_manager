@@ -29,34 +29,41 @@
 
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 py-5 side-bar">
           <nav class="navbar navbar-expand flex-column align-items-start px-0 border-sidebar h-100">
-            <div class="collapse navbar-collapse flex-column align-items-start w-100">
-              <ul class="navbar-nav nav-pills flex-column mb-sm-auto mb-0 w-100" id="menu">
+            
+            <div class="collapse navbar-collapse flex-column align-items-start w-100 h-100"> 
+              
+              <ul class="navbar-nav nav-pills flex-column mb-auto w-100" id="menu">
                 <li class="nav-item nav-design-data">
-                  <%= link_to user_session_path, class: "nav-link active px-2 align-middle" do %>
+                  <%= link_to user_session_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(user_session_path)}" do %>
                     <i class="material-symbols-outlined">mountain_flag</i>
                     <span class="ms-1 d-none d-sm-inline">Timer</span>
                   <% end %>
                 </li>
                 <li class="nav-item nav-design">
-                  <%= link_to new_user_registration_path, class: "nav-link px-2 align-middle" do %>
+                  <%= link_to best_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(best_path)}" do %>
                     <i class="material-symbols-outlined">mountain_flag</i>
                     <span class="ms-1 d-none d-sm-inline">Did I do my best to</span>
                   <% end %>
                 </li>
                 <li class="nav-item nav-design">
-                  <%= link_to edit_user_registration_path, class: "nav-link px-2 align-middle" do %>
+                  <%= link_to edit_user_registration_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(edit_user_registration_path)}" do %>
                     <i class="material-symbols-outlined">monitoring</i>
                     <span class="ms-1 d-none d-sm-inline">Analysis</span>
                   <% end %>
                 </li>          
               </ul>
-              <hr class="w-100">
-              <li class="nav-item nav-design-data">
-                  <%= link_to settings_path, class: "nav-link active px-2 align-middle" do %>
-                    <i class="material-symbols-outlined">mountain_flag</i>
-                    <span class="ms-1 d-none d-sm-inline">Settings</span>
-                  <% end %>
-                </li>
+
+              <div class="w-100">
+                <hr class="w-100">
+                <ul class="navbar-nav flex-column w-100">
+                  <li class="nav-item nav-design-data">
+                    <%= link_to settings_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(settings_path)}" do %>
+                      <i class="material-symbols-outlined">settings</i>
+                      <span class="ms-1 d-none d-sm-inline">Settings</span>
+                    <% end %>
+                  </li>
+                </ul>
+              </div>
             </div>
           </nav>
         </div>
@@ -67,7 +74,7 @@
               <%= yield %>
             </div>
           </div>
-          <% else %>
+        <% else %>
           <div class="container mt-5">
             <%= yield %>
           </div>

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   # get "dashboard/best_to"
   root "home#index"
   get 'settings', to: 'dashboard#settings'
+  get 'best', to: 'dashboard#best_to'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
