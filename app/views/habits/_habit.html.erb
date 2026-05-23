@@ -1,17 +1,9 @@
 <div id="<%= dom_id habit %>">
-  <div>
-    <strong>Title:</strong>
-    <%= habit.title %>
-  </div>
-
-  <div>
-    <strong>User:</strong>
-    <%= habit.user_id %>
-  </div>
-
-  <div>
-    <strong>Completed date:</strong>
-    <%= habit.completed_date %>
-  </div>
-
+    <tr>
+      <td>
+        <%= link_to edit_habit_path(habit) do %>
+          <%= habit.title %> 
+        <% end %>
+      </td>
+    </tr>
 </div>

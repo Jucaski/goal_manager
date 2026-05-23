@@ -1,4 +1,5 @@
 class HabitsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_habit, only: %i[ show edit update destroy ]
 
   # GET /habits or /habits.json
@@ -55,6 +56,32 @@ class HabitsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to habits_path, notice: "Habit was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
+    end
+  end
+
+  def submit_ratings
+    ratings = params[:ratings] || {}
+    today = Date.current
+
+    begin
+      ActiveRecord::Base.transaction do
+        ratings.each do |habit_id, rating|
+          next if rating.blank?
+
+          habit = current_user.habits.find_by(id: habit_id)
+          next unless habit
+
+          day_habit = current_user.day_habits.find_or_initialize_by(
+            habit_id: habit.id,
+            date: today
+          )
+          day_habit.rating = rating
+          day_habit.save!
+        end
+      end
+      redirect_to habits_path, notice: "Today's ratings saved successfully!"
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to habits_path, alert: "Failed to save ratings: #{e.record.errors.full_messages.join(', ')}"
     end
   end
 

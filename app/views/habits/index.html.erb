@@ -5,12 +5,14 @@
 <h1>Habits</h1>
 
 <div id="habits">
+  <table class="table table-hover">
   <% @habits.each do |habit| %>
     <%= render habit %>
-    <p>
-      <%= link_to "Show this habit", habit %>
-    </p>
+    <%# <p> %>
+    <%#   <%= link_to "Show this habit", habit %>
+    <%# </p> %>
   <% end %>
+  </table>
 </div>
 
 <%= link_to "New habit", new_habit_path %>
