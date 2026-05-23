@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :habits do
     collection do
       post :submit_ratings
+      patch :update_order
     end
   end
 

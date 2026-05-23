@@ -1,44 +1,84 @@
-<p style="color: green"><%= notice %></p>
-
-<% content_for :title, "Habits" %>
-
 <h1>Habits</h1>
-<div>
+<div class="row justify-content-md-end">
+  <div class="col-md-1 text-center">
+    <%= link_to new_habit_path, class: "btn btn-secondary mt-3 d-inline-flex align-items-center" do %>
+      <span class="material-symbols-outlined me-1">add</span>
+    <% end %>
+  </div>
 </div>
+<br>
 <%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
   <div style="background-color:white; border-radius:30px">
-<table class="table table-hover">
-    <thead>
-      <tr>
-        <th class="px-4 col-md-3">Habit</th>
-        <th class=col-md-9>Today's Rating</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @habits.each do |habit| %>
-        <tr id="<%= dom_id(habit) %>">
-          <td class="px-4">
-            <%= link_to habit.title, edit_habit_path(habit) %>
-          </td>
-          <td>
-            <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %>
-            
-            <div class="d-flex flex-wrap gap-5 align-items-center">
-              <% (0..10).each do |i| %>
-                <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
-                      id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
-                <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm" %>
-              <% end %>
-            </div>
-          </td>
+    <table class="table table-hover" id="habits-list">
+      <thead>
+        <tr>
+          <th class="px-4 col-md-3">Habit</th>
+          <th class="col-md-9">Today's Rating</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @habits.each do |habit| %>
+          <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
+            <td class="px-4">
+              <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
+              <%= link_to habit.title, edit_habit_path(habit) %>
+            </td>
+            <td>
+              <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %>
+
+              <div class="d-flex flex-wrap gap-5 align-items-center">
+                <% (0..10).each do |i| %>
+                  <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
+                    id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
+                  <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm" %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
-  
 
   <%= submit_tag "Save Today's Ratings", class: "btn btn-primary mt-3" %>
 <% end %>
 
-<%= link_to "New habit", new_habit_path, class: "btn btn-secondary mt-3" %>
+
+
+<!-- SortableJS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tableBody = document.querySelector('#habits-list tbody');
+    if (!tableBody) return;
+
+    Sortable.create(tableBody, {
+      handle: '.drag-handle',
+      animation: 150,
+      ghostClass: 'bg-light',
+      onEnd: function(evt) {
+        const rows = Array.from(evt.to.querySelectorAll('tr'));
+        const habitIds = rows.map(row => row.dataset.habitId);
+        
+        // Send AJAX PATCH to save new order
+        fetch('<%= update_order_habits_path %>', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ habit_ids: habitIds })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to update order');
+        })
+        .catch(err => console.error('Reorder error:', err));
+      }
+    });
+  });
+</script>
+
+<style>
+  .drag-handle { font-size: 1.2rem; line-height: 1; }
+  .drag-handle:hover { opacity: 1 !important; }
+</style>

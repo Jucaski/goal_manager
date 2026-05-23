@@ -4,7 +4,8 @@ class HabitsController < ApplicationController
 
   # GET /habits or /habits.json
   def index
-    @habits = Habit.all
+    # @habits = Habit.all
+    @habits = current_user.habits.order(position: :asc)
   end
 
   # GET /habits/1 or /habits/1.json
@@ -83,6 +84,21 @@ class HabitsController < ApplicationController
     rescue ActiveRecord::RecordInvalid => e
       redirect_to habits_path, alert: "Failed to save ratings: #{e.record.errors.full_messages.join(', ')}"
     end
+  end
+
+  def update_order
+    habit_ids = params[:habit_ids] || []
+    
+    ActiveRecord::Base.transaction do
+      habit_ids.each_with_index do |id, index|
+        habit = current_user.habits.find_by(id: id)
+        habit.update!(position: index + 1) if habit
+      end
+    end
+
+    render json: { success: true }, status: :ok
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private

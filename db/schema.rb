@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_23_184729) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_23_205941) do
   create_table "day_habits", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date"
@@ -25,9 +25,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_23_184729) do
   create_table "habits", force: :cascade do |t|
     t.date "completed_date"
     t.datetime "created_at", null: false
+    t.integer "position", default: 0, null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["user_id", "position"], name: "index_habits_on_user_id_and_position"
     t.index ["user_id"], name: "index_habits_on_user_id"
   end
 
