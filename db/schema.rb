@@ -10,7 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_23_152254) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_23_184729) do
+  create_table "day_habits", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.integer "habit_id", null: false
+    t.integer "rating"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["habit_id"], name: "index_day_habits_on_habit_id"
+    t.index ["user_id"], name: "index_day_habits_on_user_id"
+  end
+
+  create_table "habits", force: :cascade do |t|
+    t.date "completed_date"
+    t.datetime "created_at", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_habits_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -22,4 +42,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_23_152254) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "day_habits", "habits"
+  add_foreign_key "day_habits", "users"
+  add_foreign_key "habits", "users"
 end

@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @day_habit %>
+
+<div>
+  <%= link_to "Edit this day habit", edit_day_habit_path(@day_habit) %> |
+  <%= link_to "Back to day habits", day_habits_path %>
+
+  <%= button_to "Destroy this day habit", @day_habit, method: :delete %>
+</div>

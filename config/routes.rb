@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :day_habits
+  resources :habits
   devise_for :users
   # get "dashboard/best_to"
   root "home#index"

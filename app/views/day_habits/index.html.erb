@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Day habits" %>
+
+<h1>Day habits</h1>
+
+<div id="day_habits">
+  <% @day_habits.each do |day_habit| %>
+    <%= render day_habit %>
+    <p>
+      <%= link_to "Show this day habit", day_habit %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New day habit", new_day_habit_path %>

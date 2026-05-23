@@ -1,0 +1,37 @@
+<%= form_with(model: day_habit) do |form| %>
+  <% if day_habit.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(day_habit.errors.count, "error") %> prohibited this day_habit from being saved:</h2>
+
+      <ul>
+        <% day_habit.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :habit_id, style: "display: block" %>
+    <%= form.text_field :habit_id %>
+  </div>
+
+  <div>
+    <%= form.label :date, style: "display: block" %>
+    <%= form.date_field :date %>
+  </div>
+
+  <div>
+    <%= form.label :rating, style: "display: block" %>
+    <%= form.number_field :rating %>
+  </div>
+
+  <div>
+    <%= form.label :user_id, style: "display: block" %>
+    <%= form.text_field :user_id %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
