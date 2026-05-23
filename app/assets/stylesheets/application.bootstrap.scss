@@ -36,3 +36,7 @@ background-color: $background;
   background-color: $highlight !important; /* Change this hex value to your desired active background color */
   color: $font-highlight !important;            /* Text and icon color when active */
 }
+
+.table {
+  --bs-table-bg: transparent;
+}

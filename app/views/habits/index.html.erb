@@ -3,16 +3,42 @@
 <% content_for :title, "Habits" %>
 
 <h1>Habits</h1>
-
-<div id="habits">
-  <table class="table table-hover">
-  <% @habits.each do |habit| %>
-    <%= render habit %>
-    <%# <p> %>
-    <%#   <%= link_to "Show this habit", habit %>
-    <%# </p> %>
-  <% end %>
-  </table>
+<div>
 </div>
+<%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
+  <div style="background-color:white; border-radius:30px">
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th class="px-4 col-md-3">Habit</th>
+        <th class=col-md-9>Today's Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @habits.each do |habit| %>
+        <tr id="<%= dom_id(habit) %>">
+          <td class="px-4">
+            <%= link_to habit.title, edit_habit_path(habit) %>
+          </td>
+          <td>
+            <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %>
+            
+            <div class="d-flex flex-wrap gap-5 align-items-center">
+              <% (0..10).each do |i| %>
+                <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
+                      id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
+                <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm" %>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  </div>
+  
 
-<%= link_to "New habit", new_habit_path %>
+  <%= submit_tag "Save Today's Ratings", class: "btn btn-primary mt-3" %>
+<% end %>
+
+<%= link_to "New habit", new_habit_path, class: "btn btn-secondary mt-3" %>
