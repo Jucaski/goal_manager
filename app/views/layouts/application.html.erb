@@ -27,10 +27,8 @@
     <div class="container-fluid body-container">
     <div class="row flex-nowrap">
 
-      <!-- 1. Added vh-100, sticky-top, and flex utilities to the wrapper -->
       <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 py-5 side-bar vh-100 sticky-top d-flex flex-column">
         
-        <!-- 2. Replaced h-100 with flex-grow-1 -->
         <nav class="navbar navbar-expand flex-column align-items-start px-0 border-sidebar w-100 flex-grow-1">
           <div class="collapse navbar-collapse flex-column align-items-start w-100 flex-grow-1"> 
             
@@ -38,24 +36,23 @@
               <li class="nav-item nav-design-data">
                 <%= link_to habits_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(habits_path)}" do %>
                   <i class="material-symbols-outlined">mountain_flag</i>
+                  <span class="ms-1 d-none d-sm-inline">Did I do my best to</span>
+                <% end %>
+              </li>
+              <li class="nav-item nav-design">
+                <%= link_to day_habits_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(day_habits_path)}" do %>
+                  <i class="material-symbols-outlined">altitude</i>
                   <span class="ms-1 d-none d-sm-inline">Habits</span>
                 <% end %>
               </li>
               <li class="nav-item nav-design">
                 <%= link_to best_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(best_path)}" do %>
-                  <i class="material-symbols-outlined">mountain_flag</i>
-                  <span class="ms-1 d-none d-sm-inline">Did I do my best to</span>
-                <% end %>
-              </li>
-              <li class="nav-item nav-design">
-                <%= link_to edit_user_registration_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(edit_user_registration_path)}" do %>
                   <i class="material-symbols-outlined">monitoring</i>
                   <span class="ms-1 d-none d-sm-inline">Analysis</span>
                 <% end %>
               </li>          
             </ul>
 
-            <!-- 3. Added mt-auto to strictly push this to the bottom -->
             <div class="w-100 mt-auto">
               <hr class="w-100">
               <ul class="navbar-nav flex-column w-100">
@@ -72,7 +69,6 @@
         </nav>
       </div>
 
-      <!-- Main Content Area -->
       <% if user_signed_in? %>
         <div class="col py-3">
           <div class="container">

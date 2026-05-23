@@ -3,7 +3,18 @@ class DayHabitsController < ApplicationController
 
   # GET /day_habits or /day_habits.json
   def index
-    @day_habits = DayHabit.all
+    # 1. Define the last 30 days (this fixes the 'nil' error)
+    @dates = (9.days.ago.to_date..Date.current).to_a
+    
+    # 2. Load habits ordered by position
+    @habits = current_user.habits.order(position: :asc)
+    
+    # 3. Optimization: Fetch all ratings for these habits in one query
+    # We group by habit_id, then index by date for fast lookup in the view
+    @ratings_map = current_user.day_habits
+                                .where(habit_id: @habits.ids, date: @dates)
+                                .group_by(&:habit_id)
+                                .transform_values { |records| records.index_by(&:date) }
   end
 
   # GET /day_habits/1 or /day_habits/1.json
@@ -57,6 +68,15 @@ class DayHabitsController < ApplicationController
       format.html { redirect_to day_habits_path, notice: "Day habit was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
+  end
+ def history
+    @habits = current_user.habits.order(position: :asc)
+
+    @dates = (29.days.ago.to_date..Date.current).to_a
+
+    @day_habits_by_habit = current_user.day_habits
+      .where(date: @dates)
+      .group_by(&:habit_id)
   end
 
   private

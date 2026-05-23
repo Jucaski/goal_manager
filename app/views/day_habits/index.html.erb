@@ -4,13 +4,43 @@
 
 <h1>Day habits</h1>
 
-<div id="day_habits">
-  <% @day_habits.each do |day_habit| %>
-    <%= render day_habit %>
-    <p>
-      <%= link_to "Show this day habit", day_habit %>
-    </p>
-  <% end %>
+<div id="habits_history" class="mt-4">
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col" class="sticky-habit" style="min-width: 120px;">Habit</th>
+          
+          <%# Loop through the dates defined in the controller %>
+          <% @dates.each do |date| %>
+            <th scope="col" class="text-center <%= 'bg-primary text-white' if date == Date.current %>" style="min-width: 45px;">
+              <%= date.day %>
+              <div class="small fw-normal opacity-75"><%= date.strftime("%b") %></div>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @habits.each do |habit| %>
+          <tr>
+            <th scope="row" class="sticky-habit fw-normal">
+              <%= habit.title %>
+            </th>
+            
+            <% @dates.each do |date| %>
+              <%# Safe and fast lookup using the map from the controller %>
+              <% habit_ratings = @ratings_map[habit.id] %>
+              <% rating = habit_ratings && habit_ratings[date] ? habit_ratings[date].rating : '-' %>
+              
+              <td class="text-center <%= 'table-active' if date == Date.current %>">
+                <%= rating %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <%= link_to "New day habit", new_day_habit_path %>

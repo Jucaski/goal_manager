@@ -1,7 +1,7 @@
 <div id="<%= dom_id day_habit %>">
   <div>
     <strong>Habit:</strong>
-    <%= day_habit.habit_id %>
+    <%= day_habit.habit.title%>
   </div>
 
   <div>
@@ -14,9 +14,7 @@
     <%= day_habit.rating %>
   </div>
 
-  <div>
-    <strong>User:</strong>
-    <%= day_habit.user_id %>
-  </div>
+  <%= day_habit.habit.title%>
 
 </div>
+

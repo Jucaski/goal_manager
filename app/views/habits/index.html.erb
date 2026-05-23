@@ -1,48 +1,50 @@
-<h1>Habits</h1>
-<div class="row justify-content-md-end">
-  <div class="col-md-1 text-center">
-    <%= link_to new_habit_path, class: "btn btn-secondary mt-3 d-inline-flex align-items-center" do %>
-      <span class="material-symbols-outlined me-1">add</span>
-    <% end %>
+<h1>Did I do my best to...</h1>
+<div class="container-fluid">
+  <div class="row justify-content-end">
+    <div class="col-2 text-center">
+      <%= link_to new_habit_path, class: "btn btn-secondary d-inline-flex align-items-center" do %>
+        <span class="material-symbols-outlined me-1">add</span>
+      <% end %>
+    </div>
   </div>
+
+  <br>
+<div class="row">
+  <%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
+    <div style="background-color:white; border-radius:30px" class="p-2">
+      <div class="table-responsive">
+        <table class="table table-hover" id="habits-list">
+
+          <tbody>
+            <% @habits.each do |habit| %>
+              <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
+                <td class="px-4 col-md-3" style="white-space: nowrap;">
+                  <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
+                  <%= link_to habit.title, edit_habit_path(habit) %>
+                </td>
+                <td class="col-md-9">
+                  <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %>
+
+                  <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2" style="max-width: 100%;">
+                    <% (0..10).each do |i| %>
+                      <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
+                        id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
+                      <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm flex-shrink-0" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <%= submit_tag "Save Today's Ratings", class: "btn btn-primary mt-3" %>
+  <% end %>
 </div>
-<br>
-<%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
-  <div style="background-color:white; border-radius:30px">
-    <table class="table table-hover" id="habits-list">
-      <thead>
-        <tr>
-          <th class="px-4 col-md-3">Habit</th>
-          <th class="col-md-9">Today's Rating</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @habits.each do |habit| %>
-          <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
-            <td class="px-4">
-              <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
-              <%= link_to habit.title, edit_habit_path(habit) %>
-            </td>
-            <td>
-              <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %>
 
-              <div class="d-flex flex-wrap gap-5 align-items-center">
-                <% (0..10).each do |i| %>
-                  <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
-                    id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
-                  <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm" %>
-                <% end %>
-              </div>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-
-  <%= submit_tag "Save Today's Ratings", class: "btn btn-primary mt-3" %>
-<% end %>
-
+</div>
 
 
 <!-- SortableJS CDN -->

@@ -88,7 +88,7 @@ class HabitsController < ApplicationController
 
   def update_order
     habit_ids = params[:habit_ids] || []
-    
+
     ActiveRecord::Base.transaction do
       habit_ids.each_with_index do |id, index|
         habit = current_user.habits.find_by(id: id)
@@ -100,6 +100,8 @@ class HabitsController < ApplicationController
   rescue ActiveRecord::RecordInvalid => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
+
+ 
 
   private
     # Use callbacks to share common setup or constraints between actions.
