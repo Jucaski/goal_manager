@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   resources :day_habits
-  resources :habits
 
   resources :habits do
     collection do

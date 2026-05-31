@@ -9,41 +9,43 @@
   </div>
 
   <br>
-<div class="row">
-  <%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
-    <div style="background-color:white; border-radius:30px" class="p-2">
-      <div class="table-responsive">
-        <table class="table table-hover" id="habits-list">
+  <div class="row">
+    <div class="col-12">
+      <%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
+        <div style="background-color:white; border-radius:30px" class="p-2">
+          <div class="table-responsive">
+            <table class="table table-hover" id="habits-list">
 
-          <tbody>
-            <% @habits.each do |habit| %>
-              <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
-                <td class="px-4 col-md-3" style="white-space: nowrap;">
-                  <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
-                  <%= link_to habit.title, edit_habit_path(habit) %>
-                </td>
-                <td class="col-md-9">
-                  <%# <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %> 
-                  <% existing_rating = @today_ratings[habit.id]&.rating %>
+              <tbody>
+                <% @habits.each do |habit| %>
+                  <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
+                    <td class="px-4 col-md-3" style="white-space: nowrap;">
+                      <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
+                      <%= link_to habit.title, edit_habit_path(habit) %>
+                    </td>
+                    <td class="col-md-9">
+                      <%# <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %> 
+                      <% existing_rating = @today_ratings[habit.id]&.rating %>
 
-                  <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2" style="max-width: 100%;">
-                    <% (0..10).each do |i| %>
-                      <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
-                        id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
-                      <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm flex-shrink-0" %>
-                    <% end %>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+                      <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2" style="max-width: 100%;">
+                        <% (0..10).each do |i| %>
+                          <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
+                            id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
+                          <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm flex-shrink-0" %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
     </div>
 
     <%= submit_tag "Save Today's Ratings", class: "btn btn-primary mt-3" %>
   <% end %>
-</div>
+  </div>
 
 </div>
 
@@ -62,7 +64,7 @@
       onEnd: function(evt) {
         const rows = Array.from(evt.to.querySelectorAll('tr'));
         const habitIds = rows.map(row => row.dataset.habitId);
-        
+
         // Send AJAX PATCH to save new order
         fetch('<%= update_order_habits_path %>', {
           method: 'PATCH',
@@ -72,16 +74,16 @@
           },
           body: JSON.stringify({ habit_ids: habitIds })
         })
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to update order');
-        })
-        .catch(err => console.error('Reorder error:', err));
+          .then(res => {
+            if (!res.ok) throw new Error('Failed to update order');
+          })
+          .catch(err => console.error('Reorder error:', err));
       }
     });
   });
 </script>
 
 <style>
-  .drag-handle { font-size: 1.2rem; line-height: 1; }
-  .drag-handle:hover { opacity: 1 !important; }
+.drag-handle { font-size: 1.2rem; line-height: 1; }
+.drag-handle:hover { opacity: 1 !important; }
 </style>
