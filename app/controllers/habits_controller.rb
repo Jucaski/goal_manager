@@ -6,6 +6,9 @@ class HabitsController < ApplicationController
   def index
     # @habits = Habit.all
     @habits = current_user.habits.order(position: :asc)
+    @today_ratings = current_user.day_habits
+                               .where(date: Date.current)
+                               .index_by(&:habit_id)
   end
 
   # GET /habits/1 or /habits/1.json

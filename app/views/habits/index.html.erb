@@ -23,7 +23,8 @@
                   <%= link_to habit.title, edit_habit_path(habit) %>
                 </td>
                 <td class="col-md-9">
-                  <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %>
+                  <%# <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %> 
+                  <% existing_rating = @today_ratings[habit.id]&.rating %>
 
                   <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2" style="max-width: 100%;">
                     <% (0..10).each do |i| %>
