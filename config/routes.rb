@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "balances/index"
   resources :day_habits
 
   resources :habits do
@@ -13,6 +14,9 @@ Rails.application.routes.draw do
   root "home#index"
   get 'settings', to: 'dashboard#settings'
   get 'best', to: 'dashboard#best_to'
+
+  get 'balance', to: 'balances#index', as: 'balance'
+  post 'balance/create_entry', to: 'balances#create_entry', as: 'create_entry'
 
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

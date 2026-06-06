@@ -1,0 +1,81 @@
+<h1>My Balance Dashboard</h1>
+
+<hr>
+<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+  <div>
+    <h3>Add Income</h3>
+    <%= form_with model: @new_entry, url: create_entry_path, local: true do |f| %>
+      <%= f.hidden_field :entry_type, value: 'income' %>
+      <%= f.text_field :description, placeholder: "Income description" %>
+      <%= f.number_field :amount, step: 0.01, placeholder: "$" %>
+      <%= f.select :source_or_category, ['National', 'Foreign'], prompt: "Select origin" %>
+      <%= f.date_field :date %>
+      <%= f.submit "Add Income" %>
+    <% end %>
+  </div>
+
+  <div>
+    <h3>Add Outcome</h3>
+    <%= form_with model: @new_entry, url: create_entry_path, local: true do |f| %>
+      <%= f.hidden_field :entry_type, value: 'outcome' %>
+      <%= f.text_field :description, placeholder: "Outcome description" %>
+      <%= f.number_field :amount, step: 0.01, placeholder: "$" %>
+      <%= f.select :source_or_category, ['Supplies', 'Services', 'Other'], prompt: "Select category" %>
+      <%= f.date_field :date %>
+      <%= f.submit "Add Outcome" %>
+    <% end %>
+  </div>
+</div>
+
+<hr>
+<h3>Declaration Tax Month (Previous Month)</h3>
+<table border="1">
+  <tr>
+    <th>Description</th>
+    <th>Date</th>
+    <th>Balance</th>
+  </tr>
+  <tr>
+    <td>Example Foreign Income</td>
+    <td>21/01/2026</td>
+    <td style="color: green;">+ $2000.00</td>
+  </tr>
+  <tr>
+    <td>ISR (1%)</td>
+    <td></td>
+    <td style="color: red;">- $20.00</td>
+  </tr>
+  <tr>
+    <td>IVA (0% for foreign)</td>
+    <td></td>
+    <td>$0.00</td>
+  </tr>
+</table>
+
+<hr>
+<h3>Current Month Transactions</h3>
+<table border="1">
+  <tr>
+    <th>Description</th>
+    <th>Date</th>
+    <th>Income</th>
+    <th>Outcome</th>
+  </tr>
+  <% @entries.each do |entry| %>
+    <tr>
+      <td><%= entry.description %></td>
+      <td><%= entry.date.strftime("%d/%m/%Y") %></td>
+      <% if entry.entry_type == 'income' %>
+        <td style="color: green;">+ $<%= entry.amount %></td>
+        <td></td>
+      <% else %>
+        <td></td>
+        <td style="color: red;">- $<%= entry.amount %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  <tr>
+    <td colspan="2"><strong>Total Balance</strong></td>
+    <td colspan="2" style="text-align: center;"><strong>$<%= @current_balance %></strong></td>
+  </tr>
+</table>a
