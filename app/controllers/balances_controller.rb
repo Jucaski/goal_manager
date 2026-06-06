@@ -3,17 +3,22 @@ class BalancesController < ApplicationController
   before_action :set_entry, only: [:edit, :update]
 
   def index
+    if params[:month].present? && params[:year].present?
+      @target_date = Date.new(params[:year].to_i, params[:month].to_i, 1)
+    else
+      @target_date = Time.current
+    end
+
     @entries = current_user.financial_entries
-                           .where(date: Time.current.all_month)
+                           .where(date: @target_date.all_month)
                            .order(date: :desc)
-    
+
     @new_entry = FinancialEntry.new
 
     @incomes = @entries.where(entry_type: 'income')
     @outcomes = @entries.where(entry_type: 'outcome')
     @previous_month_date = Time.current.last_month
     
-    # 2. Query only incomes from exactly last month
     @previous_month_incomes = current_user.financial_entries
                                           .where(entry_type: 'income', date: @previous_month_date.all_month)
                                           .order(date: :asc)
