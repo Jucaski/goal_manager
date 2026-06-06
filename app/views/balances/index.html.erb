@@ -1,5 +1,7 @@
 <h1>My Balance Dashboard</h1>
-
+<button id="privacyBtn" onclick="togglePrivacy()" style="padding: 8px 16px; background-color: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 20px;">
+  Show Data
+</button>
 <hr>
 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
   <div>
@@ -40,14 +42,14 @@
     <tr>
       <td style="padding: 5px;"><%= income.description %></td>
       <td style="padding: 5px;"><%= income.date.strftime("%d/%m/%Y") %></td>
-      <td style="color: green;">+ <%= number_to_currency(income.amount) %></td>
+      <td style="color: green;">+ <span class="sensitive-data"> <%= number_to_currency(income.amount) %> </span></td>
     </tr>
 
     <% isr = income.amount * 0.01 %>
     <tr>
       <td style="padding: 5px;">ISR (1%)</td>
       <td></td>
-      <td style="color: red; padding: 5px;">- $<%= '%.2f' % isr %></td>
+      <td style="color: red; padding: 5px;">- <span class="sensitive-data">$<%= '%.2f' % isr %></span></td>
     </tr>
 
     <% if income.source_or_category.to_s.downcase == 'foreign' %>
@@ -61,7 +63,7 @@
       <tr>
         <td style="padding: 5px;">IVA (16% for national)</td>
         <td></td>
-        <td style="color: red; padding: 5px;">- $<%= '%.2f' % iva %></td>
+        <td style="color: red; padding: 5px;">- <span class="sensitive-data">$<%= '%.2f' % iva %></span></td>
       </tr>
     <% end %>
   <% end %>
@@ -91,18 +93,18 @@
       </td>
       <td><%= entry.date.strftime("%d/%m/%Y") %></td>
       <% if entry.entry_type == 'income' %>
-        <td style="color: green;">+ $<%= entry.amount %></td>
+        <td style="color: green;">+ <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
         <td></td>
       <% else %>
         <td></td>
-        <td style="color: red;">- $<%= entry.amount %></td>
+        <td style="color: red;">- <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
       <% end %>
     </tr>
   <% end %>
   <tr>
     <td colspan="2"><strong>Total Balance</strong></td>
-    <td colspan="1" style="text-align: center; color: green;"><strong><%= number_to_currency(@total_income) %></strong></td>
-    <td colspan="1" style="text-align: center; color: red"><strong><%= number_to_currency(@total_outcome) %></strong></td>
+    <td colspan="1" style="text-align: center; color: green;"><strong><span class="sensitive-data"><%= number_to_currency(@total_income) %></span></strong></td>
+    <td colspan="1" style="text-align: center; color: red"><strong><span class="sensitive-data"><%= number_to_currency(@total_outcome) %></span></strong></td>
   </tr>
 </table>
 
@@ -124,10 +126,10 @@
       <tr>
         <td><%= link_to data[:name], balance_path(year: Time.current.year, month: month_num), style: "text-decoration: underline; color: #000;" %></td>
         <td style="background-color: #00ff00; color: black;">
-          + <%= number_to_currency(data[:income]) %>
+          + <span class="sensitive-data"><%= number_to_currency(data[:income]) %></span>
         </td>
         <td style="background-color: #ff0000; color: white;">
-          - <%= number_to_currency(data[:outcome]) %>
+          - <span class="sensitive-data"><%= number_to_currency(data[:outcome]) %></span>
         </td>
       </tr>
     <% end %>
@@ -136,10 +138,10 @@
   <tr style="background-color: #dbeafe; font-weight: bold;">
     <td>Balance</td>
     <td style="background-color: #00ff00; color: black;">
-      + <%= number_to_currency(@yearly_total_income) %>
+      + <span class="sensitive-data"><%= number_to_currency(@yearly_total_income) %></span>
     </td>
     <td style="background-color: #ff0000; color: white;">
-      - <%= number_to_currency(@yearly_total_outcome) %>
+      - <span class="sensitive-data"><%= number_to_currency(@yearly_total_outcome) %></span>
     </td>
   </tr>
 </table>
@@ -151,15 +153,33 @@
   <div style="display: flex; justify-content: space-between;">
     <span>Current Month Balance:</span>
     <span style="background-color: #d3d3d3; padding: 2px 20px; font-weight: bold;">
-      <%= number_to_currency(@current_balance) %>
+      <span class="sensitive-data"><%= number_to_currency(@current_balance) %></span>
     </span>
   </div>
 
   <div style="display: flex; justify-content: space-between;">
     <span>Year Balance:</span>
     <span style="background-color: #00ff00; padding: 2px 20px; font-weight: bold; color: black;">
-      <%= @yearly_balance >= 0 ? '+' : '-' %> <%= number_to_currency(@yearly_balance.abs) %>
+      <span class="sensitive-data"><%= @yearly_balance >= 0 ? '+' : '-' %> <%= number_to_currency(@yearly_balance.abs) %></span>
     </span>
   </div>
 
 </div>
+<script>
+  function togglePrivacy() {
+    const dataElements = document.querySelectorAll('.sensitive-data');
+    const btn = document.getElementById('privacyBtn');
+    
+    // Toggle the 'show-data' class on every number
+    dataElements.forEach(element => {
+      element.classList.toggle('show-data');
+    });
+    
+    // Change the button text
+    if (btn.innerText === "Show Data") {
+      btn.innerText = "Hide Data";
+    } else {
+      btn.innerText = "Show Data";
+    }
+  }
+</script>

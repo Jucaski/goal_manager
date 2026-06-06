@@ -1,26 +1,68 @@
-$primary: #fbf2e8;
-$secondary: #b1e1e3;
-$success: #10b981;
-$danger: #ef4444;
-$warning: #f59e0b;
-$info: #3b82f6;
-$background: #f4d1d0;
-$highlight: #b1e1e3;
-$font-normal: #626262;
-$font-highlight: #000000;
-
+// $primary: #fbf2e8;
+// $secondary: #b1e1e3;
+// $success: #10b981;
+// $danger: #ef4444;
+// $warning: #f59e0b;
+// $info: #3b82f6;
+// $background: #f4d1d0;
+// $highlight: #b1e1e3;
+// $font-normal: #626262;
+// $font-highlight: #000000;
 @use 'bootstrap/scss/bootstrap';
 @use 'bootstrap-icons/font/bootstrap-icons';
 
-body{
-background-color: $background;
+:root, [data-theme="pink"] {
+  --bg-main: #f4d1d0;          /* Your current pink */
+  --bg-sidebar: #fbf2e8;       /* Your current sidebar */
+  
+  /* New Table Colors */
+  --table-bg: #ffffff;
+  --table-header-bg: #ffe4e4;
+  --table-text: #333333;
+  --table-border: #e8caca;
+  
+  /* New Button Colors */
+  --btn-bg: #8b5cf6;           /* Example: Violet button */
+  --btn-text: #ffffff;
+  
+  /* Status Colors */
+  --font-normal: #626262;
+  --text-income: #10b981;
+  --text-outcome: #ef4444;
 }
-.side-bar{
-  background-color: $primary
+
+/* Example Dark Theme */
+[data-theme="dark"] {
+  --bg-main: #121212;
+  --bg-sidebar: #1e1e1e;
+  
+  --table-bg: #2d2d2d;
+  --table-header-bg: #3d3d3d;
+  --table-text: #f3f4f6;
+  --table-border: #404040;
+  
+  --btn-bg: #a78bfa;
+  --btn-text: #000000;
+  
+  --text-income: #34d399;
+  --text-outcome: #f87171;
+}
+
+
+
+body {
+  background-color: var(--bg-main);
+  color: var(--table-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.side-bar {
+  background-color: var(--bg-sidebar);
+  transition: background-color 0.3s ease;
 }
 
 #menu .nav-link {
-  color: $font-normal; /* Default unselected text/icon color */
+  color: var(--font-normal); /* Default unselected text/icon color */
   border-radius: 4px; /* Optional: Adjust roundness of active block (0 for sharp square) */
   transition: background-color 0.2s ease;
 }
@@ -33,10 +75,50 @@ background-color: $background;
 
 /* Custom Active State Colors */
 #menu .nav-link.active {
-  background-color: $highlight !important; /* Change this hex value to your desired active background color */
-  color: $font-highlight !important;            /* Text and icon color when active */
+  background-color: var(--bg-sidebar) !important;
+  color: var(--table-text) !important;
 }
 
-.table {
-  --bs-table-bg: transparent;
+.theme-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--table-bg);
+  color: var(--table-text);
 }
+
+.theme-table th, .theme-table td {
+  border: 1px solid var(--table-border);
+  padding: 8px;
+}
+
+.theme-table th {
+  background-color: var(--table-header-bg);
+}
+
+.theme-btn {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.theme-btn:hover {
+  opacity: 0.8;
+}
+
+.text-income { color: var(--text-income); }
+.text-outcome { color: var(--text-outcome); }
+
+.sensitive-data {
+    filter: blur(6px);
+    user-select: none; /* Prevents people from copy-pasting the blurred text */
+    transition: filter 0.3s ease; /* Makes the transition smooth */
+  }
+  
+  /* This class will be added/removed by JavaScript */
+  .sensitive-data.show-data {
+    filter: blur(0);
+  }

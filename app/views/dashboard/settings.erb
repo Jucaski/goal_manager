@@ -6,4 +6,12 @@
   <span class="ms-1 d-none d-sm-inline">Log out</span>
 <% end %>
 
+<h3>Appearance</h3>
 
+<div class="mb-3">
+  <label for="themeSelector" class="form-label">Select Theme:</label>
+  <select id="themeSelector" class="form-select w-auto" onchange="setTheme(this.value)">
+    <option value="pink">Pink (Default)</option>
+    <option value="dark">Dark Mode</option>
+  </select>
+</div>
