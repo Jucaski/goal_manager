@@ -40,7 +40,7 @@
     <tr>
       <td style="padding: 5px;"><%= income.description %></td>
       <td style="padding: 5px;"><%= income.date.strftime("%d/%m/%Y") %></td>
-      <td style="color: green; padding: 5px;">+ $<%= '%.2f' % income.amount %></td>
+      <td style="color: green;">+ <%= number_to_currency(income.amount) %></td>
     </tr>
 
     <% isr = income.amount * 0.01 %>
@@ -96,7 +96,8 @@
   <% end %>
   <tr>
     <td colspan="2"><strong>Total Balance</strong></td>
-    <td colspan="2" style="text-align: center;"><strong>$<%= @current_balance %></strong></td>
+    <td colspan="1" style="text-align: center; color: green;"><strong><%= number_to_currency(@total_income) %></strong></td>
+    <td colspan="1" style="text-align: center; color: red"><strong><%= number_to_currency(@total_outcome) %></strong></td>
   </tr>
 </table>
 
@@ -118,10 +119,10 @@
       <tr>
         <td><%= data[:name] %></td>
         <td style="background-color: #00ff00; color: black;">
-          + $<%= data[:income] %>
+          + <%= number_to_currency(data[:income]) %>
         </td>
         <td style="background-color: #ff0000; color: white;">
-          - $<%= data[:outcome] %>
+          - <%= number_to_currency(data[:outcome]) %>
         </td>
       </tr>
     <% end %>
@@ -130,10 +131,10 @@
   <tr style="background-color: #dbeafe; font-weight: bold;">
     <td>Balance</td>
     <td style="background-color: #00ff00; color: black;">
-      + $<%= @yearly_total_income %>
+      + <%= number_to_currency(@yearly_total_income) %>
     </td>
     <td style="background-color: #ff0000; color: white;">
-      - $<%= @yearly_total_outcome %>
+      - <%= number_to_currency(@yearly_total_outcome) %>
     </td>
   </tr>
 </table>
@@ -145,14 +146,14 @@
   <div style="display: flex; justify-content: space-between;">
     <span>Current Month Balance:</span>
     <span style="background-color: #d3d3d3; padding: 2px 20px; font-weight: bold;">
-      $<%= @current_balance %>
+      <%= number_to_currency(@current_balance) %>
     </span>
   </div>
 
   <div style="display: flex; justify-content: space-between;">
     <span>Year Balance:</span>
     <span style="background-color: #00ff00; padding: 2px 20px; font-weight: bold; color: black;">
-      <%= @yearly_balance >= 0 ? '+' : '-' %> $<%= @yearly_balance.abs %>
+      <%= @yearly_balance >= 0 ? '+' : '-' %> <%= number_to_currency(@yearly_balance.abs) %>
     </span>
   </div>
 
