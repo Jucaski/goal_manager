@@ -12,14 +12,14 @@
   <div class="row">
     <div class="col-12">
       <%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
-        <div style="background-color:white; border-radius:30px" class="p-2">
+        <div class="p-2">
           <div class="table-responsive">
-            <table class="table table-hover" id="habits-list">
+            <table class="table table-hover theme-table" id="habits-list">
 
               <tbody>
                 <% @habits.each do |habit| %>
                   <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
-                    <td class="px-4 col-md-3" style="white-space: nowrap;">
+                    <td class="px-4 col-md-3" >
                       <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
                       <%= link_to habit.title, edit_habit_path(habit) %>
                     </td>
@@ -27,7 +27,7 @@
                       <%# <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %> 
                       <% existing_rating = @today_ratings[habit.id]&.rating %>
 
-                      <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2" style="max-width: 100%;">
+                      <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2">
                         <% (0..10).each do |i| %>
                           <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
                             id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>

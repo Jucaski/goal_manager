@@ -109,8 +109,8 @@ body {
   opacity: 0.8;
 }
 
-.text-income { color: var(--text-income); }
-.text-outcome { color: var(--text-outcome); }
+.text-income { color: var(--text-income)!important; }
+.text-outcome { color: var(--text-outcome) !important; }
 
 .sensitive-data {
     filter: blur(6px);

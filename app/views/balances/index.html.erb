@@ -31,55 +31,55 @@
 
 <h3>Declaration Tax Month (<%= @previous_month_date.strftime("%B") %>)</h3>
 
-<table border="1" style="border-collapse: collapse; width: 100%;">
+<table class="table theme-table table-sm">
   <tr style="background-color: #f3e8e8;">
-    <th style="text-align: left; padding: 5px;">Description</th>
-    <th style="text-align: left; padding: 5px;">Date</th>
-    <th style="text-align: left; padding: 5px;">Balance</th>
+    <th>Description</th>
+    <th>Date</th>
+    <th>Balance</th>
   </tr>
 
   <% @previous_month_incomes.each do |income| %>
     <tr>
-      <td style="padding: 5px;"><%= income.description %></td>
-      <td style="padding: 5px;"><%= income.date.strftime("%d/%m/%Y") %></td>
-      <td style="color: green;">+ <span class="sensitive-data"> <%= number_to_currency(income.amount) %> </span></td>
+      <td><%= income.description %></td>
+      <td><%= income.date.strftime("%d/%m/%Y") %></td>
+      <td class="text-income">+ <span class="sensitive-data"> <%= number_to_currency(income.amount) %> </span></td>
     </tr>
 
     <% isr = income.amount * 0.01 %>
     <tr>
-      <td style="padding: 5px;">ISR (1%)</td>
+      <td>ISR (1%)</td>
       <td></td>
-      <td style="color: red; padding: 5px;">- <span class="sensitive-data">$<%= '%.2f' % isr %></span></td>
+      <td class="text-outcome">- <span class="sensitive-data">$<%= '%.2f' % isr %></span></td>
     </tr>
 
     <% if income.source_or_category.to_s.downcase == 'foreign' %>
       <tr>
-        <td style="padding: 5px;">IVA (0% for foreign)</td>
+        <td>IVA (0% for foreign)</td>
         <td></td>
-        <td style="padding: 5px;">$0.00</td>
+        <td>- $0.00</td>
       </tr>
     <% else %>
       <% iva = income.amount * 0.16 %>
       <tr>
-        <td style="padding: 5px;">IVA (16% for national)</td>
+        <td>IVA (16% for national)</td>
         <td></td>
-        <td style="color: red; padding: 5px;">- <span class="sensitive-data">$<%= '%.2f' % iva %></span></td>
+        <td class="text-outcome">- <span class="sensitive-data">$<%= '%.2f' % iva %></span></td>
       </tr>
     <% end %>
   <% end %>
   
   <% if @previous_month_incomes.empty? %>
     <tr>
-      <td colspan="3" style="text-align: center; padding: 10px;">No incomes recorded for <%= @previous_month_date.strftime("%B") %>.</td>
+      <td colspan="3">No incomes recorded for <%= @previous_month_date.strftime("%B") %>.</td>
     </tr>
   <% end %>
 </table>
 <hr>
 <h3>Transactions (<%= @target_date.strftime("%B %Y") %>)</h3>
 <% if params[:month].present? %>
-  <%= link_to "← Back to Current Month", balance_path, style: "font-size: 0.9em; color: blue;" %>
+  <%= link_to "← Back to Current Month", balance_path%>
 <% end %>
-<table border="1">
+<table class="table table-sm theme-table">
   <tr>
     <th>Description</th>
     <th>Date</th>
@@ -89,22 +89,22 @@
   <% @entries.each do |entry| %>
     <tr>
       <td>
-        <%= link_to entry.description, edit_balance_entry_path(entry), style: "text-decoration: underline; color: #000;" %>
+        <%= link_to entry.description, edit_balance_entry_path(entry)%>
       </td>
       <td><%= entry.date.strftime("%d/%m/%Y") %></td>
       <% if entry.entry_type == 'income' %>
-        <td style="color: green;">+ <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
+        <td class="text-income">+ <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
         <td></td>
       <% else %>
         <td></td>
-        <td style="color: red;">- <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
+        <td class="text-outcome">- <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
       <% end %>
     </tr>
   <% end %>
   <tr>
-    <td colspan="2"><strong>Total Balance</strong></td>
-    <td colspan="1" style="text-align: center; color: green;"><strong><span class="sensitive-data"><%= number_to_currency(@total_income) %></span></strong></td>
-    <td colspan="1" style="text-align: center; color: red"><strong><span class="sensitive-data"><%= number_to_currency(@total_outcome) %></span></strong></td>
+    <td colspan="2" class="fw-bold">Total Balance</td>
+    <td colspan="1" class="text-income"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_income) %></span></td>
+    <td colspan="1" class="text-outcome"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_outcome) %></span></td>
   </tr>
 </table>
 
@@ -113,8 +113,8 @@
 <hr>
 <h3>Year (<%= Time.current.year %>)</h3>
 
-<table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
-  <tr style="background-color: #dbeafe;">
+<table class="table table-sm theme-table">
+  <tr>
     <th>Month</th>
     <th>Income</th>
     <th>Outcome</th>
@@ -124,47 +124,45 @@
     <%# Let's only display months up to the current month to keep the table clean %>
     <% if month_num <= Time.current.month %>
       <tr>
-        <td><%= link_to data[:name], balance_path(year: Time.current.year, month: month_num), style: "text-decoration: underline; color: #000;" %></td>
-        <td style="background-color: #00ff00; color: black;">
+        <td><%= link_to data[:name], balance_path(year: Time.current.year, month: month_num)%></td>
+        <td class="text-income">
           + <span class="sensitive-data"><%= number_to_currency(data[:income]) %></span>
         </td>
-        <td style="background-color: #ff0000; color: white;">
+        <td class="text-outcome">
           - <span class="sensitive-data"><%= number_to_currency(data[:outcome]) %></span>
         </td>
       </tr>
     <% end %>
   <% end %>
 
-  <tr style="background-color: #dbeafe; font-weight: bold;">
-    <td>Balance</td>
-    <td style="background-color: #00ff00; color: black;">
-      + <span class="sensitive-data"><%= number_to_currency(@yearly_total_income) %></span>
+  <tr>
+    <td class="fw-bold">Balance</td>
+    <td class="text-income">
+      + <span class="sensitive-data fw-bold"><%= number_to_currency(@yearly_total_income) %></span>
     </td>
-    <td style="background-color: #ff0000; color: white;">
-      - <span class="sensitive-data"><%= number_to_currency(@yearly_total_outcome) %></span>
+    <td class="text-outcome">
+      - <span class="sensitive-data fw-bold"><%= number_to_currency(@yearly_total_outcome) %></span>
     </td>
   </tr>
 </table>
 
 <br>
 
-<div style="display: flex; flex-direction: column; gap: 10px; width: 300px; font-size: 1.2em;">
   
-  <div style="display: flex; justify-content: space-between;">
+  <div>
     <span>Current Month Balance:</span>
-    <span style="background-color: #d3d3d3; padding: 2px 20px; font-weight: bold;">
+    <span class="text-income">
       <span class="sensitive-data"><%= number_to_currency(@current_balance) %></span>
     </span>
   </div>
 
-  <div style="display: flex; justify-content: space-between;">
+  <div>
     <span>Year Balance:</span>
-    <span style="background-color: #00ff00; padding: 2px 20px; font-weight: bold; color: black;">
+    <span class="text-income">
       <span class="sensitive-data"><%= @yearly_balance >= 0 ? '+' : '-' %> <%= number_to_currency(@yearly_balance.abs) %></span>
     </span>
   </div>
 
-</div>
 <script>
   function togglePrivacy() {
     const dataElements = document.querySelectorAll('.sensitive-data');
