@@ -83,7 +83,9 @@
   </tr>
   <% @entries.each do |entry| %>
     <tr>
-      <td><%= entry.description %></td>
+      <td>
+        <%= link_to entry.description, edit_balance_entry_path(entry), style: "text-decoration: underline; color: #000;" %>
+      </td>
       <td><%= entry.date.strftime("%d/%m/%Y") %></td>
       <% if entry.entry_type == 'income' %>
         <td style="color: green;">+ $<%= entry.amount %></td>

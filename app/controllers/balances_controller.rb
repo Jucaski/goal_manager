@@ -1,5 +1,6 @@
 class BalancesController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_entry, only: [:edit, :update]
 
   def index
     @entries = current_user.financial_entries
@@ -52,7 +53,23 @@ class BalancesController < ApplicationController
     end
   end
 
+  def edit
+    @entry
+  end
+
+  def update
+    if @entry.update(entry_params)
+      redirect_to balance_path, notice: "Transaction updated successfully."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
+
+  def set_entry
+    @entry = current_user.financial_entries.find(params[:id])
+  end
 
   def entry_params
     params.require(:financial_entry).permit(:entry_type, :description, :amount, :date, :source_or_category)

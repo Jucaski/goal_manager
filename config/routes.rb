@@ -18,6 +18,9 @@ Rails.application.routes.draw do
   get 'balance', to: 'balances#index', as: 'balance'
   post 'balance/create_entry', to: 'balances#create_entry', as: 'create_entry'
 
+  get 'balance/:id/edit', to: 'balances#edit', as: 'edit_balance_entry'
+  patch 'balance/:id', to: 'balances#update', as: 'balance_entry'
+
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
