@@ -16,6 +16,29 @@ class BalancesController < ApplicationController
     @total_income = @incomes.sum(:amount)
     @total_outcome = @outcomes.sum(:amount)
     @current_balance = @total_income - @total_outcome
+    current_year = Time.current.year
+    @year_entries = current_user.financial_entries.where(date: Time.new(current_year).all_year)
+
+    # 1. Create a hash to hold the 12 months, starting with $0 for everything
+    @monthly_data = {}
+    (1..12).each do |m| 
+      @monthly_data[m] = { name: Date::MONTHNAMES[m], income: 0, outcome: 0 } 
+    end
+
+    # 2. Loop through the year's entries and add the amounts to the correct month
+    @year_entries.each do |entry|
+      month = entry.date.month # Gets a number 1-12
+      if entry.entry_type == 'income'
+        @monthly_data[month][:income] += entry.amount
+      else
+        @monthly_data[month][:outcome] += entry.amount
+      end
+    end
+
+    # 3. Calculate the grand totals for the bottom rows
+    @yearly_total_income = @year_entries.where(entry_type: 'income').sum(:amount)
+    @yearly_total_outcome = @year_entries.where(entry_type: 'outcome').sum(:amount)
+    @yearly_balance = @yearly_total_income - @yearly_total_outcome
   end
 
   def create_entry
