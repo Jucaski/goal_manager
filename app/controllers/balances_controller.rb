@@ -3,7 +3,9 @@ class BalancesController < ApplicationController
 
   def index
     # Get entries for the current user
-    @entries = current_user.financial_entries.order(date: :desc)
+    @entries = current_user.financial_entries
+                           .where(date: Time.current.all_month)
+                           .order(date: :desc)
     
     # Setup instances for the forms
     @new_entry = FinancialEntry.new

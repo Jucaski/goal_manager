@@ -20,7 +20,7 @@
       <%= f.hidden_field :entry_type, value: 'outcome' %>
       <%= f.text_field :description, placeholder: "Outcome description" %>
       <%= f.number_field :amount, step: 0.01, placeholder: "$" %>
-      <%= f.select :source_or_category, ['Supplies', 'Services', 'Other'], prompt: "Select category" %>
+      <%= f.select :source_or_category, ['Amazon_Food','Food','Necessary', 'Side_Project_Build', 'Side_Project_Tech', 'Study','Transportation',  'Other'], prompt: "Select category" %>
       <%= f.date_field :date %>
       <%= f.submit "Add Outcome" %>
     <% end %>
