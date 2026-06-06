@@ -1,25 +1,25 @@
 <h1>Edit Transaction</h1>
 <hr>
 
-<div style="max-width: 400px; margin-top: 20px;">
+<div>
   <%= form_with model: @entry, url: balance_entry_path(@entry), method: :patch, local: true do |f| %>
     
-    <div style="margin-bottom: 10px;">
+    <div>
       <%= f.label :description, style: "display: block;" %>
       <%= f.text_field :description %>
     </div>
 
-    <div style="margin-bottom: 10px;">
+    <div>
       <%= f.label :amount, style: "display: block;" %>
       <%= f.number_field :amount, step: 0.01 %>
     </div>
 
-    <div style="margin-bottom: 10px;">
+    <div>
       <%= f.label :date, style: "display: block;" %>
       <%= f.date_field :date %>
     </div>
 
-    <div style="margin-bottom: 20px;">
+    <div>
       <%= f.label :source_or_category, "Category / Source", style: "display: block;" %>
       <% if @entry.entry_type == 'income' %>
         <%= f.select :source_or_category, ['National', 'Foreign'] %>

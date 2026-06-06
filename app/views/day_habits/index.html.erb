@@ -9,11 +9,11 @@
     <table class="table table-hover table-bordered align-middle text-nowrap theme-table">
       <thead class="table-light">
         <tr>
-          <th scope="col" class="sticky-habit" style="min-width: 120px;">Habit</th>
+          <th scope="col" class="sticky-habit">Habit</th>
           
           <%# Loop through the dates defined in the controller %>
           <% @dates.each do |date| %>
-            <th scope="col" class="text-center <%= 'bg-primary text-white' if date == Date.current %>" style="min-width: 45px;">
+            <th scope="col" class="text-center <%= 'bg-primary text-white' if date == Date.current %>" >
               <%= date.day %>
               <div class="small fw-normal opacity-75"><%= date.strftime("%b") %></div>
             </th>

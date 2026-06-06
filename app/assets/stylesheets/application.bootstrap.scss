@@ -122,3 +122,6 @@ body {
   .sensitive-data.show-data {
     filter: blur(0);
   }
+
+.drag-handle { font-size: 1.2rem; line-height: 1; }
+.drag-handle:hover { opacity: 1 !important; }
