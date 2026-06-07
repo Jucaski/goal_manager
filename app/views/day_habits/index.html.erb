@@ -3,44 +3,45 @@
 <h1 class="vast-header  mt-2">Day habits</h1>
 <% content_for :title, "Day habits" %> 
 
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
 
-<div id="habits_history" class="mt-4">
-  <div class="table-responsive">
-    <table class="table table-hover table-bordered align-middle text-nowrap theme-table">
-      <thead class="table-light">
+    <div class="table-responsive" id="habits-table-wrapper">
+  <table class="table table-hover table-bordered align-middle text-nowrap theme-table">
+    <thead>
+      <tr>
+        <th scope="col" class="sticky-habit">Habit</th>
+        <% @dates.each do |date| %>
+          <th scope="col" class="text-center <%= 'bg-table-active' if date == Date.current %>">
+            <%= date.day %>
+            <div class="small fw-normal opacity-75"><%= date.strftime("%b") %></div>
+          </th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @habits.each do |habit| %>
         <tr>
-          <th scope="col" class="sticky-habit">Habit</th>
-          
-          <%# Loop through the dates defined in the controller %>
+          <th scope="row" class="sticky-habit fw-normal"><%= habit.title %></th>
           <% @dates.each do |date| %>
-            <th scope="col" class="text-center <%= 'bg-table-active' if date == Date.current %>" >
-              <%= date.day %>
-              <div class="small fw-normal opacity-75"><%= date.strftime("%b") %></div>
-            </th>
+            <% habit_ratings = @ratings_map[habit.id] %>
+            <% rating = habit_ratings && habit_ratings[date] ? habit_ratings[date].rating : '-' %>
+            <td class="text-center <%= 'table-active' if date == Date.current %>">
+              <%= rating %>
+            </td>
           <% end %>
         </tr>
-      </thead>
-      <tbody>
-        <% @habits.each do |habit| %>
-          <tr>
-            <th scope="row" class=" fw-normal">
-              <%= habit.title %>
-            </th>
-            
-            <% @dates.each do |date| %>
-              <%# Safe and fast lookup using the map from the controller %>
-              <% habit_ratings = @ratings_map[habit.id] %>
-              <% rating = habit_ratings && habit_ratings[date] ? habit_ratings[date].rating : '-' %>
-              
-              <td class="text-center <%= 'table-active' if date == Date.current %>">
-                <%= rating %>
-              </td>
-            <% end %>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+      <% end %>
+    </tbody>
+  </table>
+</div>
   </div>
 </div>
 
-<%= link_to "New day habit", new_day_habit_path %>
+<%# <%= link_to "New day habit", new_day_habit_path %>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const wrapper = document.getElementById("habits-table-wrapper");
+    if (wrapper) wrapper.scrollLeft = wrapper.scrollWidth;
+  });
+</script>

@@ -130,7 +130,6 @@ body {
   --bs-table-accent-bg: transparent !important;
 }
 
-
 .theme-table th {
   background-color: var(--table-header-bg);
 }
@@ -150,6 +149,18 @@ body {
   color: var(--text-link-hover);
   text-decoration: underline;
 }
+
+.sticky-habit {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: var(--your-table-bg-color); /* match your table background */
+}
+
+thead .sticky-habit {
+  z-index: 3;
+}
+
 // ------- BUTTON ------
 .theme-btn {
   background-color: var(--btn-bg);
