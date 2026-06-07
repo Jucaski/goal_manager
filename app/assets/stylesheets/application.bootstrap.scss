@@ -14,6 +14,8 @@
 :root, [data-theme="pink"] {
   --bg-main: #f4d1d0;          /* Your current pink */
   --bg-sidebar: #fbf2e8;       /* Your current sidebar */
+  --bg-side-active: #b1e1e3;
+  --bg-card: white;
   
   /* New Table Colors */
   --table-bg: #ffffff;
@@ -35,6 +37,7 @@
 [data-theme="dark"] {
   --bg-main: #121212;
   --bg-sidebar: #1e1e1e;
+  --bg-side-active: #b1e1e3;
   
   --table-bg: #2d2d2d;
   --table-header-bg: #3d3d3d;
@@ -44,11 +47,10 @@
   --btn-bg: #a78bfa;
   --btn-text: #000000;
   
+  --font-normal: #626262;
   --text-income: #34d399;
   --text-outcome: #f87171;
 }
-
-
 
 body {
   background-color: var(--bg-main);
@@ -56,28 +58,30 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+// -----SIDEBAR------
+
 .side-bar {
   background-color: var(--bg-sidebar);
   transition: background-color 0.3s ease;
 }
 
 #menu .nav-link {
-  color: var(--font-normal); /* Default unselected text/icon color */
-  border-radius: 4px; /* Optional: Adjust roundness of active block (0 for sharp square) */
+  color: var(--font-normal);
+  border-radius: 4px;
   transition: background-color 0.2s ease;
 }
 
-/* Hover state for inactive links */
 #menu .nav-link:hover {
   background-color: rgba(0, 0, 0, 0.05); 
   color: #000000;
 }
 
-/* Custom Active State Colors */
 #menu .nav-link.active {
-  background-color: var(--bg-sidebar) !important;
+  background-color: var(--bg-side-active) !important;
   color: var(--table-text) !important;
 }
+
+// ---- TABLES-------
 
 .theme-table {
   width: 100%;
@@ -95,6 +99,12 @@ body {
   background-color: var(--table-header-bg);
 }
 
+.bg-table-active {
+  background-color: var(--bg-side-active) !important;
+  color: var(--font-normal)!important;
+}
+
+// ------- BUTTON ------
 .theme-btn {
   background-color: var(--btn-bg);
   color: var(--btn-text);
@@ -109,19 +119,28 @@ body {
   opacity: 0.8;
 }
 
+
+//------ TEXTS --------
 .text-income { color: var(--text-income)!important; }
 .text-outcome { color: var(--text-outcome) !important; }
+.text-active { color: var(--bg-side-active)!important; }
 
+
+
+//-------cards-------
+.card{
+background-color: var(--bg-card);}
+
+//--------SENSITIVE DATA ------
 .sensitive-data {
-    filter: blur(6px);
-    user-select: none; /* Prevents people from copy-pasting the blurred text */
-    transition: filter 0.3s ease; /* Makes the transition smooth */
-  }
-  
-  /* This class will be added/removed by JavaScript */
-  .sensitive-data.show-data {
-    filter: blur(0);
-  }
+  filter: blur(6px);
+  user-select: none; 
+  transition: filter 0.3s ease;
+}
+
+.sensitive-data.show-data {
+  filter: blur(0);
+}
 
 .drag-handle { font-size: 1.2rem; line-height: 1; }
 .drag-handle:hover { opacity: 1 !important; }

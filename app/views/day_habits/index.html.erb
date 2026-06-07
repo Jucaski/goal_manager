@@ -13,7 +13,7 @@
           
           <%# Loop through the dates defined in the controller %>
           <% @dates.each do |date| %>
-            <th scope="col" class="text-center <%= 'bg-primary text-white' if date == Date.current %>" >
+            <th scope="col" class="text-center <%= 'bg-table-active' if date == Date.current %>" >
               <%= date.day %>
               <div class="small fw-normal opacity-75"><%= date.strftime("%b") %></div>
             </th>
@@ -23,7 +23,7 @@
       <tbody>
         <% @habits.each do |habit| %>
           <tr>
-            <th scope="row" class="sticky-habit fw-normal">
+            <th scope="row" class=" fw-normal">
               <%= habit.title %>
             </th>
             

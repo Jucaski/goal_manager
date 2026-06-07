@@ -1,112 +1,181 @@
-<h1>My Balance Dashboard</h1>
-<button id="privacyBtn" onclick="togglePrivacy()" >
-  Show Data
-</button>
-<hr>
-<div>
-  <div>
-    <h3>Add Income</h3>
-    <%= form_with model: @new_entry, url: create_entry_path, local: true do |f| %>
-      <%= f.hidden_field :entry_type, value: 'income' %>
-      <%= f.text_field :description, placeholder: "Income description" %>
-      <%= f.number_field :amount, step: 0.01, placeholder: "$" %>
-      <%= f.select :source_or_category, ['National', 'Foreign'], prompt: "Select origin" %>
-      <%= f.date_field :date %>
-      <%= f.submit "Add Income" %>
-    <% end %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>My Balance Dashboard</h1>
+  <button id="privacyBtn" onclick="togglePrivacy()" class="btn btn-outline-primary btn-sm">Show Data</button>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-2">
+    <div class="card p-2 border-0 shadow-sm">
+      <small class="text-muted">Month Income</small>
+      <h3 class="text-income"><span class="sensitive-data"> <%= number_to_currency(@total_income) %></span></h3>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card p-2 border-0 shadow-sm">
+      <small class="text-muted">Month Expenses</small>
+      <h3 class="text-outcome"><span class="sensitive-data"> <%= number_to_currency(@total_outcome) %></span></h3>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card p-2 border-0 shadow-sm">
+      <small class="text-muted">Month Balance</small>
+      <h3 class="text-active"><span class="sensitive-data"> <%= number_to_currency(@current_balance) %></span></h3>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card p-2 border-0 shadow-sm">
+      <small class="text-muted">Year Income</small>
+      <h3 class="text-income"><span class="sensitive-data"> <%= number_to_currency(@yearly_total_income) %></span></h3>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card p-2 border-0 shadow-sm">
+      <small class="text-muted">Year Outcome</small>
+      <h3 class="text-outcome"><span class="sensitive-data"> <%= number_to_currency(@yearly_total_outcome) %></span></h3>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card p-2 border-0 shadow-sm">
+      <small class="text-muted">Year Balance</small>
+      <h3 class="text-active"><span class="sensitive-data"> <%= number_to_currency(@yearly_balance) %></span></h3>
+    </div>
   </div>
 
-  <div>
-    <h3>Add Outcome</h3>
-    <%= form_with model: @new_entry, url: create_entry_path, local: true do |f| %>
-      <%= f.hidden_field :entry_type, value: 'outcome' %>
-      <%= f.text_field :description, placeholder: "Outcome description" %>
-      <%= f.number_field :amount, step: 0.01, placeholder: "$" %>
-      <%= f.select :source_or_category, ['Amazon_Food','Food','Necessary', 'Side_Project_Build', 'Side_Project_Tech', 'Study','Transportation',  'Other'], prompt: "Select category" %>
-      <%= f.date_field :date %>
-      <%= f.submit "Add Outcome" %>
-    <% end %>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card p-4 shadow-sm border-0">
+      <h5 class="mb-3"><i class="bi bi-plus-circle-fill text-success"></i> Add Income</h5>
+      <%= form_with model: @new_entry, url: create_entry_path, local: true, class: "row g-2" do |f| %>
+        <%= f.hidden_field :entry_type, value: 'income' %>
+        <div class="col-12"><%= f.text_field :description, class: "form-control", placeholder: "Description" %></div>
+        <div class="col-6"><%= f.number_field :amount, class: "form-control", placeholder: "$" %></div>
+        <div class="col-6">
+          <%= f.select :source_or_category, 
+            ['National', 'Foreign'], 
+            { prompt: "Origin", selected: 'Foreign' }, 
+            { class: "form-select" } 
+          %>
+        </div>
+        <div class="col-12">
+          <%= f.date_field :date, 
+            class: "form-control", 
+            value: f.object.date || Date.current.strftime('%Y-%m-%d') %>
+        </div>
+        <div class="col-12"><%= f.submit "Add Income", class: "btn btn-success w-100" %></div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card p-4 shadow-sm border-0">
+      <h5 class="mb-3"><i class="bi bi-dash-circle-fill text-danger"></i> Add Expense</h5>
+      <%= form_with model: @new_entry, url: create_entry_path, local: true, class: "row g-2" do |f| %>
+        <%= f.hidden_field :entry_type, value: 'outcome' %>
+        <div class="col-12"><%= f.text_field :description, class: "form-control", placeholder: "Description" %></div>
+        <div class="col-6"><%= f.number_field :amount, class: "form-control", placeholder: "$" %></div>
+        <div class="col-6">
+          <%= f.select :source_or_category, 
+            ['Amazon_Food','Food','Necessary', 'Side_Project_Build', 'Side_Project_Tech', 'Study', 'Transportation', 'Other'], 
+            {prompt: "Category", selected: 'Food'},
+            {class: "form-select"} %>
+        </div>
+        <div class="col-12">
+          <%= f.date_field :date, 
+            class: "form-control", 
+            value: f.object.date || Date.current.strftime('%Y-%m-%d') %>
+        </div>
+        <div class="col-12"><%= f.submit "Add Expense", class: "btn btn-danger w-100" %></div>
+      <% end %>
+    </div>
   </div>
 </div>
 
-<h3>Declaration Tax Month (<%= @previous_month_date.strftime("%B") %>)</h3>
 
-<table class="table theme-table table-sm">
-  <tr>
-    <th>Description</th>
-    <th>Date</th>
-    <th>Balance</th>
-  </tr>
 
-  <% @previous_month_incomes.each do |income| %>
-    <tr>
-      <td><%= income.description %></td>
-      <td><%= income.date.strftime("%d/%m/%Y") %></td>
-      <td class="text-income">+ <span class="sensitive-data"> <%= number_to_currency(income.amount) %> </span></td>
-    </tr>
 
-    <% isr = income.amount * 0.01 %>
-    <tr>
-      <td>ISR (1%)</td>
-      <td></td>
-      <td class="text-outcome">- <span class="sensitive-data">$<%= '%.2f' % isr %></span></td>
-    </tr>
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <h5 class="mb-3">Declaration Tax Month (<%= @previous_month_date.strftime("%B") %>)</h5>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="text-muted">
+          <tr>
+            <th>Description</th>
+            <th>Date</th>
+            <th class="text-end">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @previous_month_incomes.each do |income| %>
+            <tr>
+              <td><%= income.description %></td>
+              <td><%= income.date.strftime("%d/%m/%Y") %></td>
+              <td class="text-end text-success fw-bold">+ <span class="sensitive-data"><%= number_to_currency(income.amount) %></span></td>
+            </tr>
+            <tr>
+              <td class="text-muted ps-4">ISR (1%)</td>
+              <td></td>
+              <td class="text-end text-danger">- <span class="sensitive-data">$<%= '%.2f' % (income.amount * 0.01) %></span></td>
+            </tr>
+            <% if income.source_or_category.to_s.downcase != 'foreign' %>
+              <tr>
+                <td class="text-muted ps-4">IVA (16% for national)</td>
+                <td></td>
+                <td class="text-end text-danger">- <span class="sensitive-data">$<%= '%.2f' % (income.amount * 0.16) %></span></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-    <% if income.source_or_category.to_s.downcase == 'foreign' %>
-      <tr>
-        <td>IVA (0% for foreign)</td>
-        <td></td>
-        <td>- $0.00</td>
-      </tr>
-    <% else %>
-      <% iva = income.amount * 0.16 %>
-      <tr>
-        <td>IVA (16% for national)</td>
-        <td></td>
-        <td class="text-outcome">- <span class="sensitive-data">$<%= '%.2f' % iva %></span></td>
-      </tr>
-    <% end %>
-  <% end %>
-  
-  <% if @previous_month_incomes.empty? %>
-    <tr>
-      <td colspan="3">No incomes recorded for <%= @previous_month_date.strftime("%B") %>.</td>
-    </tr>
-  <% end %>
-</table>
-<hr>
-<h3>Transactions (<%= @target_date.strftime("%B %Y") %>)</h3>
-<% if params[:month].present? %>
-  <%= link_to "← Back to Current Month", balance_path%>
-<% end %>
-<table class="table table-sm theme-table">
-  <tr>
-    <th>Description</th>
-    <th>Date</th>
-    <th>Income</th>
-    <th>Outcome</th>
-  </tr>
-  <% @entries.each do |entry| %>
-    <tr>
-      <td>
-        <%= link_to entry.description, edit_balance_entry_path(entry)%>
-      </td>
-      <td><%= entry.date.strftime("%d/%m/%Y") %></td>
-      <% if entry.entry_type == 'income' %>
-        <td class="text-income">+ <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
-        <td></td>
-      <% else %>
-        <td></td>
-        <td class="text-outcome">- <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5>Transactions (<%= @target_date.strftime("%B %Y") %>)</h5>
+      <% if params[:month].present? %>
+        <%= link_to "← Back", balance_path, class: "btn btn-sm btn-outline-secondary" %>
       <% end %>
-    </tr>
-  <% end %>
-  <tr>
-    <td colspan="2" class="fw-bold">Total Balance</td>
-    <td colspan="1" class="text-income"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_income) %></span></td>
-    <td colspan="1" class="text-outcome"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_outcome) %></span></td>
-  </tr>
-</table>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-sm theme-table">
+        <tr>
+          <th>Description</th>
+          <th>Date</th>
+          <th>Income</th>
+          <th>Outcome</th>
+        </tr>
+        <% @entries.each do |entry| %>
+          <tr>
+            <td>
+              <%= link_to entry.description, edit_balance_entry_path(entry)%>
+            </td>
+            <td><%= entry.date.strftime("%d/%m/%Y") %></td>
+            <% if entry.entry_type == 'income' %>
+              <td class="text-income">+ <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
+              <td></td>
+            <% else %>
+              <td></td>
+              <td class="text-outcome">- <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
+            <% end %>
+          </tr>
+        <% end %>
+        <tr>
+          <td colspan="2" class="fw-bold">Total Balance</td>
+          <td colspan="1" class="text-income"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_income) %></span></td>
+          <td colspan="1" class="text-outcome"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_outcome) %></span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 
@@ -147,21 +216,6 @@
 </table>
 
 <br>
-
-  
-  <div>
-    <span>Current Month Balance:</span>
-    <span class="text-income">
-      <span class="sensitive-data"><%= number_to_currency(@current_balance) %></span>
-    </span>
-  </div>
-
-  <div>
-    <span>Year Balance:</span>
-    <span class="text-income">
-      <span class="sensitive-data"><%= @yearly_balance >= 0 ? '+' : '-' %> <%= number_to_currency(@yearly_balance.abs) %></span>
-    </span>
-  </div>
 
 <script>
   function togglePrivacy() {
