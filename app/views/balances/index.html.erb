@@ -1,42 +1,42 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>My Balance Dashboard</h1>
-  <button id="privacyBtn" onclick="togglePrivacy()" class="btn btn-outline-primary btn-sm">Show Data</button>
+  <button id="privacyBtn" onclick="togglePrivacy()" class="btn bg-table-active btn-sm">Show Data</button>
 </div>
 
 <div class="row mb-4">
   <div class="col-md-2">
     <div class="card p-2 border-0 shadow-sm">
-      <small class="text-muted">Month Income</small>
+      <small class="text-normal">Month Income</small>
       <h3 class="text-income"><span class="sensitive-data"> <%= number_to_currency(@total_income) %></span></h3>
     </div>
   </div>
   <div class="col-md-2">
     <div class="card p-2 border-0 shadow-sm">
-      <small class="text-muted">Month Expenses</small>
+      <small class="text-normal">Month Expenses</small>
       <h3 class="text-outcome"><span class="sensitive-data"> <%= number_to_currency(@total_outcome) %></span></h3>
     </div>
   </div>
   <div class="col-md-2">
     <div class="card p-2 border-0 shadow-sm">
-      <small class="text-muted">Month Balance</small>
+      <small class="text-normal">Month Balance</small>
       <h3 class="text-active"><span class="sensitive-data"> <%= number_to_currency(@current_balance) %></span></h3>
     </div>
   </div>
   <div class="col-md-2">
     <div class="card p-2 border-0 shadow-sm">
-      <small class="text-muted">Year Income</small>
+      <small class="font-normal">Year Income</small>
       <h3 class="text-income"><span class="sensitive-data"> <%= number_to_currency(@yearly_total_income) %></span></h3>
     </div>
   </div>
   <div class="col-md-2">
     <div class="card p-2 border-0 shadow-sm">
-      <small class="text-muted">Year Outcome</small>
+      <small class="font-normal">Year Outcome</small>
       <h3 class="text-outcome"><span class="sensitive-data"> <%= number_to_currency(@yearly_total_outcome) %></span></h3>
     </div>
   </div>
   <div class="col-md-2">
     <div class="card p-2 border-0 shadow-sm">
-      <small class="text-muted">Year Balance</small>
+      <small class="text-normal">Year Balance</small>
       <h3 class="text-active"><span class="sensitive-data"> <%= number_to_currency(@yearly_balance) %></span></h3>
     </div>
   </div>
@@ -46,7 +46,7 @@
 <div class="row mb-4">
   <div class="col-md-6">
     <div class="card p-4 shadow-sm border-0">
-      <h5 class="mb-3"><i class="bi bi-plus-circle-fill text-success"></i> Add Income</h5>
+      <h5 class="mb-3 text-normal"><i class="bi bi-plus-circle-fill text-income"></i> Add Income</h5>
       <%= form_with model: @new_entry, url: create_entry_path, local: true, class: "row g-2" do |f| %>
         <%= f.hidden_field :entry_type, value: 'income' %>
         <div class="col-12"><%= f.text_field :description, class: "form-control", placeholder: "Description" %></div>
@@ -63,14 +63,14 @@
             class: "form-control", 
             value: f.object.date || Date.current.strftime('%Y-%m-%d') %>
         </div>
-        <div class="col-12"><%= f.submit "Add Income", class: "btn btn-success w-100" %></div>
+        <div class="col-12"><%= f.submit "Add Income", class: "btn income-btn  w-100" %></div>
       <% end %>
     </div>
   </div>
 
   <div class="col-md-6">
     <div class="card p-4 shadow-sm border-0">
-      <h5 class="mb-3"><i class="bi bi-dash-circle-fill text-danger"></i> Add Expense</h5>
+      <h5 class="mb-3 text-normal"><i class="bi bi-dash-circle-fill text-outcome"></i> Add Expense</h5>
       <%= form_with model: @new_entry, url: create_entry_path, local: true, class: "row g-2" do |f| %>
         <%= f.hidden_field :entry_type, value: 'outcome' %>
         <div class="col-12"><%= f.text_field :description, class: "form-control", placeholder: "Description" %></div>
@@ -86,7 +86,7 @@
             class: "form-control", 
             value: f.object.date || Date.current.strftime('%Y-%m-%d') %>
         </div>
-        <div class="col-12"><%= f.submit "Add Expense", class: "btn btn-danger w-100" %></div>
+        <div class="col-12"><%= f.submit "Add Expense", class: "btn outcome-btn w-100" %></div>
       <% end %>
     </div>
   </div>
@@ -97,33 +97,39 @@
 
 <div class="card shadow-sm border-0 mb-4">
   <div class="card-body">
-    <h5 class="mb-3">Declaration Tax Month (<%= @previous_month_date.strftime("%B") %>)</h5>
+    <h5 class="mb-3 text-normal">Declaration Tax Month (<%= @previous_month_date.strftime("%B") %>)</h5>
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="text-muted">
+      <table class="table table-hover table-sm mb-0 theme-table">
+        <thead>
           <tr>
-            <th>Description</th>
-            <th>Date</th>
-            <th class="text-end">Balance</th>
+            <th class="col-md-6">Description</th>
+            <th class="col-md-3">Date</th>
+            <th class="col-md-3">Balance</th>
           </tr>
         </thead>
         <tbody>
           <% @previous_month_incomes.each do |income| %>
             <tr>
               <td><%= income.description %></td>
-              <td><%= income.date.strftime("%d/%m/%Y") %></td>
-              <td class="text-end text-success fw-bold">+ <span class="sensitive-data"><%= number_to_currency(income.amount) %></span></td>
+              <td class="text-normal"><%= income.date.strftime("%d/%m/%Y") %></td>
+              <td class="text-income fw-bold">+ <span class="sensitive-data"><%= number_to_currency(income.amount) %></span></td>
             </tr>
             <tr>
-              <td class="text-muted ps-4">ISR (1%)</td>
+              <td class="text-normal ps-4">
+                ISR (<%= (income.calculate_isr_percentage * 100).round(2) %>%)
+              </td>
               <td></td>
-              <td class="text-end text-danger">- <span class="sensitive-data">$<%= '%.2f' % (income.amount * 0.01) %></span></td>
+              <td class="text-outcome">
+                - <span class="sensitive-data"><%= number_to_currency(income.isr_amount) %></span>
+              </td>
             </tr>
+
+
             <% if income.source_or_category.to_s.downcase != 'foreign' %>
               <tr>
                 <td class="text-muted ps-4">IVA (16% for national)</td>
                 <td></td>
-                <td class="text-end text-danger">- <span class="sensitive-data">$<%= '%.2f' % (income.amount * 0.16) %></span></td>
+                <td class="text-outcome">- <span class="sensitive-data">$<%= '%.2f' % (income.amount * 0.16) %></span></td>
               </tr>
             <% end %>
           <% end %>
@@ -136,13 +142,13 @@
 <div class="card shadow-sm border-0 mb-4">
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5>Transactions (<%= @target_date.strftime("%B %Y") %>)</h5>
+      <h5 class="text-normal">Transactions (<%= @target_date.strftime("%B %Y") %>)</h5>
       <% if params[:month].present? %>
-        <%= link_to "← Back", balance_path, class: "btn btn-sm btn-outline-secondary" %>
+        <%= link_to "← Back", balance_path, class: "btn btn-sm table-link" %>
       <% end %>
     </div>
     <div class="table-responsive">
-      <table class="table table-sm theme-table">
+      <table class="table table-hover theme-table">
         <tr>
           <th>Description</th>
           <th>Date</th>
@@ -152,9 +158,9 @@
         <% @entries.each do |entry| %>
           <tr>
             <td>
-              <%= link_to entry.description, edit_balance_entry_path(entry)%>
+              <%= link_to entry.description, edit_balance_entry_path(entry), class: "table-link"%>
             </td>
-            <td><%= entry.date.strftime("%d/%m/%Y") %></td>
+            <td class="text-normal"><%= entry.date.strftime("%d/%m/%Y") %></td>
             <% if entry.entry_type == 'income' %>
               <td class="text-income">+ <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
               <td></td>
@@ -176,13 +182,11 @@
 
 
 
-
-
-
-<hr>
-<h3>Year (<%= Time.current.year %>)</h3>
-
-<table class="table table-sm theme-table">
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <h5 class="mb-3 text-normal">Year (<%= Time.current.year %>)</h5>
+    <div class="table-responsive">
+<table class="table table-sm table-hover theme-table">
   <tr>
     <th>Month</th>
     <th>Income</th>
@@ -190,10 +194,9 @@
   </tr>
   
   <% @monthly_data.each do |month_num, data| %>
-    <%# Let's only display months up to the current month to keep the table clean %>
     <% if month_num <= Time.current.month %>
       <tr>
-        <td><%= link_to data[:name], balance_path(year: Time.current.year, month: month_num)%></td>
+        <td><%= link_to data[:name], balance_path(year: Time.current.year, month: month_num), class: "table-link"%></td>
         <td class="text-income">
           + <span class="sensitive-data"><%= number_to_currency(data[:income]) %></span>
         </td>
@@ -214,6 +217,10 @@
     </td>
   </tr>
 </table>
+
+    </div>
+  </div>
+</div>
 
 <br>
 

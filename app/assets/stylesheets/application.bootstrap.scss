@@ -19,7 +19,7 @@
   
   /* New Table Colors */
   --table-bg: #ffffff;
-  --table-header-bg: #ffe4e4;
+  --table-header-bg: #fbf2e8;
   --table-text: #333333;
   --table-border: #e8caca;
   
@@ -29,8 +29,16 @@
   
   /* Status Colors */
   --font-normal: #626262;
-  --text-income: #10b981;
-  --text-outcome: #ef4444;
+  --text-focus: black;
+  --text-income: #9bddc8;
+  --text-outcome: #e89c8e;
+  --text-income-btn: white;
+  --text-link: #47c0c5;
+  --text-link-hover: #029442;
+
+  /* inputs*/
+  --input-line: #d6d6d6;
+  --input-focus: green;
 }
 
 /* Example Dark Theme */
@@ -40,7 +48,7 @@
   --bg-side-active: #b1e1e3;
   
   --table-bg: #2d2d2d;
-  --table-header-bg: #3d3d3d;
+  --table-header-bg: #bfbfbf;
   --table-text: #f3f4f6;
   --table-border: #404040;
   
@@ -48,6 +56,7 @@
   --btn-text: #000000;
   
   --font-normal: #626262;
+  --text-focus: black;
   --text-income: #34d399;
   --text-outcome: #f87171;
 }
@@ -86,14 +95,11 @@ body {
 .theme-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--table-bg);
   color: var(--table-text);
+  --bs-table-bg: transparent !important;
+  --bs-table-accent-bg: transparent !important;
 }
 
-.theme-table th, .theme-table td {
-  border: 1px solid var(--table-border);
-  padding: 8px;
-}
 
 .theme-table th {
   background-color: var(--table-header-bg);
@@ -101,9 +107,19 @@ body {
 
 .bg-table-active {
   background-color: var(--bg-side-active) !important;
-  color: var(--font-normal)!important;
+  color: var(--text-focus)!important;
 }
 
+.table-link {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.table-link:hover {
+  color: var(--text-link-hover);
+  text-decoration: underline;
+}
 // ------- BUTTON ------
 .theme-btn {
   background-color: var(--btn-bg);
@@ -119,17 +135,42 @@ body {
   opacity: 0.8;
 }
 
+.income-btn {
+  background-color: var(--text-income);
+  color: var(--text-income-btn);
+}
+
+.outcome-btn {
+  background-color: var(--text-outcome);
+  color: var(--text-income-btn);
+}
 
 //------ TEXTS --------
 .text-income { color: var(--text-income)!important; }
 .text-outcome { color: var(--text-outcome) !important; }
 .text-active { color: var(--bg-side-active)!important; }
-
+.text-normal { color: var(--font-normal)!important; }
 
 
 //-------cards-------
-.card{
-background-color: var(--bg-card);}
+.card{ background-color: var(--bg-card); }
+
+
+.card .form-control, 
+.card .form-select {
+  --bs-body-bg: transparent!important;
+  border: 1px solid var(--input-line);
+  
+  /* Optional: Make the text stand out better on transparent backgrounds */
+  color: var(--font-normal);
+}
+
+.card .form-control:focus, 
+.card .form-select:focus {
+  background-color: transparent !important;
+  border-color: var(--input-focus); 
+  box-shadow: none; /* Removes the default blue glow */
+}
 
 //--------SENSITIVE DATA ------
 .sensitive-data {
