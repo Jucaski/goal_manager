@@ -1,9 +1,12 @@
 <h1 class="vast-header mt-2">Did I do my best to...</h1>
 <div class="container-fluid">
-  <div class="row justify-content-end">
-    <div class="col-2 text-center">
+  <div class="row align-items-center mb-1">
+    <div class="col">
+      <%# empty col to push button right, or put something here %>
+    </div>
+    <div class="col-auto">
       <%= link_to new_habit_path, class: "btn btn-secondary d-inline-flex align-items-center" do %>
-        <span class="material-symbols-outlined me-1">add</span>
+        <span class="material-symbols-outlined">add</span>
       <% end %>
     </div>
   </div>
@@ -22,17 +25,16 @@
                     <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
                       <td class="px-4 col-md-4" >
                         <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
-                        <%= link_to habit.title, edit_habit_path(habit) %>
+                        <%= link_to habit.title, edit_habit_path(habit), class: "table-link" %>
                       </td>
                       <td class="col-md-9">
-                        <%# <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %> 
                         <% existing_rating = @today_ratings[habit.id]&.rating %>
-
-                        <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2">
+                        <div class="d-flex flex-wrap gap-1 align-items-center w-100">
                           <% (0..10).each do |i| %>
                             <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
                               id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
-                            <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm flex-shrink-0" %>
+                            <%= label_tag "habit_#{habit.id}_rating_#{i}", i,
+                              class: "btn btn-outline-secondary btn-sm flex-grow-1" %>
                           <% end %>
                         </div>
                       </td>

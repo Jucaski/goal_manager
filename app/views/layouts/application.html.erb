@@ -31,11 +31,9 @@
     <div class="row flex-nowrap">
 
       <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 py-5 side-bar vh-100 sticky-top d-flex flex-column">
-        
         <nav class="navbar navbar-expand flex-column align-items-start px-0 border-sidebar w-100 flex-grow-1">
           <div class="collapse navbar-collapse flex-column align-items-start w-100 flex-grow-1"> 
-            
-            <ul class="navbar-nav nav-pills flex-column mb-auto w-100" id="menu">
+            <ul class="navbar-nav nav-pills flex-column mb-auto w-100 h-100" id="menu">
               <li class="nav-item nav-design-data">
                 <%= link_to habits_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(habits_path)}" do %>
                   <i class="material-symbols-outlined">mountain_flag</i>
@@ -52,23 +50,18 @@
                 <%= link_to balance_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(balance_path)}" do %>
                   <%# <i class="material-symbols-outlined">monitoring</i> %>
                   <span class="material-symbols-outlined">account_balance</span>
-                  <span class="ms-1 d-none d-sm-inline">Analysis</span>
+                  <span class="ms-1 d-none d-sm-inline">Balance</span>
                 <% end %>
-              </li>          
+              </li>
+              <li class="flex-grow-1"></li>
+              <li class="nav-item nav-design">
+                <hr class="w-100">
+                <%= link_to settings_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(settings_path)}" do %>
+                  <i class="material-symbols-outlined">settings</i>
+                  <span class="ms-1 d-none d-sm-inline">Settings</span>
+                <% end %>
+              </li>
             </ul>
-
-            <div class="w-100 mt-auto">
-              <hr class="w-100">
-              <ul class="navbar-nav flex-column w-100">
-                <li class="nav-item nav-design-data">
-                  <%= link_to settings_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(settings_path)}" do %>
-                    <i class="material-symbols-outlined">settings</i>
-                    <span class="ms-1 d-none d-sm-inline">Settings</span>
-                  <% end %>
-                </li>
-              </ul>
-            </div>
-
           </div>
         </nav>
       </div>
@@ -86,27 +79,27 @@
       <% end %>
 
     </div>
-  </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1. Get the saved theme, default to 'pink'
-    const currentTheme = localStorage.getItem('app-theme') || 'pink';
-    document.documentElement.setAttribute('data-theme', currentTheme);
+      document.addEventListener('DOMContentLoaded', () => {
+        // 1. Get the saved theme, default to 'pink'
+        const currentTheme = localStorage.getItem('app-theme') || 'pink';
+        document.documentElement.setAttribute('data-theme', currentTheme);
 
-    // 2. If the user is on the Settings page, make the dropdown match the current theme
-    const themeSelector = document.getElementById('themeSelector');
-    if (themeSelector) {
-      themeSelector.value = currentTheme;
-    }
-  });
+        // 2. If the user is on the Settings page, make the dropdown match the current theme
+        const themeSelector = document.getElementById('themeSelector');
+        if (themeSelector) {
+          themeSelector.value = currentTheme;
+        }
+      });
 
-  // 3. Function triggered by your new buttons/dropdown
-  function setTheme(themeName) {
-    document.documentElement.setAttribute('data-theme', themeName);
-    localStorage.setItem('app-theme', themeName);
-  }
-</script>
+      // 3. Function triggered by your new buttons/dropdown
+      function setTheme(themeName) {
+        document.documentElement.setAttribute('data-theme', themeName);
+        localStorage.setItem('app-theme', themeName);
+      }
+    </script>
 
   </body>
 </html>

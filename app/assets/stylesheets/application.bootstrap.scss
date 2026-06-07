@@ -12,8 +12,8 @@
 @use 'bootstrap-icons/font/bootstrap-icons';
 
 :root, [data-theme="pink"] {
-  --bg-main: #f4d1d0;          /* Your current pink */
-  --bg-sidebar: #fbf2e8;       /* Your current sidebar */
+  --bg-main: #f4d1d0;          
+  --bg-sidebar: #fbf2e8;     
   --bg-side-active: #b1e1e3;
   --bg-card: white;
   
@@ -24,7 +24,7 @@
   --table-border: #e8caca;
   
   /* New Button Colors */
-  --btn-bg: #8b5cf6;           /* Example: Violet button */
+  --btn-bg: #8b5cf6;           
   --btn-text: #ffffff;
   
   /* Status Colors */
@@ -39,6 +39,36 @@
   /* inputs*/
   --input-line: #d6d6d6;
   --input-focus: green;
+}
+
+[data-theme="dark-orange"] {
+  --bg-main: #1a1c2e;
+  --bg-sidebar: #12141f;
+  --bg-side-active: #1e3a3e;
+  --bg-card: #22253a;
+
+  /* Table */
+  --table-bg: #22253a;
+  --table-header-bg: #1a1c2e;
+  --table-text: #d4d6e8;
+  --table-border: #2e3152;
+
+  /* Button */
+  --btn-bg: #7c4ddb;
+  --btn-text: #ffffff;
+
+  /* Status */
+  --font-normal: #9395b0;
+  --text-focus: #e8eaf6;
+  --text-income: #4ecba8;
+  --text-outcome: #e07b6e;
+  --text-income-btn: #0d1f1b;
+  --text-link: #38b2b8;
+  --text-link-hover: #2dd4a7;
+
+  /* Inputs */
+  --input-line: #2e3152;
+  --input-focus: #38b2b8;
 }
 
 /* Example Dark Theme */
