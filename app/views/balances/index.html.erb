@@ -1,8 +1,9 @@
+<p style="color: green"><%= notice %></p>
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>My Balance Dashboard</h1>
+  <h1 class=" vast-header mt-2" >Balance</h1>
   <button id="privacyBtn" onclick="togglePrivacy()" class="btn bg-table-active btn-sm">Show Data</button>
 </div>
-
+<br/>
 <div class="row mb-4">
   <div class="col-md-2">
     <div class="card p-2 border-0 shadow-sm">
@@ -92,9 +93,6 @@
   </div>
 </div>
 
-
-
-
 <div class="card shadow-sm border-0 mb-4">
   <div class="card-body">
     <h5 class="mb-3 text-normal">Declaration Tax Month (<%= @previous_month_date.strftime("%B") %>)</h5>
@@ -180,43 +178,41 @@
   </div>
 </div>
 
-
-
 <div class="card shadow-sm border-0 mb-4">
   <div class="card-body">
     <h5 class="mb-3 text-normal">Year (<%= Time.current.year %>)</h5>
     <div class="table-responsive">
-<table class="table table-sm table-hover theme-table">
-  <tr>
-    <th>Month</th>
-    <th>Income</th>
-    <th>Outcome</th>
-  </tr>
-  
-  <% @monthly_data.each do |month_num, data| %>
-    <% if month_num <= Time.current.month %>
-      <tr>
-        <td><%= link_to data[:name], balance_path(year: Time.current.year, month: month_num), class: "table-link"%></td>
-        <td class="text-income">
-          + <span class="sensitive-data"><%= number_to_currency(data[:income]) %></span>
-        </td>
-        <td class="text-outcome">
-          - <span class="sensitive-data"><%= number_to_currency(data[:outcome]) %></span>
-        </td>
-      </tr>
-    <% end %>
-  <% end %>
+      <table class="table table-sm table-hover theme-table">
+        <tr>
+          <th>Month</th>
+          <th>Income</th>
+          <th>Outcome</th>
+        </tr>
 
-  <tr>
-    <td class="fw-bold">Balance</td>
-    <td class="text-income">
-      + <span class="sensitive-data fw-bold"><%= number_to_currency(@yearly_total_income) %></span>
-    </td>
-    <td class="text-outcome">
-      - <span class="sensitive-data fw-bold"><%= number_to_currency(@yearly_total_outcome) %></span>
-    </td>
-  </tr>
-</table>
+        <% @monthly_data.each do |month_num, data| %>
+          <% if month_num <= Time.current.month %>
+            <tr>
+              <td><%= link_to data[:name], balance_path(year: Time.current.year, month: month_num), class: "table-link"%></td>
+              <td class="text-income">
+                + <span class="sensitive-data"><%= number_to_currency(data[:income]) %></span>
+              </td>
+              <td class="text-outcome">
+                - <span class="sensitive-data"><%= number_to_currency(data[:outcome]) %></span>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+
+        <tr>
+          <td class="fw-bold">Balance</td>
+          <td class="text-income">
+            + <span class="sensitive-data fw-bold"><%= number_to_currency(@yearly_total_income) %></span>
+          </td>
+          <td class="text-outcome">
+            - <span class="sensitive-data fw-bold"><%= number_to_currency(@yearly_total_outcome) %></span>
+          </td>
+        </tr>
+      </table>
 
     </div>
   </div>
@@ -228,13 +224,9 @@
   function togglePrivacy() {
     const dataElements = document.querySelectorAll('.sensitive-data');
     const btn = document.getElementById('privacyBtn');
-    
-    // Toggle the 'show-data' class on every number
     dataElements.forEach(element => {
       element.classList.toggle('show-data');
     });
-    
-    // Change the button text
     if (btn.innerText === "Show Data") {
       btn.innerText = "Hide Data";
     } else {

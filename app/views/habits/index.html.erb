@@ -1,4 +1,4 @@
-<h1>Did I do my best to...</h1>
+<h1 class="vast-header mt-2">Did I do my best to...</h1>
 <div class="container-fluid">
   <div class="row justify-content-end">
     <div class="col-2 text-center">
@@ -12,38 +12,39 @@
   <div class="row">
     <div class="col-12">
       <%= form_with url: submit_ratings_habits_path, method: :post, local: true do %>
-        <div class="p-2">
-          <div class="table-responsive">
-            <table class="table table-hover theme-table" id="habits-list">
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover theme-table" id="habits-list">
 
-              <tbody>
-                <% @habits.each do |habit| %>
-                  <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
-                    <td class="px-4 col-md-3" >
-                      <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
-                      <%= link_to habit.title, edit_habit_path(habit) %>
-                    </td>
-                    <td class="col-md-9">
-                      <%# <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %> 
-                      <% existing_rating = @today_ratings[habit.id]&.rating %>
+                <tbody>
+                  <% @habits.each do |habit| %>
+                    <tr id="<%= dom_id(habit) %>" data-habit-id="<%= habit.id %>">
+                      <td class="px-4 col-md-4" >
+                        <span class="drag-handle" style="cursor: grab; margin-right: 12px; opacity: 0.5; user-select: none;">⋮⋮</span>
+                        <%= link_to habit.title, edit_habit_path(habit) %>
+                      </td>
+                      <td class="col-md-9">
+                        <%# <% existing_rating = habit.day_habits.find { |dh| dh.date == Date.current }&.rating %> 
+                        <% existing_rating = @today_ratings[habit.id]&.rating %>
 
-                      <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2">
-                        <% (0..10).each do |i| %>
-                          <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
-                            id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
-                          <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm flex-shrink-0" %>
-                        <% end %>
-                      </div>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
+                        <div class="d-flex flex-nowrap gap-2 align-items-center overflow-x-auto pb-2">
+                          <% (0..10).each do |i| %>
+                            <%= radio_button_tag "ratings[#{habit.id}]", i, existing_rating == i,
+                              id: "habit_#{habit.id}_rating_#{i}", class: "btn-check" %>
+                            <%= label_tag "habit_#{habit.id}_rating_#{i}", i, class: "btn btn-outline-secondary btn-sm flex-shrink-0" %>
+                          <% end %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
     </div>
-
-    <%= submit_tag "Save Today's Ratings", class: "btn btn-primary mt-3" %>
+    <%= submit_tag "Save Today's Ratings", class: "btn bg-table-active mt-3" %>
   <% end %>
   </div>
 
