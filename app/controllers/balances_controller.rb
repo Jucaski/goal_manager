@@ -10,8 +10,13 @@ class BalancesController < ApplicationController
     end
 
     @entries = current_user.financial_entries
-                           .where(date: @target_date.all_month)
-                           .order(date: :desc)
+                         .main_transactions
+                         .where(date: @target_date.all_month)
+                         .order(date: :desc)
+
+    @pending_outcomes = current_user.financial_entries.pending_table
+  
+    @fulfilled_outcomes = current_user.financial_entries.fulfilled_table.where(date: @target_date.all_month)
 
     @new_entry = FinancialEntry.new
 
@@ -78,6 +83,12 @@ class BalancesController < ApplicationController
     end
   end
 
+  def mark_as_paid
+    @entry = current_user.financial_entries.find(params[:id])
+    @entry.update!(status: 2, date: Date.current)
+    redirect_to balance_path, notice: "Payment fulfilled!"
+  end
+
   private
 
   def set_entry
@@ -85,6 +96,6 @@ class BalancesController < ApplicationController
   end
 
   def entry_params
-    params.require(:financial_entry).permit(:entry_type, :description, :amount, :date, :source_or_category)
+    params.require(:financial_entry).permit(:entry_type, :description, :amount, :date, :source_or_category, :status)
   end
 end

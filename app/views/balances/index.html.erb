@@ -81,7 +81,13 @@
             {prompt: "Category", selected: 'Food'},
             {class: "form-select"} %>
         </div>
-        <div class="col-12">
+<div class="col-6">
+  <%= f.select :status,
+    [['Regular', 0], ['Pending Payment', 1]],
+    { selected: 0 },
+    { class: "form-select" } %>
+</div>
+        <div class="col-6">
           <%= f.date_field :date, 
             class: "form-control", 
             value: f.object.date || Date.current.strftime('%Y-%m-%d') %>
@@ -179,6 +185,26 @@
           <td colspan="1" class="text-income"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_income) %></span></td>
           <td colspan="1" class="text-outcome"><span class="sensitive-data fw-bold"><%= number_to_currency(@total_outcome) %></span></td>
         </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <h5 class="mb-3 text-normal">Pending Payments</h5>
+    <div class="table-responsive">
+      <table class="table table-hover table-sm">
+        <% @pending_outcomes.each do |entry| %>
+          <tr>
+            <td><%= entry.description %></td>
+            <td><%= entry.date.strftime("%d/%m/%Y") %></td>
+            <td class="text-outcome"><%= number_to_currency(entry.amount) %></td>
+            <td>
+<%= button_to "Do the payment", mark_as_paid_balance_path(entry), 
+    method: :patch, class: "btn btn-sm btn-outline-success" %>
+            </td>
+          </tr>
+        <% end %>
       </table>
     </div>
   </div>

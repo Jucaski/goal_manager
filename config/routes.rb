@@ -16,10 +16,11 @@ Rails.application.routes.draw do
   get 'best', to: 'dashboard#best_to'
 
   get 'balance', to: 'balances#index', as: 'balance'
+  get 'balance/:id/edit', to: 'balances#edit', as: 'edit_balance_entry'
   post 'balance/create_entry', to: 'balances#create_entry', as: 'create_entry'
 
-  get 'balance/:id/edit', to: 'balances#edit', as: 'edit_balance_entry'
   patch 'balance/:id', to: 'balances#update', as: 'balance_entry'
+  patch 'balance/:id/mark_as_paid', to: 'balances#mark_as_paid', as: 'mark_as_paid_balance'
 
   delete 'balance/:id', to: 'balances#destroy', as: 'delete_balance_entry'
 
