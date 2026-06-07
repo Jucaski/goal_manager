@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   get 'balance/:id/edit', to: 'balances#edit', as: 'edit_balance_entry'
   patch 'balance/:id', to: 'balances#update', as: 'balance_entry'
 
+  delete 'balance/:id', to: 'balances#destroy', as: 'delete_balance_entry'
+
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

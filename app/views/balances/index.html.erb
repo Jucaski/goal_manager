@@ -1,4 +1,3 @@
-<p style="color: green"><%= notice %></p>
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1 class=" vast-header mt-2" >Balance</h1>
   <button id="privacyBtn" onclick="togglePrivacy()" class="btn bg-table-active btn-sm">Show Data</button>
@@ -78,7 +77,7 @@
         <div class="col-6"><%= f.number_field :amount, class: "form-control", placeholder: "$" %></div>
         <div class="col-6">
           <%= f.select :source_or_category, 
-            ['Amazon_Food','Food','Necessary', 'Side_Project_Build', 'Side_Project_Tech', 'Study', 'Transportation', 'Other'], 
+            ['Amazon_Food','Food','Health', 'Necessary', 'Side_Project_Build', 'Side_Project_Tech', 'Study', 'Transportation', 'Other'], 
             {prompt: "Category", selected: 'Food'},
             {class: "form-select"} %>
         </div>
@@ -152,6 +151,7 @@
           <th>Date</th>
           <th>Income</th>
           <th>Outcome</th>
+          <th class="col-md-1"></th>
         </tr>
         <% @entries.each do |entry| %>
           <tr>
@@ -166,6 +166,12 @@
               <td></td>
               <td class="text-outcome">- <span class="sensitive-data"><%= number_to_currency(entry.amount) %></span></td>
             <% end %>
+            <td>
+        <%= button_to "-", delete_balance_entry_path(entry), 
+            method: :delete, 
+            form: { data: { turbo_confirm: "Are you sure you want to delete this transaction?" } },
+            class: "btn circle-btn btn-sm outcome-btn" %>
+      </td>
           </tr>
         <% end %>
         <tr>

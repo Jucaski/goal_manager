@@ -186,6 +186,9 @@ thead .sticky-habit {
   color: var(--text-income-btn);
 }
 
+.circle-btn{
+border-radius: 50%!important;
+}
 //------ TEXTS --------
 .text-income { color: var(--text-income)!important; }
 .text-outcome { color: var(--text-outcome) !important; }

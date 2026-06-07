@@ -3,6 +3,8 @@ class DayHabitsController < ApplicationController
 
   # GET /day_habits or /day_habits.json
   def index
+    flash[:success] = "If you see this, the gem is working!"
+redirect_to habits_path
     # 1. Define the last 30 days (this fixes the 'nil' error)
     @dates = (9.days.ago.to_date..Date.current).to_a
     

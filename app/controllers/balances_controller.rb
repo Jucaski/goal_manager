@@ -1,6 +1,6 @@
 class BalancesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_entry, only: [:edit, :update]
+  before_action :set_entry, only: [:edit, :update, :destroy]
 
   def index
     if params[:month].present? && params[:year].present?
@@ -67,6 +67,14 @@ class BalancesController < ApplicationController
       redirect_to balance_path, notice: "Transaction updated successfully."
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    if @entry.destroy
+      redirect_to balance_path, notice: "Transaction deleted successfully."
+    else
+      redirect_to balance_path, alert: "Could not delete transaction."
     end
   end
 
