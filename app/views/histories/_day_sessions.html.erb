@@ -1,0 +1,32 @@
+<div class="border rounded p-3 mt-2">
+  <h3 class="h5 fw-bold mb-3"><%= date.strftime("%B %d, %Y") %></h3>
+  
+  <% if sessions.present? %>
+    <% sessions.each do |session| %>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <%= session.is_running ? "🏃 Running" : "💪 Workout" %>
+          </h5>
+          <p class="card-text">
+            <strong><%= session.sets %> sets</strong> · 
+            <%= session.work_duration %>s work · 
+            <%= session.rest_duration %>s rest
+          </p>
+          <p class="card-text">
+            Note: <%= session.note.presence || "—" %>
+          </p>
+          <% if session.distance.present? %>
+            <p class="card-text">
+              Distance: <%= session.distance %> km | 
+              Calories: <%= session.calories %> | 
+              Max pace: <%= session.max_pace %> min/km
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-muted">No workouts logged this day.</p>
+  <% end %>
+</div>

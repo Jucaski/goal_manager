@@ -1,17 +1,23 @@
 <h1 class="text-2xl font-bold mb-4">History</h1>
 
-<%= month_calendar do |date| %>
-  <div class="text-center">
-    <%= date.day %>
-    <% if @sessions_by_date[date].present? %>
-      <div class="text-green-600 text-xl">🏋️</div>
-    <% end %>
-  </div>
+<%= month_calendar(events: @sessions) do |date, sessions| %>
+  <%= link_to history_path(date: date), 
+              data: { turbo_frame: "day_details" }, 
+              class: "text-center d-block text-decoration-none" do %>
+    <div>
+      <%= date.day %>
+      <% if sessions.present? %>
+        <div class="text-green-600 text-xl">🏋️</div>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
 
-<!-- Modal / details on day click -->
-<turbo-frame id="day_details">
+<!-- This frame will be replaced when a day is clicked -->
+<turbo-frame id="day_details" class="mt-4">
   <% if params[:date] %>
-    <%= render "day_sessions", date: Date.parse(params[:date]), sessions: @sessions_by_date[Date.parse(params[:date])] %>
+    <%= render "day_sessions", 
+               date: Date.parse(params[:date]), 
+               sessions: @sessions.select { |s| s.date == Date.parse(params[:date]) } %>
   <% end %>
 </turbo-frame>
