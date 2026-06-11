@@ -1,0 +1,23 @@
+<div class="flex justify-between items-center mb-4">
+  <h1 class="text-2xl font-bold">My Workouts</h1>
+  <%= link_to "New Workout", new_workout_template_path, class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+</div>
+
+<div class="space-y-4">
+  <% @templates.each do |t| %>
+    <div class="border rounded p-4 flex justify-between items-center">
+      <div>
+        <h2 class="font-semibold"><%= t.name %></h2>
+        <p class="text-sm text-gray-600">
+          <%= t.sets %> sets · <%= t.work_duration %>s work · <%= t.rest_duration %>s rest
+          <%= "🏃‍♂️ Running" if t.is_running %>
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <%= link_to "Play", focus_path(sets: t.sets, work: t.work_duration, rest: t.rest_duration, is_running: t.is_running, template_id: t.id), class: "bg-green-500 text-white px-3 py-1 rounded" %>
+        <%= link_to "Edit", edit_workout_template_path(t), class: "bg-yellow-500 text-white px-3 py-1 rounded" %>
+        <%= button_to "Delete", t, method: :delete, data: { confirm: "Sure?" }, class: "bg-red-500 text-white px-3 py-1 rounded" %>
+      </div>
+    </div>
+  <% end %>
+</div>

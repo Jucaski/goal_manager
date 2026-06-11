@@ -6,4 +6,6 @@ class User < ApplicationRecord
   has_many :habits, dependent: :destroy
   has_many :day_habits, dependent: :destroy
   has_many :financial_entries, dependent: :destroy
+  has_many :workout_templates, dependent: :destroy
+  has_many :workout_sessions, dependent: :destroy
 end

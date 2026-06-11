@@ -25,6 +25,18 @@ Rails.application.routes.draw do
   delete 'balance/:id', to: 'balances#destroy', as: 'delete_balance_entry'
 
 
+  resources :workout_templates      # for the Workouts list
+  resources :workout_sessions, only: [:new, :create, :index, :show]
+
+  get "timers", to: "timers#index"
+  get "history", to: "histories#index"
+  get "settings", to: "settings#index"
+
+  # Focus screen receives parameters (quick or template)
+  get "focus", to: "focus#show"
+  post "focus/complete", to: "focus#complete"
+
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

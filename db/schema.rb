@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_07_181642) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_11_134245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,8 +61,41 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_181642) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "workout_sessions", force: :cascade do |t|
+    t.integer "calories"
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.float "distance"
+    t.boolean "is_running"
+    t.float "max_pace"
+    t.text "note"
+    t.integer "rest_duration"
+    t.integer "sets"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "work_duration"
+    t.bigint "workout_template_id"
+    t.index ["user_id"], name: "index_workout_sessions_on_user_id"
+    t.index ["workout_template_id"], name: "index_workout_sessions_on_workout_template_id"
+  end
+
+  create_table "workout_templates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "is_running"
+    t.string "name"
+    t.integer "rest_duration"
+    t.integer "sets"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "work_duration"
+    t.index ["user_id"], name: "index_workout_templates_on_user_id"
+  end
+
   add_foreign_key "day_habits", "habits"
   add_foreign_key "day_habits", "users"
   add_foreign_key "financial_entries", "users"
   add_foreign_key "habits", "users"
+  add_foreign_key "workout_sessions", "users"
+  add_foreign_key "workout_sessions", "workout_templates"
+  add_foreign_key "workout_templates", "users"
 end

@@ -1,0 +1,17 @@
+<h1 class="text-2xl font-bold mb-4">History</h1>
+
+<%= month_calendar do |date| %>
+  <div class="text-center">
+    <%= date.day %>
+    <% if @sessions_by_date[date].present? %>
+      <div class="text-green-600 text-xl">🏋️</div>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- Modal / details on day click -->
+<turbo-frame id="day_details">
+  <% if params[:date] %>
+    <%= render "day_sessions", date: Date.parse(params[:date]), sessions: @sessions_by_date[Date.parse(params[:date])] %>
+  <% end %>
+</turbo-frame>

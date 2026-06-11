@@ -1,0 +1,18 @@
+<div data-controller="timer"
+     data-timer-sets-value="<%= @sets %>"
+     data-timer-work-value="<%= @work %>"
+     data-timer-rest-value="<%= @rest %>"
+     data-timer-is-running-value="<%= @is_running %>"
+     data-timer-template-id-value="<%= @template_id %>"
+     class="min-vh-100 d-flex flex-column align-items-center justify-content-center text-white text-center">
+
+  <div data-timer-target="remainingLabel" class="h5 mb-3">REMAINING 00:00</div>
+  <div data-timer-target="intervalLabel" class="display-4 fw-bold mb-4">WORK 0/0</div>
+  <div data-timer-target="timeDisplay" class="display-1 font-monospace mb-5">00:00</div>
+
+  <div class="d-flex gap-3">
+    <button data-action="timer#previousInterval" class="btn btn-secondary btn-lg">&lt;&lt;</button>
+    <button data-timer-target="pausePlayBtn" data-action="timer#togglePause" class="btn btn-secondary btn-lg">Pause</button>
+    <button data-action="timer#nextInterval" class="btn btn-secondary btn-lg">&gt;&gt;</button>
+  </div>
+</div>

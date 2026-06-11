@@ -1,0 +1,44 @@
+<h1 class="text-2xl font-bold mb-4">Great work!</h1>
+
+<%= form_with model: @workout_session, local: true do |f| %>
+  <%= f.hidden_field :sets, value: @session_data["sets"] %>
+  <%= f.hidden_field :work_duration, value: @session_data["work"] %>
+  <%= f.hidden_field :rest_duration, value: @session_data["rest"] %>
+  <%= f.hidden_field :is_running, value: @session_data["is_running"] %>
+  <% if @session_data["template_id"].present? %>
+    <%= f.hidden_field :workout_template_id, value: @session_data["template_id"] %>
+  <% end %>
+
+  <div class="mb-4">
+    <p class="font-semibold">TOTAL WORKOUT: <%= @session_data["work"] * @session_data["sets"].to_i %>s</p>
+    <p class="font-semibold">TOTAL REST: <%= @session_data["rest"] * (@session_data["sets"].to_i - 1) %>s</p>
+  </div>
+
+  <p class="mb-2">How was your workout?</p>
+  <div class="flex gap-4 mb-4">
+    <%= f.radio_button :note, "Hard", class: "hidden peer/hard" %>
+    <%= f.label :note_hard, "Hard", class: "bg-gray-200 px-4 py-2 rounded peer-checked/hard:bg-red-400" %>
+    <%= f.radio_button :note, "Good", class: "hidden peer/good" %>
+    <%= f.label :note_good, "Good", class: "bg-gray-200 px-4 py-2 rounded peer-checked/good:bg-green-400" %>
+    <%= f.radio_button :note, "Easy", class: "hidden peer/easy" %>
+    <%= f.label :note_easy, "Easy", class: "bg-gray-200 px-4 py-2 rounded peer-checked/easy:bg-blue-400" %>
+  </div>
+
+  <% if @session_data["is_running"] == "true" %>
+    <div class="space-y-3">
+      <%= f.label :distance, "Distance (km)" %>
+      <%= f.number_field :distance, step: 0.01, class: "border rounded w-full p-2" %>
+
+      <%= f.label :calories %>
+      <%= f.number_field :calories, class: "border rounded w-full p-2" %>
+
+      <%= f.label :max_pace, "Max pace (min/km)" %>
+      <%= f.number_field :max_pace, step: 0.1, class: "border rounded w-full p-2" %>
+    </div>
+  <% else %>
+    <%= f.label :note, "Add a note (optional)" %>
+    <%= f.text_area :note, class: "border rounded w-full p-2", rows: 3 %>
+  <% end %>
+
+  <%= f.submit "OK", class: "mt-4 bg-blue-600 text-white px-6 py-2 rounded" %>
+<% end %>

@@ -1,0 +1,19 @@
+<%= form_tag focus_path, method: :get, class: "container mt-4" do %>
+  <div class="mb-3">
+    <%= label_tag :sets, "SETS", class: "form-label" %>
+    <%= number_field_tag :sets, 10, min: 1, class: "form-control" %>
+  </div>
+  <div class="mb-3">
+    <%= label_tag :work, "WORK (seconds)", class: "form-label" %>
+    <%= number_field_tag :work, 30, min: 1, class: "form-control" %>
+  </div>
+  <div class="mb-3">
+    <%= label_tag :rest, "REST (seconds)", class: "form-label" %>
+    <%= number_field_tag :rest, 120, min: 1, class: "form-control" %>
+  </div>
+  <div class="form-check mb-3">
+    <%= check_box_tag :is_running, true, false, class: "form-check-input" %>
+    <%= label_tag :is_running, "Count as running (distance, calories, pace)", class: "form-check-label" %>
+  </div>
+  <%= submit_tag "Start workout", class: "btn btn-success" %>
+<% end %>
