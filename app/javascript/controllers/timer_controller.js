@@ -24,7 +24,7 @@ export default class extends Controller {
     this.intervals = []
     for (let i = 1; i <= this.setsValue; i++) {
       this.intervals.push({ type: "work", set: i, duration: this.workValue })
-      if (i < this.setsValue) {
+      if (i <= this.setsValue) {
         this.intervals.push({ type: "rest", set: i, duration: this.restValue })
       }
     }
@@ -57,7 +57,7 @@ export default class extends Controller {
       this.intervalLabelTarget.innerText = `WORK ${interval.set}/${this.setsValue}`
       document.body.style.backgroundColor = "#2e7d32" // green
     } else {
-      this.intervalLabelTarget.innerText = `REST ${interval.set}/${this.setsValue-1}`
+      this.intervalLabelTarget.innerText = `REST ${interval.set}/${this.setsValue}`
       document.body.style.backgroundColor = "#1565c0" // blue
     }
   }
