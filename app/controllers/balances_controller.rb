@@ -10,7 +10,6 @@ class BalancesController < ApplicationController
     end
 
     @entries = current_user.financial_entries
-                         .main_transactions
                          .where(date: @target_date.all_month)
                          .order(date: :desc)
 
@@ -21,7 +20,7 @@ class BalancesController < ApplicationController
     @new_entry = FinancialEntry.new
 
     @incomes = @entries.where(entry_type: 'income')
-    @outcomes = @entries.where(entry_type: 'outcome')
+    @outcomes = @entries.where(entry_type: 'outcome').main_transactions
     @previous_month_date = Time.current.last_month
     
     @previous_month_incomes = current_user.financial_entries
