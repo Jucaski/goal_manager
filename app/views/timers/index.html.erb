@@ -1,3 +1,10 @@
+<nav class="flex gap-4 p-4 bg-gray-100">
+  <%= link_to "Timer", timers_path, class: "px-3 py-2 rounded hover:bg-gray-200" %>
+  <%= link_to "Workouts", workout_templates_path, class: "px-3 py-2 rounded hover:bg-gray-200" %>
+  <%= link_to "History", history_path, class: "px-3 py-2 rounded hover:bg-gray-200" %>
+</nav>
+
+
 <%= form_tag focus_path, method: :get, class: "container mt-4" do %>
   <div class="mb-3">
     <%= label_tag :sets, "SETS", class: "form-label" %>
