@@ -24,7 +24,7 @@
     <%= f.label :note_easy, "Easy", class: "bg-gray-200 px-4 py-2 rounded peer-checked/easy:bg-blue-400" %>
   </div>
 
-  <% if @session_data["is_running"] == "true" %>
+  <% if @session_data["is_running"].to_s == "true" %>
     <div class="space-y-3">
       <%= f.label :distance, "Distance (km)" %>
       <%= f.number_field :distance, step: 0.01, class: "border rounded w-full p-2" %>
