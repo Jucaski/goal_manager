@@ -13,6 +13,7 @@ class BooksController < ApplicationController
   def create
     @book = current_user.books.build(book_params)
     if @book.save
+      BookCoverFetcher.call(@book)
       redirect_to request.referer.presence || book_planner_path, notice: "Book added."
     else
       redirect_to book_planner_path, alert: @book.errors.full_messages.join(", ")
@@ -23,6 +24,7 @@ class BooksController < ApplicationController
 
   def update
     if @book.update(book_params)
+      BookCoverFetcher.call(@book)
       redirect_to book_planner_path, notice: "Book updated."
     else
       render :edit, status: :unprocessable_entity

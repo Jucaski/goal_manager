@@ -18,7 +18,7 @@
   </div>
   <div class="mb-3">
     <%= f.label :genre, class: "form-label" %>
-    <%= f.text_field :genre, class: "form-control" %>
+    <%= f.select :genre, options_for_select(["Documentary", "Drama", "Electricity", "Fantasy", "Health", "History", "Horror", "Magical realism", "Programming", "Self-help", "Technical"], @book.genre), { include_blank: "Select genre..." }, class: "form-select" %>
   </div>
   <div class="mb-3">
     <%= f.label :isbn, class: "form-label" %>

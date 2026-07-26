@@ -54,7 +54,11 @@
             </div>
             <% data[:books].each do |book| %>
               <div class="d-flex gap-2 align-items-center pt-2 border-top">
-                <div class="analytics-cover bg-secondary" style="width: 45px; height: 68px;"></div>
+                <% if book.cover_url.present? %>
+                  <img src="<%= book.cover_url %>" alt="<%= book.title %>" class="analytics-cover shadow-sm">
+                <% else %>
+                  <div class="analytics-cover bg-secondary"></div>
+                <% end %>
                 <div class="overflow-hidden">
                   <div class="fw-semibold text-truncate small"><%= book.title %></div>
                   <div class="small text-normal text-truncate" style="font-size: 0.75rem;"><%= book.author %></div>
@@ -89,7 +93,11 @@
             </div>
             <% data[:books].each do |book| %>
               <div class="d-flex gap-3 align-items-center <%= "mb-2" unless book == data[:books].last %>">
-                <div class="analytics-cover bg-secondary" style="width: 45px; height: 68px;"></div>
+                <% if book.cover_url.present? %>
+                  <img src="<%= book.cover_url %>" alt="<%= book.title %>" class="analytics-cover shadow-sm">
+                <% else %>
+                  <div class="analytics-cover bg-secondary"></div>
+                <% end %>
                 <div>
                   <div class="fw-semibold small"><%= book.title %></div>
                   <div class="small text-normal"><%= book.author %><% if book.total_pages %> · <%= book.total_pages %>p<% end %></div>
