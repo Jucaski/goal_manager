@@ -11,7 +11,7 @@
 
 <%# Top Key Metrics %>
 <div class="row g-3 mb-4">
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-2">
     <div class="stat-card">
       <div class="stat-value"><%= @books_finished %></div>
       <div class="stat-label">Books Finished</div>
@@ -20,24 +20,42 @@
       <% end %>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-2">
     <div class="stat-card">
       <div class="stat-value"><%= @total_pages_read %></div>
       <div class="stat-label">Pages Read</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-2">
     <div class="stat-card">
       <div class="stat-value"><%= @avg_days_per_book %></div>
       <div class="stat-label">Avg Days per Book</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-2">
     <div class="stat-card">
       <div class="stat-value"><%= @current_month_data ? "#{@current_month_data[:pages]}/#{@current_month_data[:planned_pages]}" : "0/0" %></div>
       <div class="stat-label">Pages Read / Planned</div>
       <% if @current_month_data %>
         <div class="small text-normal mt-1"><%= Date::MONTHNAMES[@current_month_data[:month]] %></div>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card">
+      <div class="stat-value"><%= @pages_per_day %></div>
+      <div class="stat-label">Pages per Day</div>
+      <% if @current_month_data %>
+        <div class="small text-normal mt-1"><%= Date::MONTHNAMES[@current_month_data[:month]] %></div>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card">
+      <div class="stat-value"><%= @current_month_data ? @current_month_data[:planned_count] - @current_month_data[:count] : 0 %></div>
+      <div class="stat-label">Books Left This Month</div>
+      <% if @current_month_data %>
+        <div class="small text-normal mt-1">of <%= @current_month_data[:planned_count] %> planned</div>
       <% end %>
     </div>
   </div>
