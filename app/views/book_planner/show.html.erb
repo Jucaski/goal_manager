@@ -195,10 +195,17 @@
         <div class="d-flex flex-column gap-2">
           <% unfinished_books.each do |book| %>
             <div class="card-item d-flex justify-content-between align-items-center">
-              <div>
-                <div class="fw-semibold"><%= book.title %></div>
-                <div class="small text-normal">
-                  <%= book.author %><% if book.total_pages %> · <%= book.total_pages %>p<% end %><% if book.genre %> · <%= book.genre %><% end %>
+              <div class="d-flex gap-3 align-items-center">
+                <% if book.cover_url.present? %>
+                  <img src="<%= book.cover_url %>" alt="<%= book.title %>" class="analytics-cover shadow-sm">
+                <% else %>
+                  <div class="analytics-cover bg-secondary"></div>
+                <% end %>
+                <div>
+                  <div class="fw-semibold"><%= book.title %></div>
+                  <div class="small text-normal">
+                    <%= book.author %><% if book.total_pages %> · <%= book.total_pages %>p<% end %><% if book.genre %> · <%= book.genre %><% end %>
+                  </div>
                 </div>
               </div>
               <div class="text-nowrap">
