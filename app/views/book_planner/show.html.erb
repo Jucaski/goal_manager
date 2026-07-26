@@ -84,10 +84,10 @@
         <div class="col-12">
           <%= form_tag book_planner_path, method: :get, class: "row g-2" do %>
             <div class="col-5">
-              <%= select_month @month, prefix: nil, field_name: "month", class: "form-select form-select-sm" %>
+              <%= select_tag :month, options_for_select((1..12).map { |m| [Date::MONTHNAMES[m], m] }, @month), class: "form-select form-select-sm" %>
             </div>
             <div class="col-5">
-              <%= select_year @year, prefix: nil, field_name: "year", start_year: @year - 1, end_year: @year + 5, class: "form-select form-select-sm" %>
+              <%= select_tag :year, options_for_select((@year - 1..@year + 5).map { |y| [y, y] }, @year), class: "form-select form-select-sm" %>
             </div>
             <div class="col-2">
               <%= submit_tag "Go", class: "theme-btn btn-sm w-100" %>
