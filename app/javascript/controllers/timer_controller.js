@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["timeDisplay", "remainingLabel", "intervalLabel", "pausePlayBtn"]
+  static targets = ["timeDisplay", "remainingLabel", "intervalLabel", "pausePlayBtn", "totalTimeLabel"]
 
   static values = {
     sets: Number,
@@ -12,7 +12,7 @@ export default class extends Controller {
   }
 
   connect() {
-    console.log("Timer controller connected") // Check browser console
+    console.log("Timer controller connected")
     this.buildIntervals()
     this.currentIndex = 0
     this.paused = false
@@ -28,6 +28,14 @@ export default class extends Controller {
         this.intervals.push({ type: "rest", set: i, duration: this.restValue })
       }
     }
+  }
+
+  remainingTotalSeconds(remaining) {
+    let total = remaining
+    for (let i = this.currentIndex + 1; i < this.intervals.length; i++) {
+      total += this.intervals[i].duration
+    }
+    return total
   }
 
   startCurrentInterval() {
@@ -47,11 +55,16 @@ export default class extends Controller {
   }
 
   updateDisplay(interval, remaining) {
+    const totalRemaining = this.remainingTotalSeconds(remaining)
     const mins = Math.floor(remaining / 60)
     const secs = remaining % 60
     const formatted = `${mins.toString().padStart(2,"0")}:${secs.toString().padStart(2,"0")}`
+    const totalMins = Math.floor(totalRemaining / 60)
+    const totalSecs = totalRemaining % 60
+    const totalFormatted = `${totalMins.toString().padStart(2, "0")}:${totalSecs.toString().padStart(2, "0")}`
     this.timeDisplayTarget.innerText = formatted
     this.remainingLabelTarget.innerText = `REMAINING ${formatted}`
+    this.totalTimeLabelTarget.innerText = `TOTAL ${totalFormatted}`
 
     if (interval.type === "work") {
       this.intervalLabelTarget.innerText = `WORK ${interval.set}/${this.setsValue}`

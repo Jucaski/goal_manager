@@ -5,22 +5,23 @@
 </nav>
 
 
-<%= form_tag focus_path, method: :get, class: "container mt-4" do %>
+<%= form_tag focus_path, method: :get, class: "container mt-4", data: { controller: "timer-form" } do %>
   <div class="mb-3">
     <%= label_tag :sets, "SETS", class: "form-label" %>
-    <%= number_field_tag :sets, 10, min: 1, class: "form-control" %>
+    <%= number_field_tag :sets, 10, min: 1, class: "form-control", data: { action: "input->timer-form#calculate" } %>
   </div>
   <div class="mb-3">
     <%= label_tag :work, "WORK (seconds)", class: "form-label" %>
-    <%= number_field_tag :work, 30, min: 1, class: "form-control" %>
+    <%= number_field_tag :work, 30, min: 1, class: "form-control", data: { action: "input->timer-form#calculate" } %>
   </div>
   <div class="mb-3">
     <%= label_tag :rest, "REST (seconds)", class: "form-label" %>
-    <%= number_field_tag :rest, 120, min: 1, class: "form-control" %>
+    <%= number_field_tag :rest, 120, min: 1, class: "form-control", data: { action: "input->timer-form#calculate" } %>
   </div>
   <div class="form-check mb-3">
-    <%= check_box_tag :is_running, true, false, class: "form-check-input" %>
+    <%= check_box_tag :is_running, true, true, class: "form-check-input" %>
     <%= label_tag :is_running, "Count as running (distance, calories, pace)", class: "form-check-label" %>
   </div>
+  <div class="mb-3 h5" data-timer-form-target="totalLabel">TOTAL 00:00</div>
   <%= submit_tag "Start workout", class: "btn btn-success" %>
 <% end %>

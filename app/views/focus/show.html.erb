@@ -6,9 +6,10 @@
      data-timer-template-id-value="<%= @template_id %>"
      class="min-vh-100 d-flex flex-column align-items-center justify-content-center text-white text-center">
 
-  <div data-timer-target="remainingLabel" class="h5 mb-3">REMAINING 00:00</div>
+  <div data-timer-target="totalTimeLabel" class="h2 mb-1">TOTAL 00:00</div><br>
   <div data-timer-target="intervalLabel" class="display-4 fw-bold mb-4">WORK 0/0</div>
   <div data-timer-target="timeDisplay" class="display-1 font-monospace mb-5">00:00</div>
+  <div data-timer-target="remainingLabel" class="h5 mb-3">REMAINING 00:00</div>
 
   <div class="d-flex gap-3">
     <button data-action="timer#previousInterval" class="btn btn-secondary btn-lg">&lt;&lt;</button>
