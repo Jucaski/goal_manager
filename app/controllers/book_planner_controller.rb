@@ -8,6 +8,11 @@ class BookPlannerController < ApplicationController
     @yearly_goal = current_user.yearly_goals.find_or_initialize_by(year: @year)
     @books = current_user.books.order(:title)
     @monthly_plan = current_user.monthly_plans.find_or_initialize_by(year: @year, month: @month)
+    @available_books = if @monthly_plan.persisted?
+      @books.where.not(id: @monthly_plan.planned_books.select(:book_id))
+    else
+      @books
+    end
     @planned_books = if @monthly_plan.persisted?
       @monthly_plan.planned_books.ordered.includes(:book)
     else

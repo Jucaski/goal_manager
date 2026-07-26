@@ -232,3 +232,16 @@ font-style: normal;}
 
 .drag-handle { font-size: 1.2rem; line-height: 1; }
 .drag-handle:hover { opacity: 1 !important; }
+
+.card-box {
+  border: 1px solid var(--table-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.card-item {
+  background-color: var(--bg-card);
+  border: 1px solid var(--table-border);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+}

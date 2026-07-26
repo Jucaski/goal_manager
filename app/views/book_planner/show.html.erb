@@ -1,203 +1,216 @@
-<div class="flex justify-between items-center mb-4">
-  <h1 class="text-2xl font-bold">Book Planner</h1>
-  <%= link_to "Analytics", book_analytics_path(year: @year), class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold m-0">Book Planner</h1>
+  <%= link_to "Analytics →", book_analytics_path(year: @year), class: "fw-bold text-decoration-none table-link" %>
 </div>
 
-<%# Yearly Goal %>
-<div class="border rounded p-4 mb-4">
-  <h2 class="font-semibold mb-2">
-    <%= @year %> Goal
-    <% if @yearly_goal.persisted? %>
-      <span class="text-sm text-gray-600 font-normal"> — <%= @yearly_goal.target_books %> books</span>
-    <% end %>
-  </h2>
-  <% if @yearly_goal.persisted? %>
-    <%= form_with model: @yearly_goal, class: "flex gap-2 items-end" do |f| %>
-      <%= f.hidden_field :year, value: @year %>
-      <div>
-        <%= f.label :target_books, "Target", class: "text-sm" %>
-        <%= f.number_field :target_books, value: @yearly_goal.target_books, min: 1, class: "form-control form-control-sm" %>
-      </div>
-      <%= f.submit "Update", class: "bg-blue-500 text-white px-3 py-1 rounded text-sm" %>
-    <% end %>
-  <% else %>
-    <%= form_with model: @yearly_goal, class: "flex gap-2 items-end" do |f| %>
-      <%= f.hidden_field :year, value: @year %>
-      <div>
-        <%= f.label :target_books, "Books to read in #{@year}", class: "text-sm" %>
-        <%= f.number_field :target_books, min: 1, class: "form-control form-control-sm" %>
-      </div>
-      <%= f.submit "Set Goal", class: "bg-green-500 text-white px-3 py-1 rounded text-sm" %>
-    <% end %>
-  <% end %>
-</div>
+<div class="row g-4">
 
-<%# Book Catalog %>
-<div class="border rounded p-4 mb-4">
-  <div class="flex justify-between items-center mb-2">
-    <h2 class="font-semibold">Your Books</h2>
-    <%= link_to "Add Book", new_book_path, class: "bg-green-500 text-white px-3 py-1 rounded text-sm" %>
-  </div>
-  <% if @books.any? %>
-    <div class="space-y-2">
-      <% @books.each do |book| %>
-        <div class="flex justify-between items-center py-1 border-b last:border-b-0">
-          <div>
-            <span class="font-medium"><%= book.title %></span>
-            <% if book.author.present? %>
-              <span class="text-sm text-gray-600"> — <%= book.author %></span>
-            <% end %>
-            <span class="text-sm text-gray-500">
-              <% if book.total_pages %><%= book.total_pages %>p · <% end %>
-              <% if book.genre %><%= book.genre %><% end %>
-            </span>
+  <%# Left Column %>
+  <div class="col-12 col-lg-6">
+
+    <%# Reading Progress %>
+    <div class="card card-box mb-4">
+      <% current_book = @books.find { |b| @reading_logs[b.id]&.start_date.present? && @reading_logs[b.id]&.finish_date.blank? } %>
+      <% if current_book %>
+        <h2 class="h5 fw-bold mb-1">Reading Progress</h2>
+        <p class="text-normal small mb-3">Reading: <strong><%= current_book.title %></strong></p>
+      <% else %>
+        <h2 class="h5 fw-bold mb-3">Reading Progress</h2>
+      <% end %>
+
+      <% if current_book %>
+        <% log = @reading_logs[current_book.id] %>
+        <%= form_with model: log, url: reading_log_path(log), class: "needs-validation" do |f| %>
+          <div class="mb-3">
+            <%= f.label :start_date, "Start Date", class: "form-label text-uppercase" %>
+            <%= f.text_field :start_date, value: log.start_date&.strftime("%d/%m/%Y"), placeholder: "dd/mm/yyyy", class: "form-control form-control-sm" %>
           </div>
-          <div class="flex gap-2 items-center">
-            <%= link_to "Edit", edit_book_path(book), class: "text-yellow-600 text-sm" %>
-            <%= button_to "Delete", book, method: :delete, data: { turbo_confirm: "Remove #{book.title}?" }, class: "text-red-600 text-sm bg-transparent border-0" %>
+          <div class="mb-3">
+            <%= f.label :finish_date, "Finish Date", class: "form-label text-uppercase" %>
+            <%= f.text_field :finish_date, value: log.finish_date&.strftime("%d/%m/%Y"), placeholder: "dd/mm/yyyy", class: "form-control form-control-sm" %>
           </div>
-        </div>
+          <div class="mb-3">
+            <%= f.label :rating, "Rating", class: "form-label text-uppercase" %>
+            <%= f.select :rating, options_for_select([["Select a rating...", nil]] + [["⭐⭐⭐⭐⭐ (5/5)", 5], ["⭐⭐⭐⭐ (4/5)", 4], ["⭐⭐⭐ (3/5)", 3], ["⭐⭐ (2/5)", 2], ["⭐ (1/5)", 1]], log&.rating), {}, class: "form-select form-select-sm" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :notes, "Notes", class: "form-label text-uppercase" %>
+            <%= f.text_field :notes, value: log&.notes, placeholder: "Write thoughts or progress notes...", class: "form-control form-control-sm" %>
+          </div>
+          <div class="d-flex gap-2 pt-2">
+            <%= f.submit "Update", class: "theme-btn px-4" %>
+            <%= link_to "Delete", reading_log_path(log), data: { turbo_method: :delete, turbo_confirm: "Remove log?" }, class: "btn btn-outline-danger btn-sm" %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-normal small mb-0">No books started yet. Click <strong>"Start"</strong> in the weekly breakdown to begin.</p>
       <% end %>
     </div>
-  <% else %>
-    <p class="text-gray-500 text-sm">No books yet. Add your first book!</p>
-  <% end %>
-</div>
 
-<%# Monthly Plan %>
-<div class="border rounded p-4 mb-4">
-  <div class="flex justify-between items-center mb-2">
-    <h2 class="font-semibold">
-      <%= form_tag book_planner_path, method: :get, class: "inline-flex gap-2 items-center" do %>
-        <%= select_month @month, prefix: nil, field_name: "month", class: "form-select form-select-sm" %>
-        <%= select_year @year, prefix: nil, field_name: "year", start_year: @year - 1, end_year: @year + 5, class: "form-select form-select-sm" %>
-        <%= submit_tag "Go", class: "bg-blue-500 text-white px-2 py-1 rounded text-sm" %>
-      <% end %>
-    </h2>
-    <% if @monthly_plan.persisted? %>
-      <% if @books.any? %>
-        <%= form_tag monthly_plan_planned_books_path(@monthly_plan), class: "flex gap-2 items-end" do %>
-          <%= select_tag :book_id, options_from_collection_for_select(@books, :id, :title), include_blank: "Add book...", class: "form-select form-select-sm" %>
-          <%= submit_tag "+", class: "bg-green-500 text-white px-2 py-1 rounded text-sm" %>
+    <%# Goal %>
+    <div class="card card-box mb-4">
+      <h2 class="h5 fw-bold mb-3"><%= @year %> Goal — <%= @yearly_goal.persisted? ? "#{@yearly_goal.target_books} books" : "Not set" %></h2>
+      <% if @yearly_goal.persisted? %>
+        <%= form_with model: @yearly_goal, class: "row g-2 align-items-center" do |f| %>
+          <%= f.hidden_field :year, value: @year %>
+          <div class="col">
+            <%= f.number_field :target_books, value: @yearly_goal.target_books, min: 1, class: "form-control form-control-sm" %>
+          </div>
+          <div class="col-auto">
+            <%= f.submit "Update Goal", class: "theme-btn" %>
+          </div>
+        <% end %>
+      <% else %>
+        <%= form_with model: @yearly_goal, class: "row g-2 align-items-center" do |f| %>
+          <%= f.hidden_field :year, value: @year %>
+          <div class="col">
+            <%= f.number_field :target_books, min: 1, placeholder: "Number of books", class: "form-control form-control-sm" %>
+          </div>
+          <div class="col-auto">
+            <%= f.submit "Set Goal", class: "theme-btn" %>
+          </div>
         <% end %>
       <% end %>
-    <% end %>
+    </div>
+
   </div>
 
-  <% if @monthly_plan.persisted? %>
-    <% if @planned_books.any? %>
-      <table class="table table-sm mb-3">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Book</th>
-            <th>Author</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @planned_books.each_with_index do |pb, idx| %>
-            <tr>
-              <td class="align-middle"><%= pb.position + 1 %></td>
-              <td class="align-middle"><%= pb.book.title %></td>
-              <td class="align-middle text-gray-600"><%= pb.book.author %></td>
-              <td class="align-middle text-nowrap">
-                <% if idx > 0 %>
-                  <%= button_to "↑", move_up_monthly_plan_planned_book_path(@monthly_plan, pb), method: :patch, class: "btn btn-sm btn-outline-secondary py-0 px-1" %>
-                <% end %>
-                <% if idx < @planned_books.size - 1 %>
-                  <%= button_to "↓", move_down_monthly_plan_planned_book_path(@monthly_plan, pb), method: :patch, class: "btn btn-sm btn-outline-secondary py-0 px-1" %>
-                <% end %>
-                <%= link_to "Remove", monthly_plan_planned_book_path(@monthly_plan, pb), data: { turbo_method: :delete, turbo_confirm: "Remove from plan?" }, class: "text-red-600 text-sm ms-1" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+  <%# Right Column %>
+  <div class="col-12 col-lg-6">
 
-      <%# Weekly Breakdown %>
-      <div class="mt-3 pt-3 border-t">
-        <h3 class="font-medium text-sm mb-2">Weekly Breakdown</h3>
-        <div class="grid grid-cols-4 gap-2">
-          <% @weeks.each do |week| %>
-            <div class="border rounded p-2">
-              <p class="text-xs font-semibold mb-1">Week <%= week[:week] %></p>
-              <% week[:planned_books].each do |pb| %>
-                <% log = @reading_logs[pb.book_id] %>
-                <div class="border-b border-gray-100 last:border-b-0 py-1">
-                  <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs truncate"><%= pb.book.title %></span>
-                    <% if log&.finish_date.present? %>
-                      <span class="text-xs text-green-600 font-medium shrink-0">✓</span>
-                    <% elsif log&.start_date.present? %>
-                      <span class="text-xs text-blue-600 shrink-0">Reading</span>
-                    <% else %>
-                      <%= button_to reading_logs_path, params: { reading_log: { book_id: pb.book_id, start_date: Date.current } }, class: "text-xs bg-green-500 text-white px-1.5 py-0.5 rounded shrink-0" do %>
-                        Start
-                      <% end %>
+    <%# Schedule & Filter Table %>
+    <div class="card card-box mb-4">
+      <div class="row g-2 mb-3">
+        <div class="col-12">
+          <%= form_tag book_planner_path, method: :get, class: "row g-2" do %>
+            <div class="col-5">
+              <%= select_month @month, prefix: nil, field_name: "month", class: "form-select form-select-sm" %>
+            </div>
+            <div class="col-5">
+              <%= select_year @year, prefix: nil, field_name: "year", start_year: @year - 1, end_year: @year + 5, class: "form-select form-select-sm" %>
+            </div>
+            <div class="col-2">
+              <%= submit_tag "Go", class: "theme-btn btn-sm w-100" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @monthly_plan.persisted? %>
+        <% if @available_books.any? %>
+          <%= form_tag monthly_plan_planned_books_path(@monthly_plan), class: "row g-2 mb-3" do %>
+            <div class="col">
+              <%= select_tag :book_id, options_from_collection_for_select(@available_books, :id, :title), include_blank: "Add book to schedule...", class: "form-select form-select-sm" %>
+            </div>
+            <div class="col-auto">
+              <%= submit_tag "+", class: "theme-btn btn-sm px-3" %>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if @monthly_plan.persisted? && @planned_books.any? %>
+        <div class="table-responsive">
+          <table class="table table-borderless align-middle m-0">
+            <thead>
+              <tr class="border-bottom text-normal small">
+                <th scope="col" style="width: 30px;">#</th>
+                <th scope="col">Book</th>
+                <th scope="col">Author</th>
+                <th scope="col" class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @planned_books.each_with_index do |pb, idx| %>
+                <tr class="border-bottom">
+                  <td><%= pb.position + 1 %></td>
+                  <td class="fw-semibold"><%= pb.book.title %></td>
+                  <td class="small text-normal"><%= pb.book.author %></td>
+                  <td class="text-end text-nowrap">
+                    <% if idx > 0 %>
+                      <%= button_to "↑", move_up_monthly_plan_planned_book_path(@monthly_plan, pb), method: :patch, class: "btn btn-light btn-sm border me-1" %>
                     <% end %>
-                  </div>
-                </div>
+                    <% if idx < @planned_books.size - 1 %>
+                      <%= button_to "↓", move_down_monthly_plan_planned_book_path(@monthly_plan, pb), method: :patch, class: "btn btn-light btn-sm border me-1" %>
+                    <% end %>
+                    <%= button_to "Remove", monthly_plan_planned_book_path(@monthly_plan, pb), method: :delete, data: { turbo_confirm: "Remove from plan?" }, class: "btn btn-outline-danger btn-sm" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% elsif @monthly_plan.persisted? %>
+        <p class="text-normal small mb-0">No books planned for this month yet.</p>
+      <% else %>
+        <%= form_tag monthly_plans_path, method: :post do %>
+          <%= hidden_field_tag "monthly_plan[year]", @year %>
+          <%= hidden_field_tag "monthly_plan[month]", @month %>
+          <%= submit_tag "Start Planning #{Date::MONTHNAMES[@month]}", class: "theme-btn" %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Weekly Breakdown %>
+    <div class="card card-box mb-4">
+      <h2 class="h5 fw-bold mb-3">Weekly Breakdown</h2>
+      <% if @weeks.any? %>
+        <% @weeks.each do |week| %>
+          <% week[:planned_books].each do |pb| %>
+            <% log = @reading_logs[pb.book_id] %>
+            <div class="card-item d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <div class="fw-bold small text-uppercase" style="color: var(--text-link);">Week <%= week[:week] %></div>
+                <div><%= pb.book.title %></div>
+              </div>
+              <% if log&.finish_date.present? %>
+                <span class="badge bg-success">Finished</span>
+              <% elsif log&.start_date.present? %>
+                <span class="badge" style="background-color: var(--btn-bg);">In Progress</span>
+              <% else %>
+                <%= button_to reading_logs_path, params: { reading_log: { book_id: pb.book_id, start_date: Date.current } }, class: "theme-btn btn-sm" do %>
+                  Start
+                <% end %>
               <% end %>
             </div>
           <% end %>
-        </div>
-      </div>
-    <% else %>
-      <p class="text-gray-500 text-sm">No books planned for this month. Add books from your catalog above.</p>
-    <% end %>
-  <% else %>
-    <%= form_tag monthly_plans_path, method: :post, class: "inline" do %>
-      <%= hidden_field_tag "monthly_plan[year]", @year %>
-      <%= hidden_field_tag "monthly_plan[month]", @month %>
-      <%= submit_tag "Start Planning #{Date::MONTHNAMES[@month]}", class: "bg-green-500 text-white px-3 py-1 rounded text-sm" %>
-    <% end %>
-  <% end %>
-</div>
-
-<%# Reading Logs %>
-<div class="border rounded p-4 mb-4">
-  <h2 class="font-semibold mb-2">Reading Progress</h2>
-  <% if @books.any? %>
-    <div class="space-y-3">
-      <% @books.each do |book| %>
-        <% log = @reading_logs[book.id] %>
-        <div class="border rounded p-3">
-          <div class="flex justify-between items-center mb-2">
-            <span class="font-medium"><%= book.title %></span>
-            <% if log&.finish_date.present? %>
-              <span class="text-green-600 text-sm font-medium">Finished</span>
-            <% elsif log&.start_date.present? %>
-              <span class="text-blue-600 text-sm font-medium">Reading</span>
-            <% end %>
-          </div>
-          <%= form_with model: log || ReadingLog.new, url: log ? reading_log_path(log) : reading_logs_path, class: "flex flex-wrap gap-2 items-end" do |f| %>
-            <%= f.hidden_field :book_id, value: book.id %>
-            <div>
-              <%= f.label :start_date, "Start", class: "text-xs" %>
-              <%= f.date_field :start_date, class: "form-control form-control-sm" %>
-            </div>
-            <div>
-              <%= f.label :finish_date, "Finish", class: "text-xs" %>
-              <%= f.date_field :finish_date, class: "form-control form-control-sm" %>
-            </div>
-            <div>
-              <%= f.label :rating, "Rating", class: "text-xs" %>
-              <%= f.select :rating, options_for_select([["", nil]] + (1..5).map { |r| [r, r] }, log&.rating), {}, class: "form-select form-select-sm" %>
-            </div>
-            <div>
-              <%= f.label :notes, "Notes", class: "text-xs" %>
-              <%= f.text_field :notes, value: log&.notes, class: "form-control form-control-sm" %>
-            </div>
-            <%= f.submit log&.persisted? ? "Update" : "Log", class: "bg-blue-500 text-white px-2 py-1 rounded text-sm" %>
-            <% if log&.persisted? %>
-              <%= link_to "Delete", reading_log_path(log), data: { turbo_method: :delete, turbo_confirm: "Remove log?" }, class: "text-red-600 text-sm" %>
-            <% end %>
-          <% end %>
-        </div>
+        <% end %>
+      <% else %>
+        <p class="text-normal small mb-0">No books planned for this month yet.</p>
       <% end %>
     </div>
-  <% else %>
-    <p class="text-gray-500 text-sm">Add books first to track your reading progress.</p>
-  <% end %>
+
+  </div>
+
+  <%# Bottom Full-Width: Your Books %>
+  <div class="col-12">
+    <div class="card card-box">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 fw-bold m-0">Your Books</h2>
+        <%= link_to "+ Add Book", new_book_path, class: "fw-bold text-decoration-none table-link" %>
+      </div>
+
+      <% if @books.any? %>
+        <div class="d-flex flex-column gap-2">
+          <% @books.each do |book| %>
+            <div class="card-item d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold"><%= book.title %></div>
+                <div class="small text-normal">
+                  <%= book.author %><% if book.total_pages %> · <%= book.total_pages %>p<% end %><% if book.genre %> · <%= book.genre %><% end %>
+                </div>
+              </div>
+              <div class="text-nowrap">
+                <%= link_to "Edit", edit_book_path(book), class: "text-decoration-none me-3 table-link" %>
+                <%= button_to "Delete", book, method: :delete, data: { turbo_confirm: "Remove #{book.title}?" }, class: "btn btn-sm btn-outline-danger" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-normal small mb-0">No books yet. Add your first book!</p>
+      <% end %>
+    </div>
+  </div>
+
 </div>
