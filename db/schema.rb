@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_134245) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_26_000005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "books", force: :cascade do |t|
+    t.string "author"
+    t.datetime "created_at", null: false
+    t.string "genre"
+    t.string "isbn"
+    t.string "title", null: false
+    t.integer "total_pages"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_books_on_user_id"
+  end
 
   create_table "day_habits", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -49,6 +61,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_134245) do
     t.index ["user_id"], name: "index_habits_on_user_id"
   end
 
+  create_table "monthly_plans", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "month", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "year", null: false
+    t.index ["user_id", "year", "month"], name: "index_monthly_plans_on_user_id_and_year_and_month", unique: true
+    t.index ["user_id"], name: "index_monthly_plans_on_user_id"
+  end
+
+  create_table "planned_books", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "monthly_plan_id", null: false
+    t.integer "position"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["book_id"], name: "index_planned_books_on_book_id"
+    t.index ["monthly_plan_id", "book_id"], name: "index_planned_books_on_monthly_plan_id_and_book_id", unique: true
+    t.index ["monthly_plan_id"], name: "index_planned_books_on_monthly_plan_id"
+    t.index ["user_id"], name: "index_planned_books_on_user_id"
+  end
+
+  create_table "reading_logs", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.datetime "created_at", null: false
+    t.date "finish_date"
+    t.text "notes"
+    t.integer "rating"
+    t.date "start_date"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["book_id"], name: "index_reading_logs_on_book_id"
+    t.index ["user_id", "book_id"], name: "index_reading_logs_on_user_id_and_book_id", unique: true
+    t.index ["user_id"], name: "index_reading_logs_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -59,6 +108,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_134245) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "weight_entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.decimal "weight"
+    t.index ["user_id"], name: "index_weight_entries_on_user_id"
   end
 
   create_table "workout_sessions", force: :cascade do |t|
@@ -91,11 +149,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_134245) do
     t.index ["user_id"], name: "index_workout_templates_on_user_id"
   end
 
+  create_table "yearly_goals", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "target_books", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "year", null: false
+    t.index ["user_id", "year"], name: "index_yearly_goals_on_user_id_and_year", unique: true
+    t.index ["user_id"], name: "index_yearly_goals_on_user_id"
+  end
+
+  add_foreign_key "books", "users"
   add_foreign_key "day_habits", "habits"
   add_foreign_key "day_habits", "users"
   add_foreign_key "financial_entries", "users"
   add_foreign_key "habits", "users"
+  add_foreign_key "monthly_plans", "users"
+  add_foreign_key "planned_books", "books"
+  add_foreign_key "planned_books", "monthly_plans"
+  add_foreign_key "planned_books", "users"
+  add_foreign_key "reading_logs", "books"
+  add_foreign_key "reading_logs", "users"
+  add_foreign_key "weight_entries", "users"
   add_foreign_key "workout_sessions", "users"
   add_foreign_key "workout_sessions", "workout_templates"
   add_foreign_key "workout_templates", "users"
+  add_foreign_key "yearly_goals", "users"
 end

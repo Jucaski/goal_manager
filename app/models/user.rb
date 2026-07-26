@@ -8,4 +8,9 @@ class User < ApplicationRecord
   has_many :financial_entries, dependent: :destroy
   has_many :workout_templates, dependent: :destroy
   has_many :workout_sessions, dependent: :destroy
+  has_many :books, dependent: :destroy
+  has_many :yearly_goals, dependent: :destroy
+  has_many :monthly_plans, dependent: :destroy
+  has_many :planned_books, dependent: :destroy
+  has_many :reading_logs, dependent: :destroy
 end

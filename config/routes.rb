@@ -36,6 +36,20 @@ Rails.application.routes.draw do
   get "focus", to: "focus#show"
   post "focus/complete", to: "focus#complete"
 
+  resources :books
+  resources :yearly_goals, only: [:create, :update]
+  resources :monthly_plans, only: [:show, :create, :update] do
+    resources :planned_books, only: [:create, :destroy] do
+      patch :reorder, on: :collection
+      patch :move_up, on: :member
+      patch :move_down, on: :member
+    end
+  end
+  resources :reading_logs, only: [:create, :update, :destroy]
+
+  get "book_planner", to: "book_planner#show"
+  get "book_analytics", to: "book_analytics#show"
+
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

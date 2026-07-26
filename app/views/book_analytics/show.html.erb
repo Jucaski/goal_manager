@@ -1,0 +1,76 @@
+<div class="flex justify-between items-center mb-4">
+  <h1 class="text-2xl font-bold"><%= @year %> Reading Analytics</h1>
+  <%= link_to "Planner", book_planner_path(year: @year), class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+</div>
+
+<%# Summary Cards %>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="border rounded p-4 text-center">
+    <p class="text-3xl font-bold"><%= @books_finished %></p>
+    <p class="text-sm text-gray-600">Books Finished</p>
+    <% if @yearly_goal %>
+      <p class="text-xs text-gray-500">of <%= @yearly_goal.target_books %> goal</p>
+      <div class="w-full bg-gray-200 rounded h-2 mt-1">
+        <div class="bg-blue-500 rounded h-2" style="width: <%= @yearly_goal.target_books > 0 ? [(@books_finished.to_f / @yearly_goal.target_books * 100), 100].min : 0 %>%"></div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="border rounded p-4 text-center">
+    <p class="text-3xl font-bold"><%= @total_pages_read %></p>
+    <p class="text-sm text-gray-600">Pages Read</p>
+  </div>
+
+  <div class="border rounded p-4 text-center">
+    <p class="text-3xl font-bold"><%= @avg_days_per_book %></p>
+    <p class="text-sm text-gray-600">Avg Days per Book</p>
+  </div>
+
+  <div class="border rounded p-4 text-center">
+    <p class="text-3xl font-bold"><%= @monthly_data.sum { |m| m[:pages] } %></p>
+    <p class="text-sm text-gray-600">Total Pages</p>
+  </div>
+</div>
+
+<%# Monthly Breakdown %>
+<div class="border rounded p-4 mb-4">
+  <h2 class="font-semibold mb-3">Monthly Breakdown</h2>
+  <div class="space-y-2">
+    <% @monthly_data.each do |data| %>
+      <div class="flex items-center gap-3">
+        <span class="text-sm w-20"><%= Date::MONTHNAMES[data[:month]] %></span>
+        <div class="flex-1 bg-gray-200 rounded h-5 relative">
+          <div class="bg-blue-500 rounded h-5" style="width: <%= @books_finished > 0 ? (data[:count].to_f / @monthly_data.map { |m| m[:count] }.max * 100) : 0 %>%"></div>
+        </div>
+        <span class="text-sm w-16 text-right"><%= data[:count] %> books</span>
+        <span class="text-sm text-gray-500 w-20 text-right"><%= data[:pages] %>p</span>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%# Genre Distribution %>
+<% if @genre_distribution.any? %>
+  <div class="border rounded p-4 mb-4">
+    <h2 class="font-semibold mb-3">By Genre</h2>
+    <div class="space-y-2">
+      <% @genre_distribution.each do |genre, count| %>
+        <div class="flex items-center gap-3">
+          <span class="text-sm w-24"><%= genre.presence || "Uncategorized" %></span>
+          <div class="flex-1 bg-gray-200 rounded h-5 relative">
+            <div class="bg-green-500 rounded h-5" style="width: <%= count.to_f / @genre_distribution.first[1] * 100 %>%"></div>
+          </div>
+          <span class="text-sm w-12 text-right"><%= count %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<%# Year Selector %>
+<div class="mt-4">
+  <%= form_tag book_analytics_path, method: :get, class: "inline-flex gap-2 items-center" do %>
+    <%= select_year @year, prefix: nil, field_name: "year", start_year: @year - 1, end_year: @year + 5, class: "form-select form-select-sm" %>
+    <%= submit_tag "Change Year", class: "bg-blue-500 text-white px-3 py-1 rounded text-sm" %>
+  <% end %>
+</div>

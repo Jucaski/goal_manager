@@ -1,0 +1,28 @@
+<div class="flex justify-between items-center mb-4">
+  <h1 class="text-2xl font-bold">Edit Book</h1>
+  <%= link_to "Back to Planner", book_planner_path, class: "text-blue-600 text-sm" %>
+</div>
+
+<%= form_with model: @book, class: "max-w-md" do |f| %>
+  <div class="mb-3">
+    <%= f.label :title, class: "form-label" %>
+    <%= f.text_field :title, required: true, class: "form-control" %>
+  </div>
+  <div class="mb-3">
+    <%= f.label :author, class: "form-label" %>
+    <%= f.text_field :author, class: "form-control" %>
+  </div>
+  <div class="mb-3">
+    <%= f.label :total_pages, class: "form-label" %>
+    <%= f.number_field :total_pages, min: 1, class: "form-control" %>
+  </div>
+  <div class="mb-3">
+    <%= f.label :genre, class: "form-label" %>
+    <%= f.text_field :genre, class: "form-control" %>
+  </div>
+  <div class="mb-3">
+    <%= f.label :isbn, class: "form-label" %>
+    <%= f.text_field :isbn, class: "form-control" %>
+  </div>
+  <%= f.submit "Update Book", class: "bg-blue-500 text-white px-4 py-2 rounded" %>
+<% end %>
