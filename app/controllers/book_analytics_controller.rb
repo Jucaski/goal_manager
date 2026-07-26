@@ -39,8 +39,10 @@ class BookAnalyticsController < ApplicationController
 
     @current_month_data = @monthly_data.find { |d| d[:month] == Date.current.month }
     if @current_month_data && @current_month_data[:planned_pages] > 0
+      remaining_pages = @current_month_data[:planned_pages] - @current_month_data[:pages]
       days_in_month = Time.days_in_month(Date.current.month, Date.current.year)
-      @pages_per_day = (@current_month_data[:planned_pages].to_f / days_in_month).round(1)
+      remaining_days = days_in_month - Date.current.day
+      @pages_per_day = remaining_days > 0 ? (remaining_pages.to_f / remaining_days).round(1) : 0
     else
       @pages_per_day = 0
     end
