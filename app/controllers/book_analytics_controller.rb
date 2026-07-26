@@ -20,13 +20,23 @@ class BookAnalyticsController < ApplicationController
       0
     end
 
+    monthly_plans = current_user.monthly_plans.for_year(@year).includes(planned_books: { book: {} })
+
     @monthly_data = (1..12).map do |m|
       logs = finished_logs.select { |l| l.finish_date.month == m }
       count = logs.size
       pages = logs.sum { |l| l.book.total_pages || 0 }
       books = logs.map { |l| l.book }
-      { month: m, count: count, pages: pages, books: books }
+      plan = monthly_plans.find { |p| p.month == m }
+      planned_pages = if plan
+        plan.planned_books.includes(:book).sum { |pb| pb.book.total_pages || 0 }
+      else
+        0
+      end
+      { month: m, count: count, pages: pages, books: books, planned_pages: planned_pages }
     end
+
+    @current_month_data = @monthly_data.find { |d| d[:month] == Date.current.month }
 
     finished_by_book = finished_logs.includes(:book).to_a
 

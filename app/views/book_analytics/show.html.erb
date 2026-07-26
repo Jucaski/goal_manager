@@ -34,8 +34,11 @@
   </div>
   <div class="col-6 col-md-3">
     <div class="stat-card">
-      <div class="stat-value"><%= @monthly_data.sum { |m| m[:pages] } %></div>
-      <div class="stat-label">Total Pages</div>
+      <div class="stat-value"><%= @current_month_data ? "#{@current_month_data[:pages]}/#{@current_month_data[:planned_pages]}" : "0/0" %></div>
+      <div class="stat-label">Pages Read / Planned</div>
+      <% if @current_month_data %>
+        <div class="small text-normal mt-1"><%= Date::MONTHNAMES[@current_month_data[:month]] %></div>
+      <% end %>
     </div>
   </div>
 </div>
@@ -50,7 +53,7 @@
           <div class="month-card has-books">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="fw-bold small" style="color: var(--btn-bg);"><%= Date::MONTHNAMES[data[:month]] %></span>
-              <span class="badge rounded-pill bg-light text-dark border"><%= data[:count] %> book<%= "s" unless data[:count] == 1 %> · <%= data[:pages] %>p</span>
+              <span class="badge rounded-pill bg-light text-dark border"><%= data[:count] %> book<%= "s" unless data[:count] == 1 %> · <%= data[:pages] %>p / <%= data[:planned_pages] %>p</span>
             </div>
             <% data[:books].each do |book| %>
               <div class="d-flex gap-2 align-items-center pt-2 border-top">
