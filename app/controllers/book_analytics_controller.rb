@@ -21,15 +21,19 @@ class BookAnalyticsController < ApplicationController
     end
 
     @monthly_data = (1..12).map do |m|
-      count = finished_logs.select { |l| l.finish_date.month == m }.size
-      pages = finished_logs.select { |l| l.finish_date.month == m }.sum { |l| l.book.total_pages || 0 }
-      { month: m, count: count, pages: pages }
+      logs = finished_logs.select { |l| l.finish_date.month == m }
+      count = logs.size
+      pages = logs.sum { |l| l.book.total_pages || 0 }
+      books = logs.map { |l| l.book }
+      { month: m, count: count, pages: pages, books: books }
     end
 
-    @genre_distribution = finished_logs
-      .joins(:book)
-      .group("books.genre")
-      .count
-      .sort_by { |_, c| -c }
+    finished_by_book = finished_logs.includes(:book).to_a
+
+    @genre_data = finished_by_book
+      .group_by { |log| log.book.genre.presence || "Uncategorized" }
+      .transform_values { |logs| { count: logs.size, books: logs.map(&:book) } }
+      .sort_by { |_, data| -data[:count] }
+      .to_h
   end
 end

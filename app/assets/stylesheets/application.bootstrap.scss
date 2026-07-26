@@ -245,3 +245,50 @@ font-style: normal;}
   border-radius: 0.5rem;
   padding: 0.85rem 1rem;
 }
+
+.stat-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--table-border);
+  border-radius: 0.75rem;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--btn-bg);
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--font-normal);
+  margin-top: 0.35rem;
+}
+
+.month-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--table-border);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  height: 100%;
+}
+
+.month-card.has-books {
+  border-color: var(--btn-bg);
+  background-color: var(--bg-card);
+}
+
+.analytics-cover {
+  width: 45px;
+  height: 68px;
+  border-radius: 0.25rem;
+  border: 1px solid var(--table-border);
+  flex-shrink: 0;
+}
