@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   devise_for :users
   # get "dashboard/best_to"
   root "home#index"
+  get 'dashboard', to: 'dashboard#index', as: 'dashboard'
   get 'settings', to: 'dashboard#settings'
   get 'best', to: 'dashboard#best_to'
 

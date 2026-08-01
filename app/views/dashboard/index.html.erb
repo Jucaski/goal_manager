@@ -1,0 +1,107 @@
+<% content_for :title, "Dashboard" %>
+
+<h1 class="fw-bold mb-4">Dashboard</h1>
+
+<%# Reading Stats %>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @books_finished %></div>
+      <div class="stat-label">Books Finished</div>
+      <div class="small text-normal mt-1"><%= Date::MONTHNAMES[@month] %></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= "#{@pages_read}/#{@planned_pages}" %></div>
+      <div class="stat-label">Pages Read / Planned</div>
+      <div class="small text-normal mt-1"><%= Date::MONTHNAMES[@month] %></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @pages_per_day %></div>
+      <div class="stat-label">Pages per Day</div>
+      <div class="small text-normal mt-1"><%= Date::MONTHNAMES[@month] %></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @books_left %></div>
+      <div class="stat-label">Books Left This Month</div>
+      <div class="small text-normal mt-1">of <%= @planned_books_count %> planned</div>
+    </div>
+  </div>
+</div>
+
+<%# Timers history calendar %>
+<div class="card card-box mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold m-0">Timers History</h2>
+    <%= link_to "View History →", history_path, class: "fw-bold text-decoration-none table-link" %>
+  </div>
+  <%= month_calendar(events: @sessions, start_on_sunday: true) do |date, sessions| %>
+    <%= link_to history_path(date: date),
+                data: { turbo_frame: "day_details" },
+                class: "text-center d-block text-decoration-none" do %>
+      <div>
+        <%= date.day %>
+        <% if sessions.present? %>
+          <div class="text-green-600 text-xl">🏋️</div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <turbo-frame id="day_details" class="mt-4">
+    <% if params[:date] %>
+      <%= render "histories/day_sessions",
+                 date: Date.parse(params[:date]),
+                 sessions: @sessions.select { |s| s.date == Date.parse(params[:date]) } %>
+    <% end %>
+  </turbo-frame>
+</div>
+
+<%# Day habits table %>
+<div class="card card-box">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold m-0">Day Habits</h2>
+    <%= link_to "View Habits →", day_habits_path, class: "fw-bold text-decoration-none table-link" %>
+  </div>
+  <div class="table-responsive" id="habits-table-wrapper">
+    <table class="table table-hover table-bordered align-middle text-nowrap theme-table">
+      <thead>
+        <tr>
+          <th scope="col" class="sticky-habit">Habit</th>
+          <% @dates.each do |date| %>
+            <th scope="col" class="text-center <%= 'bg-table-active' if date == Date.current %>">
+              <%= date.day %>
+              <div class="small fw-normal opacity-75"><%= date.strftime("%b") %></div>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @habits.each do |habit| %>
+          <tr>
+            <th scope="row" class="sticky-habit fw-normal"><%= habit.title %></th>
+            <% @dates.each do |date| %>
+              <% habit_ratings = @ratings_map[habit.id] %>
+              <% rating = habit_ratings && habit_ratings[date] ? habit_ratings[date].rating : '-' %>
+              <td class="text-center <%= 'table-active' if date == Date.current %>">
+                <%= rating %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const wrapper = document.getElementById("habits-table-wrapper");
+    if (wrapper) wrapper.scrollLeft = wrapper.scrollWidth;
+  });
+</script>

@@ -37,6 +37,12 @@
             <div class="collapse navbar-collapse flex-column align-items-start w-100 flex-grow-1"> 
               <ul class="navbar-nav nav-pills flex-column mb-auto w-100 h-100" id="menu">
                 <li class="nav-item nav-design-data">
+                  <%= link_to dashboard_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(dashboard_path)}" do %>
+                    <i class="material-symbols-outlined">dashboard</i>
+                    <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+                  <% end %>
+                </li>
+                <li class="nav-item nav-design">
                   <%= link_to habits_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(habits_path)}" do %>
                     <i class="material-symbols-outlined">mountain_flag</i>
                     <span class="ms-1 d-none d-sm-inline">Did I do my best to</span>
