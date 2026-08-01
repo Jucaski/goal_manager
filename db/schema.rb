@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_26_000006) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,6 +25,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_000006) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_books_on_user_id"
+  end
+
+  create_table "counters", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "direction", default: "descending", null: false
+    t.string "duration_unit"
+    t.integer "duration_value"
+    t.date "end_date", null: false
+    t.string "mode", default: "duration", null: false
+    t.date "start_date", null: false
+    t.string "tag"
+    t.string "title", null: false
+    t.string "units", default: [], null: false, array: true
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "tag"], name: "index_counters_on_user_id_and_tag"
+    t.index ["user_id"], name: "index_counters_on_user_id"
   end
 
   create_table "day_habits", force: :cascade do |t|
@@ -161,6 +178,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_000006) do
   end
 
   add_foreign_key "books", "users"
+  add_foreign_key "counters", "users"
   add_foreign_key "day_habits", "habits"
   add_foreign_key "day_habits", "users"
   add_foreign_key "financial_entries", "users"

@@ -13,4 +13,5 @@ class User < ApplicationRecord
   has_many :monthly_plans, dependent: :destroy
   has_many :planned_books, dependent: :destroy
   has_many :reading_logs, dependent: :destroy
+  has_many :counters, dependent: :destroy
 end

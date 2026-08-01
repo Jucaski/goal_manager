@@ -2,6 +2,9 @@ class DashboardController < ApplicationController
   before_action :authenticate_user!
 
   def index
+    # Current goal counter
+    @current_goal = current_user.counters.find_by(tag: Counter::CURRENT_GOAL_TAG)
+
     # Timers history calendar
     @sessions = current_user.workout_sessions.order(:date)
 

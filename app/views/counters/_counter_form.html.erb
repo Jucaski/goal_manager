@@ -1,0 +1,90 @@
+<%= form_with model: counter, class: "row g-3" do |f| %>
+  <% if counter.errors.any? %>
+    <div class="col-12">
+      <div class="alert alert-danger py-2 small mb-0">
+        <ul class="mb-0 ps-3">
+          <% counter.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="col-12 col-md-4">
+    <%= f.label :title, "Title", class: "form-label text-uppercase small fw-semibold" %>
+    <%= f.text_field :title, class: "form-control form-control-sm", placeholder: "e.g. Study Chinese" %>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <%= f.label :mode, "Count", class: "form-label text-uppercase small fw-semibold" %>
+    <%= f.select :mode,
+                 [ [ "From today for a duration", "duration" ], [ "Between two dates", "dates" ] ],
+                 {},
+                 class: "form-select form-select-sm counter-mode-select",
+                 onchange: "toggleCounterMode(this)" %>
+  </div>
+
+  <div class="col-6 col-md-4">
+    <%= f.label :start_date, "Start Date", class: "form-label text-uppercase small fw-semibold" %>
+    <%= f.date_field :start_date, class: "form-control form-control-sm" %>
+  </div>
+
+  <div class="counter-fields-duration col-4 col-md-2">
+    <%= f.label :duration_value, "Duration", class: "form-label text-uppercase small fw-semibold" %>
+    <%= f.number_field :duration_value, min: 1, class: "form-control form-control-sm", placeholder: "e.g. 100" %>
+  </div>
+
+  <div class="counter-fields-duration col-8 col-md-3">
+    <%= f.label :duration_unit, "&nbsp;".html_safe, class: "form-label text-uppercase small fw-semibold d-block" %>
+    <%= f.select :duration_unit, [ [ "Days", "days" ], [ "Weeks", "weeks" ], [ "Months", "months" ] ], { include_blank: "—" }, class: "form-select form-select-sm" %>
+  </div>
+
+  <div class="counter-fields-dates col-6 col-md-3">
+    <%= f.label :end_date, "End Date", class: "form-label text-uppercase small fw-semibold" %>
+    <%= f.date_field :end_date, class: "form-control form-control-sm" %>
+  </div>
+
+  <div class="col-6 col-md-3 col-lg-2">
+    <%= f.label :direction, "Count", class: "form-label text-uppercase small fw-semibold" %>
+    <%= f.select :direction, [ [ "Down", "descending" ], [ "Up", "ascending" ] ], {}, class: "form-select form-select-sm" %>
+  </div>
+
+  <div class="col-12">
+    <span class="form-label text-uppercase small fw-semibold d-block mb-1">Show</span>
+    <div class="d-flex gap-4">
+      <% Counter::UNITS.each do |unit| %>
+        <div class="form-check">
+          <%= f.check_box :units, { multiple: true, class: "form-check-input" }, unit, nil %>
+          <%= f.label "units_#{unit}", unit.titleize, class: "form-check-label" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <%= f.submit counter.persisted? ? "Save" : "Create Counter", class: "theme-btn" %>
+  </div>
+<% end %>
+
+<script>
+  function toggleCounterMode(select) {
+    const form = select.closest("form");
+    const isDuration = select.value === "duration";
+    form.querySelectorAll(".counter-fields-duration").forEach((el) => {
+      el.style.display = isDuration ? "" : "none";
+    });
+    form.querySelectorAll(".counter-fields-dates").forEach((el) => {
+      el.style.display = isDuration ? "none" : "";
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".counter-mode-select").forEach((select) => {
+      if (!select.dataset.initialized) {
+        select.dataset.initialized = "true";
+        toggleCounterMode(select);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,74 @@
+<% content_for :title, "Counters" %>
+
+<h1 class="fw-bold mb-4">Counters</h1>
+
+<%# Current Goal %>
+<% if @current_goal.persisted? %>
+  <div class="card card-box mb-4">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div>
+        <div class="small text-uppercase fw-semibold text-normal">Current Goal</div>
+        <h2 class="h5 fw-bold m-0 mt-1"><%= @current_goal.title %></h2>
+      </div>
+      <div class="small text-normal text-nowrap">
+        <%= @current_goal.start_date.strftime("%d %b %Y") %> → <%= @current_goal.end_date.strftime("%d %b %Y") %>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <% @current_goal.units.each do |unit| %>
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="stat-card">
+            <div class="stat-value"><%= @current_goal.value_for(unit) %></div>
+            <div class="stat-label">
+              <%= unit.titleize %>
+              <%= @current_goal.direction == "descending" ? "left" : "elapsed" %>
+            </div>
+            <div class="small text-normal mt-1">of <%= @current_goal.total_value_for(unit) %></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <h3 class="h6 fw-bold mb-3">Edit Current Goal</h3>
+    <%= render "counter_form", counter: @current_goal %>
+  </div>
+<% end %>
+
+<%# New Counter %>
+<div class="card card-box mb-4">
+  <h2 class="h5 fw-bold mb-3">New Counter</h2>
+  <%= render "counter_form", counter: @new_counter %>
+</div>
+
+<%# All Counters %>
+<% others = @counters.reject(&:current_goal?) %>
+<% if others.any? %>
+  <div class="card card-box">
+    <h2 class="h5 fw-bold mb-3">All Counters</h2>
+    <div class="d-flex flex-column gap-2">
+      <% others.each do |counter| %>
+        <div class="card-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-semibold"><%= counter.title %></div>
+              <div class="small text-normal">
+                <%= counter.units.map { |unit| "#{counter.value_for(unit)} #{unit}" }.join(" · ") %>
+                <%= counter.direction == "descending" ? "left" : "elapsed" %>
+              </div>
+            </div>
+            <div class="text-nowrap">
+              <%= button_to "Delete", counter, method: :delete, data: { turbo_confirm: "Delete this counter?" }, class: "btn btn-sm btn-outline-danger" %>
+            </div>
+          </div>
+          <details class="mt-3">
+            <summary class="table-link fw-bold small">Edit</summary>
+            <div class="mt-3">
+              <%= render "counter_form", counter: counter %>
+            </div>
+          </details>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

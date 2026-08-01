@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   devise_for :users
   # get "dashboard/best_to"
-  root "home#index"
+  root "dashboard#index"
   get 'dashboard', to: 'dashboard#index', as: 'dashboard'
   get 'settings', to: 'dashboard#settings'
   get 'best', to: 'dashboard#best_to'
@@ -50,6 +50,8 @@ Rails.application.routes.draw do
 
   get "book_planner", to: "book_planner#show"
   get "book_analytics", to: "book_analytics#show"
+
+  resources :counters, only: [ :index, :create, :update, :destroy ]
 
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

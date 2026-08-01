@@ -34,6 +34,33 @@
   </div>
 </div>
 
+<%# Current Goal counter %>
+<% if @current_goal %>
+  <div class="card card-box mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <div class="small text-uppercase fw-semibold text-normal">Current Goal</div>
+        <h2 class="h5 fw-bold m-0 mt-1"><%= @current_goal.title %></h2>
+      </div>
+      <%= link_to "Manage →", counters_path, class: "fw-bold text-decoration-none table-link" %>
+    </div>
+    <div class="row g-3">
+      <% @current_goal.units.each do |unit| %>
+        <div class="col-6 col-md-3 col-lg-2">
+          <div class="stat-card">
+            <div class="stat-value"><%= @current_goal.value_for(unit) %></div>
+            <div class="stat-label">
+              <%= unit.titleize %>
+              <%= @current_goal.direction == "descending" ? "left" : "elapsed" %>
+            </div>
+            <div class="small text-normal mt-1">of <%= @current_goal.total_value_for(unit) %></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <%# Timers history calendar %>
 <div class="card card-box mb-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
