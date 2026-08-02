@@ -81,7 +81,7 @@ class FlashcardDecksControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "[data-controller=writing-card]"
     assert_select "script[src*='hanzi-writer']"
-    assert_select "[data-writing-char-data]"
+    assert_select "[data-char-data]"
     assert_match(/strokes/, response.body)
   end
 

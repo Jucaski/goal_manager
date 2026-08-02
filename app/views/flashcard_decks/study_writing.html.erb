@@ -43,7 +43,7 @@
       <% char_data = hanzi ? { strokes: hanzi.strokes, medians: hanzi.medians } : nil %>
       <div data-writing-card-target="canvas"
            data-writing-char="<%= character %>"
-           data-writing-char-data="<%= char_data.to_json %>"
+           data-char-data="<%= char_data.to_json %>"
            class="<%= index.zero? ? "" : "d-none" %> text-center order border-2 border-primary rounded-3 p-3">
         <div class="small text-uppercase fw-semibold text-normal mb-2">
           Character <%= index + 1 %> of <%= @characters.size %>
