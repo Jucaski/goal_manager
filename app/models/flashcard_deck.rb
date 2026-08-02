@@ -122,7 +122,7 @@ class FlashcardDeck < ApplicationRecord
   end
 
   def cards_source
-    scope = user.chinese_words
+    scope = ChineseWord.all
     scope = scope.where(level: levels) if levels.present?
     scope
   end

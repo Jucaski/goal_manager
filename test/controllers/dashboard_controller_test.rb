@@ -4,7 +4,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   def make_deck(user, name, word)
-    user.chinese_words.create!(word: word, pinyin: "ài", part_of_speech: "动", translation: "to love", level: 1)
+    ChineseWord.create!(word: word, pinyin: "ài", part_of_speech: "动", translation: "to love", level: 1)
     deck = user.flashcard_decks.create!(name: name, kind: "configurable", front_fields: [ "word" ], back_fields: [ "translation" ], levels: [ 1 ])
     deck.generate_cards!
     deck.next_card.review!(3)

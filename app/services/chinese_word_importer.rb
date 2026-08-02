@@ -17,12 +17,11 @@ class ChineseWordImporter
     "example_en3" => "example_en3"
   }.freeze
 
-  def self.import!(user:, path:)
-    new(user: user, path: path).import!
+  def self.import!(path:)
+    new(path: path).import!
   end
 
-  def initialize(user:, path:)
-    @user = user
+  def initialize(path:)
     @path = path
   end
 
@@ -41,7 +40,7 @@ class ChineseWordImporter
         attrs["etymology"] = parsed.is_a?(String) ? parsed : parsed.to_json
       end
 
-      record = @user.chinese_words.find_or_initialize_by(word: attrs["word"])
+      record = ChineseWord.find_or_initialize_by(word: attrs["word"])
       was_new = record.new_record?
       record.assign_attributes(attrs)
       record.save!

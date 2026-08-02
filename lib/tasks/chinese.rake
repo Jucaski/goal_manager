@@ -1,14 +1,10 @@
 namespace :chinese do
-  desc "Import Chinese words from the HSK CSV (all users unless an email is given)"
-  task :import_words, [ :path, :email ] => :environment do |_t, args|
+  desc "Import Chinese words from the HSK CSV (shared by all users)"
+  task :import_words, [ :path ] => :environment do |_t, args|
     path = args[:path] || ENV["HSK_CSV_PATH"] || Rails.root.join("hsk.csv")
-    email = args[:email] || ENV["IMPORT_EMAIL"]
 
-    users = email ? [ User.find_by!(email: email) ] : User.all
-    users.each do |user|
-      result = ChineseWordImporter.import!(user: user, path: path)
-      puts "#{user.email}: imported #{result[:imported]}, updated #{result[:updated]}"
-    end
+    result = ChineseWordImporter.import!(path: path)
+    puts "Imported #{result[:imported]} new words, updated #{result[:updated]}"
   end
 
   desc "Import hanzi stroke data from makemeahanzi graphics.txt"

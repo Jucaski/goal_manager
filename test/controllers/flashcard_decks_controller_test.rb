@@ -5,7 +5,7 @@ class FlashcardDecksControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     sign_in users(:one)
-    users(:one).chinese_words.create!(word: "爱", pinyin: "ài", part_of_speech: "动", translation: "to love", level: 1)
+    ChineseWord.create!(word: "爱", pinyin: "ài", part_of_speech: "动", translation: "to love", level: 1)
   end
 
   test "index shows decks" do

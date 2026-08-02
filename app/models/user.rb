@@ -14,7 +14,6 @@ class User < ApplicationRecord
   has_many :planned_books, dependent: :destroy
   has_many :reading_logs, dependent: :destroy
   has_many :counters, dependent: :destroy
-  has_many :chinese_words, dependent: :destroy
   has_many :flashcard_decks, dependent: :destroy
   has_many :flashcards, dependent: :destroy
   has_many :review_logs, dependent: :destroy

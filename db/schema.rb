@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_01_000010) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_01_000011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,10 +44,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000010) do
     t.string "radical"
     t.string "translation"
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
     t.string "word", null: false
-    t.index ["user_id", "word"], name: "index_chinese_words_on_user_id_and_word", unique: true
-    t.index ["user_id"], name: "index_chinese_words_on_user_id"
+    t.index ["word"], name: "index_chinese_words_on_word", unique: true
   end
 
   create_table "counters", force: :cascade do |t|
@@ -261,7 +259,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000010) do
   end
 
   add_foreign_key "books", "users"
-  add_foreign_key "chinese_words", "users"
   add_foreign_key "counters", "users"
   add_foreign_key "day_habits", "habits"
   add_foreign_key "day_habits", "users"

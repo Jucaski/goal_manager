@@ -6,7 +6,7 @@ class FlashcardDeckTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
     %w[爱 八 爸 杯].each do |word|
-      @user.chinese_words.create!(word: word, pinyin: "x", part_of_speech: "n", translation: "t", level: 1)
+      ChineseWord.create!(word: word, pinyin: "x", part_of_speech: "n", translation: "t", level: 1)
     end
     @deck = @user.flashcard_decks.create!(
       name: "HSK", kind: "configurable",

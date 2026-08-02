@@ -58,7 +58,7 @@
         <div class="col-12">
           <span class="form-label text-uppercase small fw-semibold d-block mb-1">Levels</span>
           <div class="d-flex gap-3">
-            <% current_user.chinese_words.select(:level).distinct.order(:level).pluck(:level).compact.each do |level| %>
+            <% ChineseWord.select(:level).distinct.order(:level).pluck(:level).compact.each do |level| %>
               <div class="form-check">
                 <%= f.check_box :levels, { multiple: true, class: "form-check-input" }, level, nil %>
                 <%= f.label "levels_#{level}", "Level #{level}", class: "form-check-label" %>
