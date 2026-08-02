@@ -37,11 +37,13 @@ export default class extends Controller {
     try {
       charData = JSON.parse(canvas.dataset.charData)
     } catch (e) {
-      charData = null
+      this.showStatus(canvas, `Stroke data could not be read on this device: ${e.message}`)
+      return
     }
 
     if (!charData || !Array.isArray(charData.strokes) || charData.strokes.length === 0) {
-      this.showStatus(canvas, "No stroke data for this character. Was chinese:import_hanzi run on this server?")
+      const raw = canvas.dataset.charData
+      this.showStatus(canvas, `No stroke data for this character (embedded=${raw ? "present" : "missing"}). Was chinese:import_hanzi run on this server?`)
       return
     }
 
