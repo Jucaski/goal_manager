@@ -25,20 +25,33 @@ export default class extends Controller {
 
     this.canvasTargets.forEach((c, i) => c.classList.toggle("d-none", i !== index))
 
-    const loading = canvas.querySelector("[data-writing-loading]")
-    loading.classList.remove("d-none")
+    const status = canvas.querySelector("[data-writing-status]")
+    status.classList.remove("d-none")
 
-    fetch(`/hanzi/${encodeURIComponent(character)}.json`)
-      .then((r) => r.json())
-      .then((data) => {
-        loading.classList.add("d-none")
-        this.startQuiz(canvas, character, data)
-      })
-      .catch(() => {
-        loading.textContent = "No stroke data for this character."
-        loading.classList.remove("d-none")
-        setTimeout(() => this.startCharacter(index + 1), 800)
-      })
+    if (typeof HanziWriter === "undefined") {
+      this.showStatus(canvas, "hanzi-writer library failed to load on this device.")
+      return
+    }
+
+    let charData
+    try {
+      charData = JSON.parse(canvas.dataset.charData)
+    } catch (e) {
+      charData = null
+    }
+
+    if (!charData || !Array.isArray(charData.strokes) || charData.strokes.length === 0) {
+      this.showStatus(canvas, "No stroke data for this character. Was chinese:import_hanzi run on this server?")
+      return
+    }
+
+    status.classList.add("d-none")
+
+    try {
+      this.startQuiz(canvas, character, charData)
+    } catch (e) {
+      this.showStatus(canvas, `Failed to start drawing: ${e.message}`)
+    }
   }
 
   startQuiz(canvas, character, charData) {
@@ -67,6 +80,12 @@ export default class extends Controller {
         this.startCharacter(this.currentCharIndex + 1)
       }
     })
+  }
+
+  showStatus(canvas, message) {
+    const status = canvas.querySelector("[data-writing-status]")
+    status.textContent = message
+    status.classList.remove("d-none")
   }
 
   updateStrikes() {

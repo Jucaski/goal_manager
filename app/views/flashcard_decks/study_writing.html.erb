@@ -39,12 +39,16 @@
     </p>
 
     <% @characters.each_with_index do |character, index| %>
+      <% hanzi = @hanzi_data[character] %>
+      <% char_data = hanzi ? { strokes: hanzi.strokes, medians: hanzi.medians } : nil %>
       <div data-writing-card-target="canvas"
+           data-writing-char="<%= character %>"
+           data-writing-char-data="<%= char_data.to_json %>"
            class="<%= index.zero? ? "" : "d-none" %> text-center order border-2 border-primary rounded-3 p-3">
         <div class="small text-uppercase fw-semibold text-normal mb-2">
           Character <%= index + 1 %> of <%= @characters.size %>
         </div>
-        <div data-writing-loading class="text-normal small py-4">Loading…</div>
+        <div data-writing-status class="text-normal small py-4">Loading…</div>
       </div>
     <% end %>
 

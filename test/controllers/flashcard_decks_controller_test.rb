@@ -72,7 +72,7 @@ class FlashcardDecksControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to study_writing_flashcard_deck_url(deck)
   end
 
-  test "study_writing shows a card with drawing canvas" do
+  test "study_writing shows a card with drawing canvas and embedded stroke data" do
     Hanzi.create!(character: "爱", strokes: [ "M 1 1" ], medians: [ [ [ 0, 0 ], [ 1, 1 ] ] ])
     deck = users(:one).flashcard_decks.create!(name: "Writing", kind: "writing", levels: [ 1 ])
     deck.generate_cards!
@@ -81,6 +81,8 @@ class FlashcardDecksControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "[data-controller=writing-card]"
     assert_select "script[src*='hanzi-writer']"
+    assert_select "[data-writing-char-data]"
+    assert_match(/strokes/, response.body)
   end
 
   test "hanzi endpoint returns stroke data" do
