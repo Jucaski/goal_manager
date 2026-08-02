@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_01_000010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,6 +25,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_books_on_user_id"
+  end
+
+  create_table "chinese_words", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "decomposition"
+    t.text "etymology"
+    t.string "example_en1"
+    t.string "example_en2"
+    t.string "example_en3"
+    t.string "example_zh1"
+    t.string "example_zh2"
+    t.string "example_zh3"
+    t.text "grammar_note"
+    t.integer "level"
+    t.string "part_of_speech"
+    t.string "pinyin"
+    t.string "radical"
+    t.string "translation"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.string "word", null: false
+    t.index ["user_id", "word"], name: "index_chinese_words_on_user_id_and_word", unique: true
+    t.index ["user_id"], name: "index_chinese_words_on_user_id"
   end
 
   create_table "counters", force: :cascade do |t|
@@ -68,6 +91,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
     t.index ["user_id"], name: "index_financial_entries_on_user_id"
   end
 
+  create_table "flashcard_decks", force: :cascade do |t|
+    t.jsonb "back_fields", default: [], null: false
+    t.datetime "created_at", null: false
+    t.integer "daily_goal", default: 20, null: false
+    t.integer "daily_review_goal", default: 50, null: false
+    t.jsonb "front_fields", default: [], null: false
+    t.string "kind", default: "configurable", null: false
+    t.jsonb "levels", default: [], null: false
+    t.string "name", null: false
+    t.boolean "tts_back", default: false, null: false
+    t.boolean "tts_front", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_flashcard_decks_on_user_id"
+  end
+
+  create_table "flashcards", force: :cascade do |t|
+    t.bigint "chinese_word_id", null: false
+    t.datetime "created_at", null: false
+    t.float "difficulty", default: 0.0, null: false
+    t.datetime "due_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.integer "elapsed_days", default: 0, null: false
+    t.date "first_review_date"
+    t.bigint "flashcard_deck_id", null: false
+    t.integer "lapses", default: 0, null: false
+    t.date "last_review_date"
+    t.integer "reps", default: 0, null: false
+    t.integer "scheduled_days", default: 0, null: false
+    t.float "stability", default: 0.0, null: false
+    t.integer "state", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["chinese_word_id"], name: "index_flashcards_on_chinese_word_id"
+    t.index ["flashcard_deck_id", "chinese_word_id"], name: "index_flashcards_on_flashcard_deck_id_and_chinese_word_id", unique: true
+    t.index ["flashcard_deck_id"], name: "index_flashcards_on_flashcard_deck_id"
+    t.index ["user_id", "due_at"], name: "index_flashcards_on_user_id_and_due_at"
+    t.index ["user_id"], name: "index_flashcards_on_user_id"
+  end
+
   create_table "habits", force: :cascade do |t|
     t.date "completed_date"
     t.datetime "created_at", null: false
@@ -77,6 +139,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
     t.integer "user_id", null: false
     t.index ["user_id", "position"], name: "index_habits_on_user_id_and_position"
     t.index ["user_id"], name: "index_habits_on_user_id"
+  end
+
+  create_table "hanzi", primary_key: "character", id: :string, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "medians", default: [], null: false
+    t.jsonb "strokes", default: [], null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "monthly_plans", force: :cascade do |t|
@@ -114,6 +183,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
     t.index ["book_id"], name: "index_reading_logs_on_book_id"
     t.index ["user_id", "book_id"], name: "index_reading_logs_on_user_id_and_book_id", unique: true
     t.index ["user_id"], name: "index_reading_logs_on_user_id"
+  end
+
+  create_table "review_logs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "flashcard_id", null: false
+    t.integer "rating", null: false
+    t.date "review_date", null: false
+    t.integer "state_after", null: false
+    t.integer "state_before", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["flashcard_id", "review_date"], name: "index_review_logs_on_flashcard_id_and_review_date"
+    t.index ["flashcard_id"], name: "index_review_logs_on_flashcard_id"
+    t.index ["user_id"], name: "index_review_logs_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -178,10 +261,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
   end
 
   add_foreign_key "books", "users"
+  add_foreign_key "chinese_words", "users"
   add_foreign_key "counters", "users"
   add_foreign_key "day_habits", "habits"
   add_foreign_key "day_habits", "users"
   add_foreign_key "financial_entries", "users"
+  add_foreign_key "flashcard_decks", "users"
+  add_foreign_key "flashcards", "chinese_words"
+  add_foreign_key "flashcards", "flashcard_decks"
+  add_foreign_key "flashcards", "users"
   add_foreign_key "habits", "users"
   add_foreign_key "monthly_plans", "users"
   add_foreign_key "planned_books", "books"
@@ -189,6 +277,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000002) do
   add_foreign_key "planned_books", "users"
   add_foreign_key "reading_logs", "books"
   add_foreign_key "reading_logs", "users"
+  add_foreign_key "review_logs", "flashcards"
+  add_foreign_key "review_logs", "users"
   add_foreign_key "weight_entries", "users"
   add_foreign_key "workout_sessions", "users"
   add_foreign_key "workout_sessions", "workout_templates"

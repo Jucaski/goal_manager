@@ -1,0 +1,74 @@
+<% content_for :title, "Flashcards" %>
+
+<h1 class="fw-bold mb-4">Flashcards</h1>
+
+<%# New Deck %>
+<div class="card card-box mb-4">
+  <h2 class="h5 fw-bold mb-3">New Deck</h2>
+  <%= form_with model: @deck, class: "row g-3" do |f| %>
+    <% if @deck.errors.any? %>
+      <div class="col-12">
+        <div class="alert alert-danger py-2 small mb-0">
+          <ul class="mb-0 ps-3">
+            <% @deck.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="col-12 col-md-4">
+      <%= f.label :name, "Name", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.text_field :name, class: "form-control form-control-sm", placeholder: "e.g. HSK 1 Reading" %>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <%= f.label :kind, "Type", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.select :kind,
+                   [ [ "Configurable (front/back)", "configurable" ], [ "Writing practice", "writing" ] ],
+                   {},
+                   class: "form-select form-select-sm" %>
+    </div>
+
+    <div class="col-6 col-md-2">
+      <%= f.label :daily_goal, "Daily new", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.number_field :daily_goal, min: 1, class: "form-control form-control-sm", placeholder: "20" %>
+    </div>
+
+    <div class="col-6 col-md-2">
+      <%= f.label :daily_review_goal, "Daily reviews", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.number_field :daily_review_goal, min: 1, class: "form-control form-control-sm", placeholder: "50" %>
+    </div>
+
+    <div class="col-12">
+      <%= f.submit "Create Deck", class: "theme-btn" %>
+    </div>
+  <% end %>
+</div>
+
+<%# Decks list %>
+<% if @decks.any? %>
+  <div class="card card-box">
+    <h2 class="h5 fw-bold mb-3">Your Decks</h2>
+    <div class="d-flex flex-column gap-2">
+      <% @decks.each do |deck| %>
+        <div class="card-item d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-semibold"><%= deck.name %></div>
+            <div class="small text-normal">
+              <%= deck.kind.titleize %> · <%= deck.flashcards.count %> cards ·
+              <%= deck.due_cards.count %> due now
+            </div>
+          </div>
+          <div class="text-nowrap">
+            <%= link_to "Study", deck.writing? ? study_writing_flashcard_deck_path(deck) : study_flashcard_deck_path(deck), class: "theme-btn btn-sm text-decoration-none d-inline-block me-2" %>
+            <%= link_to "Manage", flashcard_deck_path(deck), class: "text-decoration-none table-link" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <p class="text-normal">No decks yet. Create one above.</p>
+<% end %>

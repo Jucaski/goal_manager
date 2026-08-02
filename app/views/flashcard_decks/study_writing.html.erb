@@ -1,0 +1,59 @@
+<% content_for :title, "Writing · #{@deck.name}" %>
+
+<% content_for :head do %>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<% end %>
+
+<div data-controller="writing-card"
+     data-writing-card-characters-value="<%= @characters.to_json %>"
+     data-writing-card-rating-url-value="<%= review_flashcard_path(@card) %>">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold m-0"><%= @deck.name %></h1>
+      <div class="small text-normal">
+        <%= @deck.flashcards.count %> cards · <%= @deck.due_cards.count %> due now ·
+        new <%= @deck.new_cards_today %>/<%= @deck.daily_goal %> ·
+        to review <%= @deck.words_studied_today %>/<%= @deck.daily_review_goal %>
+      </div>
+    </div>
+    <%= link_to "Back to deck", flashcard_deck_path(@deck), class: "text-decoration-none table-link" %>
+  </div>
+
+  <div class="card card-box mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="fs-1 fw-bold"><%= @card.chinese_word.word %></div>
+      <% if @deck.tts_front %>
+        <%= render "tts_button", text: [ @card.chinese_word.word, @card.chinese_word.pinyin ].compact.join(" "), autoplay: true %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card card-box mb-4">
+    <h2 class="h5 fw-bold mb-2">Draw the character</h2>
+    <p class="small text-normal mb-3">
+      Trace each stroke in order. Wrong stroke or wrong direction counts as a strike.
+      After 3 strikes the character appears as a shadow to help you.
+    </p>
+
+    <% @characters.each_with_index do |character, index| %>
+      <div data-writing-card-target="canvas"
+           class="<%= index.zero? ? "" : "d-none" %> text-center order border-2 border-primary rounded-3 p-3">
+        <div class="small text-uppercase fw-semibold text-normal mb-2">
+          Character <%= index + 1 %> of <%= @characters.size %>
+        </div>
+        <div data-writing-loading class="text-normal small py-4">Loading…</div>
+      </div>
+    <% end %>
+
+    <div class="text-center mt-3">
+      <div class="small text-uppercase fw-semibold text-normal">Strikes</div>
+      <div class="fs-2 fw-bold" data-writing-card-target="strikes">0</div>
+    </div>
+
+    <div data-writing-card-target="summary" class="d-none text-center mt-3">
+      <div class="fs-3 fw-bold" data-writing-result></div>
+      <div class="small text-normal">Advancing to next card…</div>
+    </div>
+  </div>
+</div>

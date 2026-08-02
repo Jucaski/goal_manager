@@ -1,0 +1,10 @@
+<%# locals: text, autoplay (optional) %>
+<% autoplay = local_assigns.fetch(:autoplay, false) %>
+<button type="button"
+        class="btn btn-sm btn-outline-secondary"
+        data-controller="tts"
+        data-action="tts#speak"
+        data-tts-text-value="<%= text %>"
+        data-tts-autoplay-value="<%= autoplay == true %>">
+  <i class="material-symbols-outlined" style="font-size: 1.1rem;">volume_up</i>
+</button>

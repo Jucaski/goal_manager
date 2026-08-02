@@ -1,0 +1,23 @@
+<%# locals: review_counts_by_day %>
+<div class="table-responsive" data-controller="heatmap">
+  <div class="heatmap-labels">
+    <% heatmap_week_labels(review_counts_by_day).each do |label| %>
+      <span class="heat-label"><%= label %></span>
+    <% end %>
+  </div>
+  <div class="heatmap" role="img" aria-label="Study activity over the last year">
+    <% heatmap_days(review_counts_by_day).each do |day| %>
+      <div class="heat-cell heat-<%= day[:intensity] %>"
+           title="<%= day[:date].strftime("%b %d, %Y") %> · <%= day[:count] %> review<%= "s" unless day[:count] == 1 %>"></div>
+    <% end %>
+  </div>
+</div>
+<div class="d-flex justify-content-end align-items-center gap-2 mt-3 small text-normal">
+  <span>Less</span>
+  <span class="heat-cell heat-0"></span>
+  <span class="heat-cell heat-1"></span>
+  <span class="heat-cell heat-2"></span>
+  <span class="heat-cell heat-3"></span>
+  <span class="heat-cell heat-4"></span>
+  <span>More</span>
+</div>

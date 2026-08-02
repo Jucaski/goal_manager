@@ -53,6 +53,23 @@ Rails.application.routes.draw do
 
   resources :counters, only: [ :index, :create, :update, :destroy ]
 
+  resources :flashcard_decks do
+    member do
+      post :generate_cards
+      get :study
+      get :study_writing
+      get :summary
+    end
+  end
+
+  resources :flashcards, only: [] do
+    member do
+      post :review
+    end
+  end
+
+  get "hanzi/:character", to: "hanzi#show", as: :hanzi
+
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

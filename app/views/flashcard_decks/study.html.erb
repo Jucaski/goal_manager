@@ -1,0 +1,86 @@
+<% content_for :title, "Study · #{@deck.name}" %>
+
+<% word = @card.chinese_word %>
+<% front_text = @deck.front_fields.include?("word") ? word.word : @deck.front_fields.map { |f| flashcard_field_value(word, f) }.compact.join(" ") %>
+<% back_text = [ word.translation, word.example_zh1, word.example_zh2, word.example_zh3 ].compact.join(" ") %>
+
+<div data-controller="flashcard"
+     data-flashcard-tts-front-value="<%= @deck.tts_front %>"
+     data-flashcard-tts-back-value="<%= @deck.tts_back %>"
+     data-flashcard-front-text-value="<%= front_text %>"
+     data-flashcard-back-text-value="<%= back_text %>">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold m-0"><%= @deck.name %></h1>
+      <div class="small text-normal">
+        <%= @deck.flashcards.count %> cards · <%= @deck.due_cards.count %> due now ·
+        new <%= @deck.new_cards_today %>/<%= @deck.daily_goal %> ·
+        to review <%= @deck.words_studied_today %>/<%= @deck.daily_review_goal %>
+      </div>
+      <% if @card.reps > 0 %>
+        <div class="small text-normal">
+          <%= word.word %> reviewed <%= @card.reps %>×
+          <% if @card.state_before_type_cast.in?([ 1, 3 ]) %><span class="text-outcome">· needs practice</span><% end %>
+        </div>
+      <% end %>
+    </div>
+    <%= link_to "Back to deck", flashcard_deck_path(@deck), class: "text-decoration-none table-link" %>
+  </div>
+
+  <div class="card card-box mb-4">
+    <div class="mb-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="small text-uppercase fw-semibold text-normal mb-2">Front</div>
+        <% if @deck.tts_front %>
+          <%= render "tts_button", text: front_text %>
+        <% end %>
+      </div>
+      <% @deck.front_fields.each do |field| %>
+        <div class="mb-3">
+          <div class="small text-uppercase fw-semibold text-normal"><%= flashcard_field_label(field) %></div>
+          <div class="fs-2 fw-bold"><%= flashcard_field_value(word, field) %></div>
+        </div>
+      <% end %>
+    </div>
+
+    <div data-flashcard-target="back" class="d-none border-top pt-3">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div class="small text-uppercase fw-semibold text-normal">Back</div>
+        <% if @deck.tts_back %>
+          <%= render "tts_button", text: back_text %>
+        <% end %>
+      </div>
+      <% @deck.back_fields.each do |field| %>
+        <div class="mb-3">
+          <div class="small text-uppercase fw-lighter text-normal"><%= flashcard_field_label(field) %></div>
+          <div class="fs-4"><%= flashcard_field_value(word, field) %></div>
+        </div>
+      <% end %>
+    </div>
+
+    <button type="button"
+            class="theme-btn mt-3"
+            data-flashcard-target="showAnswer"
+            data-action="flashcard#reveal">
+      Show Answer
+    </button>
+  </div>
+
+  <div data-flashcard-target="rating" class="d-none">
+    <div class="row g-2">
+      <div class="col-3">
+        <%= button_to "Again", review_flashcard_path(@card, rating: 1), method: :post, class: "btn btn-outline-danger w-100" %>
+      </div>
+      <div class="col-3">
+        <%= button_to "Hard", review_flashcard_path(@card, rating: 2), method: :post, class: "btn btn-outline-warning w-100" %>
+      </div>
+      <div class="col-3">
+        <%= button_to "Good", review_flashcard_path(@card, rating: 3), method: :post, class: "btn btn-outline-success w-100" %>
+      </div>
+      <div class="col-3">
+        <%= button_to "Easy", review_flashcard_path(@card, rating: 4), method: :post, class: "btn btn-outline-info w-100" %>
+      </div>
+    </div>
+  </div>
+</div>

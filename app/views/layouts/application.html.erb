@@ -86,6 +86,12 @@
                     <span class="ms-1 d-none d-sm-inline">Book Analytics</span>
                   <% end %>
                 </li>
+                <li class="nav-item nav-design">
+                  <%= link_to flashcard_decks_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(flashcard_decks_path)}" do %>
+                    <span class="material-symbols-outlined">translate</span>
+                    <span class="ms-1 d-none d-sm-inline">Flashcards</span>
+                  <% end %>
+                </li>
                 <li class="flex-grow-1"></li>
                 <li class="nav-item nav-design">
                   <hr class="w-100">

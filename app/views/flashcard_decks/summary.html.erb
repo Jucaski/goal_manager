@@ -1,0 +1,90 @@
+<% content_for :title, "Summary · #{@deck.name}" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="fw-bold m-0"><%= @deck.name %> · Summary</h1>
+    <div class="small text-normal">
+      <%= @deck.flashcards.count %> cards · <%= @deck.due_cards.count %> due now
+    </div>
+  </div>
+  <%= link_to "Back to deck", flashcard_deck_path(@deck), class: "text-decoration-none table-link" %>
+</div>
+
+<%# Totals %>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @deck.flashcards.count %></div>
+      <div class="stat-label">Total Words</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @studied_count %></div>
+      <div class="stat-label">Words Studied</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @review_counts_by_day.values.sum %></div>
+      <div class="stat-label">Total Reviews</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @review_counts_by_day.keys.size %></div>
+      <div class="stat-label">Days Studied</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <%# Phases %>
+  <div class="col-12 col-lg-6">
+    <div class="card card-box mb-4">
+      <h2 class="h5 fw-bold mb-3">Phases</h2>
+      <div class="row g-3">
+        <% FlashcardDecksHelper::PHASES.each do |phase| %>
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div class="stat-value"><%= @phase_counts[phase] %></div>
+              <div class="stat-label"><%= phase_label(phase) %></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <p class="small text-normal mt-3 mb-0">
+        <strong>New</strong> never studied · <strong>Learning</strong> in learning steps ·
+        <strong>Young</strong> reviews due within 21 days · <strong>Mature</strong> reviews scheduled further out.
+      </p>
+    </div>
+
+    <%# By level %>
+    <div class="card card-box">
+      <h2 class="h5 fw-bold mb-3">Words by Level</h2>
+      <% if @words_by_level.any? %>
+        <div class="d-flex flex-wrap gap-2">
+          <% @words_by_level.each do |level, count| %>
+            <span class="badge rounded-pill" style="background-color: var(--btn-bg); font-size: 0.9rem;">
+              Level <%= level %> · <%= count %>
+            </span>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No words generated yet.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Heatmap %>
+  <div class="col-12 col-lg-6">
+    <div class="card card-box">
+      <h2 class="h5 fw-bold mb-3">Study Activity</h2>
+      <% if @review_counts_by_day.any? %>
+        <%= render "heatmap", review_counts_by_day: @review_counts_by_day %>
+      <% else %>
+        <p class="small text-normal mb-0">No reviews yet. Study some cards to see activity.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

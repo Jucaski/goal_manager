@@ -292,3 +292,42 @@ font-style: normal;}
   border: 1px solid var(--table-border);
   flex-shrink: 0;
 }
+
+// ----- HEATMAP ------
+.heatmap {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 14px);
+  grid-auto-columns: 14px;
+  gap: 3px;
+  width: min-content;
+}
+
+.heatmap-labels {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 14px;
+  gap: 3px;
+  width: min-content;
+  margin-bottom: 4px;
+}
+
+.heat-label {
+  font-size: 0.65rem;
+  color: var(--font-normal);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.heat-cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background-color: var(--table-border);
+}
+
+.heat-1 { background-color: #9be9a8; }
+.heat-2 { background-color: #40c463; }
+.heat-3 { background-color: #30a14e; }
+.heat-4 { background-color: #216e39; }

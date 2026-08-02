@@ -47,7 +47,30 @@ class DashboardController < ApplicationController
       @pages_per_day = 0
     end
 
-    @books_left = @planned_books_count - @books_finished
+    # Flashcards summary per deck
+    decks = current_user.flashcard_decks
+    cards_by_deck = Flashcard.where(flashcard_deck_id: decks.ids).group_by(&:flashcard_deck_id)
+    review_logs_by_deck = ReviewLog.joins(:flashcard)
+      .where(flashcards: { flashcard_deck_id: decks.ids })
+      .group(:flashcard_deck_id, :review_date)
+      .count
+      .each_with_object(Hash.new { |h, k| h[k] = {} }) do |((deck_id, date), count), acc|
+        acc[deck_id][date] = count
+      end
+
+    @decks_with_summary = decks.map do |deck|
+      cards = cards_by_deck.fetch(deck.id, [])
+      counts = { new: 0, learning: 0, young: 0, mature: 0 }
+      cards.each { |card| counts[card.phase] += 1 }
+
+      {
+        deck: deck,
+        cards_count: cards.size,
+        due_count: deck.due_cards.count,
+        phase_counts: counts,
+        review_counts_by_day: review_logs_by_deck.fetch(deck.id, {})
+      }
+    end
   end
 
   def settings

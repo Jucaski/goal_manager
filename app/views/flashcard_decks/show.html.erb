@@ -1,0 +1,187 @@
+<% content_for :title, @deck.name %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="fw-bold m-0"><%= @deck.name %></h1>
+    <div class="small text-normal">
+      <%= @deck.kind.titleize %> deck · <%= @deck.flashcards.count %> cards · <%= @due_count %> due now
+    </div>
+  </div>
+  <div class="text-nowrap">
+    <%= link_to "Summary", summary_flashcard_deck_path(@deck), class: "text-decoration-none table-link me-3" %>
+    <%= link_to "Study", @deck.writing? ? study_writing_flashcard_deck_path(@deck) : study_flashcard_deck_path(@deck), class: "theme-btn btn-sm text-decoration-none me-2" %>
+    <%= button_to "Delete", flashcard_deck_path(@deck), method: :delete, data: { turbo_confirm: "Delete this deck and all its cards?" }, class: "btn btn-sm btn-outline-danger" %>
+  </div>
+</div>
+
+<div class="row g-4">
+  <%# Config %>
+  <div class="col-12 col-lg-6">
+    <div class="card card-box mb-4">
+      <h2 class="h5 fw-bold mb-3">Deck Configuration</h2>
+      <%= form_with model: @deck, class: "row g-3" do |f| %>
+        <% if @deck.errors.any? %>
+          <div class="col-12">
+            <div class="alert alert-danger py-2 small mb-0">
+              <ul class="mb-0 ps-3">
+                <% @deck.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="col-12 col-md-6">
+          <%= f.label :name, "Name", class: "form-label text-uppercase small fw-semibold" %>
+          <%= f.text_field :name, class: "form-control form-control-sm" %>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <%= f.label :kind, "Type", class: "form-label text-uppercase small fw-semibold" %>
+          <%= f.select :kind,
+                       [ [ "Configurable (front/back)", "configurable" ], [ "Writing practice", "writing" ] ],
+                       {},
+                       class: "form-select form-select-sm" %>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <%= f.label :daily_goal, "Daily new", class: "form-label text-uppercase small fw-semibold" %>
+          <%= f.number_field :daily_goal, min: 1, class: "form-control form-control-sm" %>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <%= f.label :daily_review_goal, "Daily reviews", class: "form-label text-uppercase small fw-semibold" %>
+          <%= f.number_field :daily_review_goal, min: 1, class: "form-control form-control-sm" %>
+        </div>
+
+        <div class="col-12">
+          <span class="form-label text-uppercase small fw-semibold d-block mb-1">Levels</span>
+          <div class="d-flex gap-3">
+            <% current_user.chinese_words.select(:level).distinct.order(:level).pluck(:level).compact.each do |level| %>
+              <div class="form-check">
+                <%= f.check_box :levels, { multiple: true, class: "form-check-input" }, level, nil %>
+                <%= f.label "levels_#{level}", "Level #{level}", class: "form-check-label" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <% unless @deck.writing? %>
+          <div class="col-12">
+            <span class="form-label text-uppercase small fw-semibold d-block mb-1">Front</span>
+            <div class="d-flex flex-wrap gap-3">
+              <% FlashcardDecksHelper::CHINESE_WORD_FIELDS.each do |field, label| %>
+                <div class="form-check">
+                  <%= f.check_box :front_fields, { multiple: true, class: "form-check-input" }, field, nil %>
+                  <%= f.label "front_fields_#{field}", label, class: "form-check-label" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <span class="form-label text-uppercase small fw-semibold d-block mb-1">Back</span>
+            <div class="d-flex flex-wrap gap-3">
+              <% FlashcardDecksHelper::CHINESE_WORD_FIELDS.each do |field, label| %>
+                <div class="form-check">
+                  <%= f.check_box :back_fields, { multiple: true, class: "form-check-input" }, field, nil %>
+                  <%= f.label "back_fields_#{field}", label, class: "form-check-label" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <p class="small text-normal mb-0">Writing deck: shows the word on the front with a drawing canvas. The rating is measured by your strikes while drawing.</p>
+        <% end %>
+
+        <div class="col-12">
+          <div class="d-flex gap-4">
+            <div class="form-check">
+              <%= f.check_box :tts_front, class: "form-check-input" %>
+              <%= f.label :tts_front, "TTS on front", class: "form-check-label" %>
+            </div>
+            <div class="form-check">
+              <%= f.check_box :tts_back, class: "form-check-input" %>
+              <%= f.label :tts_back, "TTS on back", class: "form-check-label" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <%= f.submit "Save", class: "theme-btn" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Cards %>
+  <div class="col-12 col-lg-6">
+    <div class="card card-box">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 fw-bold m-0">Cards</h2>
+        <div class="text-nowrap">
+          <%= button_to "Generate Cards", generate_cards_flashcard_deck_path(@deck), method: :post, class: "theme-btn btn-sm", form_class: "d-inline" %>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-3 mb-3 small">
+        <span class="badge rounded-pill" style="background-color: var(--btn-bg);">
+          New today: <%= @deck.new_cards_today %> / <%= @deck.daily_goal %>
+        </span>
+        <span class="badge rounded-pill" style="background-color: var(--text-link);">
+          To review: <%= @deck.words_studied_today %> / <%= @deck.daily_review_goal %>
+        </span>
+        <span class="badge rounded-pill bg-light text-dark border">
+          Due now: <%= @due_count %>
+        </span>
+      </div>
+
+      <p class="small text-normal mb-3">
+        <%= @deck.flashcards.count %> of <%= @deck.word_count %> words in this deck.
+        Cards are generated from words matching the selected levels.
+      </p>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle theme-table">
+          <thead>
+            <tr>
+              <th>Word</th>
+              <th>Level</th>
+              <th>State</th>
+              <th>Reviews</th>
+              <th>Due</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @cards.limit(100).each do |card| %>
+              <tr>
+                <td class="fw-semibold"><%= card.chinese_word.word %></td>
+                <td><%= card.chinese_word.level %></td>
+                <td>
+                  <span class="badge bg-light text-dark border"><%= card.state %></span>
+                  <% if card.state_before_type_cast.in?([ 1, 3 ]) %>
+                    <span class="badge text-bg-warning" title="Needs practice">practice</span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if card.reps > 0 %>
+                    <span class="<%= card.reps >= 3 ? "text-outcome fw-semibold" : "text-normal" %>" title="Times reviewed">
+                      <%= card.reps %>×
+                    </span>
+                  <% else %>
+                    <span class="text-normal">—</span>
+                  <% end %>
+                </td>
+                <td class="small text-normal"><%= card.due_at.strftime("%b %d, %I:%M %p") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <% if @cards.count > 100 %>
+        <p class="small text-normal mt-2 mb-0">Showing first 100 of <%= @cards.count %> cards.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

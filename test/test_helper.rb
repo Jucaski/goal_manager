@@ -2,6 +2,11 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 
+# The database role used locally cannot disable referential integrity
+# (it is not a superuser), so fixture inserts rely on deferrable constraints
+# and we skip the post-insert FK validation pass.
+ActiveRecord.verify_foreign_keys_for_fixtures = false
+
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers

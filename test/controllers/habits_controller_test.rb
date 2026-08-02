@@ -1,7 +1,10 @@
 require "test_helper"
 
 class HabitsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
+    sign_in users(:one)
     @habit = habits(:one)
   end
 
