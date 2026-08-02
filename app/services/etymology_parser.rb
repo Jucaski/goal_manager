@@ -1,25 +1,37 @@
 module EtymologyParser
-  # Parses a Python-style dict literal from the HSK CSV, e.g.
-  #   {'type': 'ideographic', 'hint': "To bring a friend 友 into one's house 冖"}
-  #   {'type': 'pictophonetic', 'phonetic': '巴', 'semantic': '父', 'hint': 'father'}
-  # into a Ruby hash. Falls back to returning the raw string if it cannot be parsed.
+  # Parses the etymology column from the HSK CSV into a Hash or Array of Hashes.
+  #
+  # Supported formats:
+  #   Single JSON object:  {"type": "ideographic", "hint": "..."}
+  #   Multiple JSON objects: {"type": "pictophonetic", ...}, {"type": "ideographic", ...}
+  #   Legacy Python-dict literal: {'type': 'ideographic', 'hint': '...'}
   def self.parse(raw)
     return nil if raw.blank?
 
     text = raw.strip
     return JSON.parse(text) if json?(text)
 
+    if text.start_with?("{")
+      array_text = "[#{text}]"
+      return JSON.parse(array_text) if json?(array_text)
+    end
+
+    parse_python_dict(text) || raw
+  end
+
+  def self.json?(text)
+    JSON.parse(text)
+    true
+  rescue JSON::ParserError
+    false
+  end
+
+  def self.parse_python_dict(text)
     hash = {}
     text.scan(/'([^']+)':\s*("(?:[^"\\]|\\.)*"|'[^']*')/) do |key, value|
       hash[key] = unquote(value)
     end
-    hash.presence || raw
-  end
-
-  def self.json?(text)
-    text.start_with?("{") && JSON.parse(text) && true
-  rescue JSON::ParserError
-    false
+    hash.presence
   end
 
   def self.unquote(value)

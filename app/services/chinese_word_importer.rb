@@ -36,7 +36,10 @@ class ChineseWordImporter
         attrs[model_col] = row[csv_col]
       end
       attrs["level"] = attrs["level"].to_i if attrs["level"].present?
-      attrs["etymology"] = EtymologyParser.parse(attrs["etymology"]) if attrs["etymology"].present?
+      if attrs["etymology"].present?
+        parsed = EtymologyParser.parse(attrs["etymology"])
+        attrs["etymology"] = parsed.is_a?(String) ? parsed : parsed.to_json
+      end
 
       record = @user.chinese_words.find_or_initialize_by(word: attrs["word"])
       was_new = record.new_record?

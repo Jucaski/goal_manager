@@ -84,15 +84,30 @@ module FlashcardDecksHelper
   def render_etymology(value)
     return "" if value.blank?
 
-    unless value.is_a?(Hash)
-      return value
-    end
+    value = parse_etymology_value(value)
+    entries = value.is_a?(Array) ? value : [ value ]
+
+    entries.map { |entry| render_etymology_entry(entry) }
+           .reject(&:blank?)
+           .join(" · ")
+  end
+
+  def render_etymology_entry(entry)
+    return entry.to_s unless entry.is_a?(Hash)
 
     parts = []
-    parts << value["type"].to_s.titleize if value["type"].present?
-    parts << value["hint"] if value["hint"].present?
-    parts << value["phonetic"] if value["phonetic"].present?
-    parts << value["semantic"] if value["semantic"].present?
+    parts << entry["type"].to_s.titleize if entry["type"].present?
+    parts << entry["hint"] if entry["hint"].present?
+    parts << entry["phonetic"] if entry["phonetic"].present?
+    parts << entry["semantic"] if entry["semantic"].present?
     parts.join(" — ")
+  end
+
+  def parse_etymology_value(value)
+    return value unless value.is_a?(String)
+
+    JSON.parse(value)
+  rescue JSON::ParserError
+    value
   end
 end
