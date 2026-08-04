@@ -26,7 +26,7 @@
       <div class="fs-1 fw-bold"><%= @card.chinese_word.part_of_speech %></div>
       <div class="fs-1 fw-bold"><%= @card.chinese_word.translation %></div>
       <% if @deck.tts_front %>
-        <%= render "tts_button", text: [ @card.chinese_word.word, @card.chinese_word.pinyin ].compact.join(" "), autoplay: true %>
+        <%= render "tts_button", text: @card.chinese_word.word, autoplay: true %>
       <% end %>
     </div>
   </div>

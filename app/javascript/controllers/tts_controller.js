@@ -1,31 +1,23 @@
 import { Controller } from "@hotwired/stimulus"
+import { speakText, speakSequence } from "controllers/tts_utils"
 
 export default class extends Controller {
-  static values = { text: String, autoplay: Boolean }
+  static values = { text: String, enText: String, zhText: String, autoplay: Boolean }
 
   connect() {
-    if (this.autoplayValue && this.textValue) {
-      this.speak()
-    }
+    if (this.autoplayValue) this.speak()
   }
 
   speak() {
-    if (!("speechSynthesis" in window)) return
+    const parts = []
+    if (this.enTextValue) parts.push({ text: this.enTextValue, lang: "en-US" })
+    if (this.zhTextValue) parts.push({ text: this.zhTextValue, lang: "zh-CN" })
+    if (!parts.length && this.textValue) parts.push({ text: this.textValue })
 
-    const utterance = new SpeechSynthesisUtterance(this.textValue)
-    utterance.lang = "zh-CN"
-
-    const speak = () => {
-      const zhVoice = speechSynthesis.getVoices().find((v) => v.lang && v.lang.toLowerCase().startsWith("zh"))
-      if (zhVoice) utterance.voice = zhVoice
-      speechSynthesis.cancel()
-      speechSynthesis.speak(utterance)
-    }
-
-    if (speechSynthesis.getVoices().length === 0) {
-      speechSynthesis.addEventListener("voiceschanged", speak, { once: true })
-    } else {
-      speak()
+    if (parts.length > 1) {
+      speakSequence(parts)
+    } else if (parts.length === 1) {
+      speakText(parts[0].text)
     }
   }
 }

@@ -2,13 +2,15 @@
 
 <% word = @card.chinese_word %>
 <% front_text = @deck.front_fields.include?("word") ? word.word : @deck.front_fields.map { |f| flashcard_field_value(word, f) }.compact.join(" ") %>
-<% back_text = [ word.translation, word.example_zh1, word.example_zh2, word.example_zh3 ].compact.join(" ") %>
+<% back_en_text = word.translation.to_s %>
+<% back_zh_text = [ word.example_zh1, word.example_zh2, word.example_zh3 ].compact.join(" ") %>
 
 <div data-controller="flashcard"
      data-flashcard-tts-front-value="<%= @deck.tts_front %>"
      data-flashcard-tts-back-value="<%= @deck.tts_back %>"
      data-flashcard-front-text-value="<%= front_text %>"
-     data-flashcard-back-text-value="<%= back_text %>">
+     data-flashcard-back-text-value="<%= back_zh_text %>"
+     data-flashcard-back-en-text-value="<%= back_en_text %>">
 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -48,7 +50,7 @@
       <div class="d-flex justify-content-between align-items-start mb-2">
         <div class="small text-uppercase fw-semibold text-normal">Back</div>
         <% if @deck.tts_back %>
-          <%= render "tts_button", text: back_text %>
+          <%= render "tts_button", en_text: back_en_text, zh_text: back_zh_text %>
         <% end %>
       </div>
       <% @deck.back_fields.each do |field| %>

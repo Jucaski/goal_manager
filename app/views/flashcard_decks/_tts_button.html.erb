@@ -1,10 +1,15 @@
-<%# locals: text, autoplay (optional) %>
+<%# locals: text (optional), en_text (optional), zh_text (optional), autoplay (optional) %>
+<% text = local_assigns.fetch(:text, nil) %>
+<% en_text = local_assigns.fetch(:en_text, nil) %>
+<% zh_text = local_assigns.fetch(:zh_text, nil) %>
 <% autoplay = local_assigns.fetch(:autoplay, false) %>
 <button type="button"
         class="btn btn-sm btn-outline-secondary"
         data-controller="tts"
         data-action="tts#speak"
         data-tts-text-value="<%= text %>"
+        data-tts-en-text-value="<%= en_text %>"
+        data-tts-zh-text-value="<%= zh_text %>"
         data-tts-autoplay-value="<%= autoplay == true %>">
   <i class="material-symbols-outlined" style="font-size: 1.1rem;">volume_up</i>
 </button>

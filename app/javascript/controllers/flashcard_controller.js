@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { speakText, speakSequence } from "controllers/tts_utils"
 
 export default class extends Controller {
   static targets = ["back", "rating", "showAnswer"]
@@ -6,12 +7,13 @@ export default class extends Controller {
     ttsFront: Boolean,
     ttsBack: Boolean,
     frontText: String,
-    backText: String
+    backText: String,
+    backEnText: String
   }
 
   connect() {
     if (this.ttsFrontValue && this.frontTextValue) {
-      this.speak(this.frontTextValue)
+      speakText(this.frontTextValue)
     }
   }
 
@@ -20,28 +22,18 @@ export default class extends Controller {
     this.ratingTarget.classList.remove("d-none")
     this.showAnswerTarget.classList.add("d-none")
 
-    if (this.ttsBackValue && this.backTextValue) {
-      this.speak(this.backTextValue)
-    }
+    if (this.ttsBackValue) this.speakBack()
   }
 
-  speak(text) {
-    if (!("speechSynthesis" in window)) return
+  speakBack() {
+    const parts = []
+    if (this.backEnTextValue) parts.push({ text: this.backEnTextValue, lang: "en-US" })
+    if (this.backTextValue) parts.push({ text: this.backTextValue, lang: "zh-CN" })
 
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = "zh-CN"
-
-    const speak = () => {
-      const zhVoice = speechSynthesis.getVoices().find((v) => v.lang && v.lang.toLowerCase().startsWith("zh"))
-      if (zhVoice) utterance.voice = zhVoice
-      speechSynthesis.cancel()
-      speechSynthesis.speak(utterance)
-    }
-
-    if (speechSynthesis.getVoices().length === 0) {
-      speechSynthesis.addEventListener("voiceschanged", speak, { once: true })
-    } else {
-      speak()
+    if (parts.length > 1) {
+      speakSequence(parts)
+    } else if (parts.length === 1) {
+      speakText(parts[0].text)
     }
   }
 }
