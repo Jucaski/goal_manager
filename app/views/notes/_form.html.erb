@@ -1,0 +1,71 @@
+<div class="card card-box mb-4">
+  <%= form_with model: note, data: { controller: "note-form", action: "submit->note-form#submit" }, class: "row g-3" do |f| %>
+    <% if note.errors.any? %>
+      <div class="col-12">
+        <div class="alert alert-danger py-2 small mb-0">
+          <ul class="mb-0 ps-3">
+            <% note.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="col-12">
+      <%= f.label :title, "Title", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.text_field :title, class: "form-control", placeholder: "e.g. Reading list ideas" %>
+    </div>
+
+    
+    <div class="col-12">
+      <%= f.label :tags_string, "Tags", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.text_field :tags_string, class: "form-control", placeholder: "#books #ideas #goals" %>
+      <div class="small text-normal mt-1">Notes are grouped automatically by tag. Separate tags with a space or comma.</div>
+    </div>
+
+    <div class="col-12">
+      <%= f.submit note.persisted? ? "Save Note" : "Create Note", class: "theme-btn" %>
+    </div>
+    <div class="col-12">
+      <span class="form-label text-uppercase small fw-semibold d-block mb-1">Type</span>
+      <div class="d-flex gap-4">
+        <div class="form-check">
+          <%= f.radio_button :note_type, "typed", class: "form-check-input", data: { action: "change->note-form#toggle" } %>
+          <%= f.label :note_type_typed, "Type it", class: "form-check-label" %>
+        </div>
+        <div class="form-check">
+          <%= f.radio_button :note_type, "handwritten", class: "form-check-input", data: { action: "change->note-form#toggle" } %>
+          <%= f.label :note_type_handwritten, "Write by hand", class: "form-check-label" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12" data-note-form-target="typedSection">
+      <%= f.label :content, "Content", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.text_area :content, rows: 40, class: "form-control", placeholder: "Write your note here…" %>
+    </div>
+
+    <div class="col-12 d-none" data-note-form-target="handwrittenSection">
+      <span class="form-label text-uppercase small fw-semibold d-block mb-1">Drawing</span>
+      <p class="small text-normal mb-2">
+        Draw your note with your finger or mouse. The text will be recognized automatically so it can be searched.
+      </p>
+
+      <div data-controller="drawing-pad"
+           data-note-form-target="drawingPad"
+           data-drawing-pad-strokes-value="<%= note.drawing_data.to_json %>"
+           class="text-center">
+        <div class="d-flex gap-2 justify-content-center mt-2">
+          <button type="button" data-action="click->drawing-pad#undo" class="theme-btn btn-sm">Undo</button>
+          <button type="button" data-action="click->drawing-pad#clear" class="btn btn-sm btn-outline-danger">Clear</button>
+        </div>
+        <canvas data-drawing-pad-target="canvas" class="note-canvas"></canvas>
+        <%= f.hidden_field :drawing_data, value: note.drawing_data.to_json, data: { drawing_pad_target: "strokes" } %>
+      </div>
+
+      <%= f.hidden_field :ocr_text, data: { note_form_target: "ocrText" } %>
+      <div data-note-form-target="status" class="d-none small text-normal mt-2"></div>
+    </div>
+  <% end %>
+</div>

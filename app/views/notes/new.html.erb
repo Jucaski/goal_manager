@@ -1,0 +1,12 @@
+<% content_for :title, "New Note" %>
+
+<% content_for :head do %>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<% end %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold m-0">New Note</h1>
+  <%= link_to "Back to Notes", notes_path, class: "text-decoration-none table-link" %>
+</div>
+
+<%= render "form", note: @note %>

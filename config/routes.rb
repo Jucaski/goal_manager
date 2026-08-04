@@ -53,6 +53,8 @@ Rails.application.routes.draw do
 
   resources :counters, only: [ :index, :create, :update, :destroy ]
 
+  resources :notes
+
   resources :flashcard_decks do
     member do
       post :generate_cards

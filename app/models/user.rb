@@ -17,4 +17,5 @@ class User < ApplicationRecord
   has_many :flashcard_decks, dependent: :destroy
   has_many :flashcards, dependent: :destroy
   has_many :review_logs, dependent: :destroy
+  has_many :notes, dependent: :destroy
 end

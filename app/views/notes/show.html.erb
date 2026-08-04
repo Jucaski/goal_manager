@@ -1,0 +1,42 @@
+<% content_for :title, @note.title %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold m-0"><%= @note.title %></h1>
+  <div class="text-nowrap">
+    <%= link_to "Edit", edit_note_path(@note), class: "theme-btn btn-sm text-decoration-none me-2" %>
+    <%= button_to "Delete", @note, method: :delete, data: { turbo_confirm: "Delete this note?" }, class: "btn btn-sm btn-outline-danger" %>
+  </div>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <span class="badge text-bg-secondary"><%= @note.typed? ? "Typed" : "Handwritten" %></span>
+  <% @note.tags.reject(&:blank?).each do |tag| %>
+    <%= link_to "##{tag}", notes_path(tag: tag), class: "badge text-bg-primary text-decoration-none" %>
+  <% end %>
+</div>
+
+<% if @note.typed? %>
+  <div class="card card-box">
+    <p class="mb-0 text-normal" style="white-space: pre-wrap;"><%= @note.content %></p>
+  </div>
+<% else %>
+  <div class="card card-box">
+    <div data-controller="drawing-pad"
+         data-drawing-pad-read-only-value="true"
+         data-drawing-pad-strokes-value="<%= @note.drawing_data.to_json %>"
+         class="text-center">
+      <canvas data-drawing-pad-target="canvas" class="note-canvas"></canvas>
+    </div>
+    <% if @note.ocr_text.present? %>
+      <hr>
+      <div class="small text-normal">
+        <span class="fw-semibold">Recognized text:</span>
+        <p class="mb-0 mt-1" style="white-space: pre-wrap;"><%= @note.ocr_text %></p>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="small text-normal mt-3">
+  Created <%= @note.created_at.strftime("%d %b %Y") %>
+</div>

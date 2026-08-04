@@ -1,0 +1,77 @@
+<% content_for :title, "Notes" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold m-0">Notes</h1>
+  <%= link_to "New Note", new_note_path, class: "theme-btn text-decoration-none" %>
+</div>
+
+<%# Search %>
+<div class="card card-box mb-4">
+  <%= form_with url: notes_path, method: :get, class: "row g-3 align-items-center" do %>
+    <div class="col-12 col-md-7">
+      <%= label_tag :q, "Search all notes", class: "form-label text-uppercase small fw-semibold" %>
+      <div class="d-flex gap-2">
+        <%= search_field_tag :q, params[:q], class: "form-control", placeholder: "Search title, text, tags, handwriting…" %>
+        <%= submit_tag "Search", class: "theme-btn" %>
+      </div>
+    </div>
+    <div class="col-12 col-md-5">
+      <span class="form-label text-uppercase small fw-semibold d-block mb-1">Type</span>
+      <div class="d-flex gap-2">
+        <%= link_to "All", notes_path(q: params[:q], tag: params[:tag]), class: "btn btn-sm #{params[:type].blank? ? 'theme-btn' : 'btn-outline-secondary'}" %>
+        <%= link_to "Typed", notes_path(type: "typed", q: params[:q], tag: params[:tag]), class: "btn btn-sm #{params[:type] == 'typed' ? 'theme-btn' : 'btn-outline-secondary'}" %>
+        <%= link_to "Handwritten", notes_path(type: "handwritten", q: params[:q], tag: params[:tag]), class: "btn btn-sm #{params[:type] == 'handwritten' ? 'theme-btn' : 'btn-outline-secondary'}" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%# Tags %>
+<div class="card card-box mb-4">
+  <h2 class="h5 fw-bold mb-3">Tags</h2>
+  <% if @tags.any? %>
+    <div class="d-flex flex-wrap gap-2">
+      <%= link_to "All notes", notes_path(q: params[:q], type: params[:type]), class: "badge text-decoration-none #{params[:tag].blank? ? 'text-bg-primary' : 'text-bg-secondary'}" %>
+      <% @tags.each do |tag, count| %>
+        <%= link_to "##{tag} (#{count})", notes_path(tag: tag, q: params[:q], type: params[:type]), class: "badge text-decoration-none #{params[:tag] == tag ? 'text-bg-primary' : 'text-bg-secondary'}" %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="small text-normal mb-0">
+      No tags yet. Add tags like <code>#books</code> to your notes and they will be grouped here.
+    </p>
+  <% end %>
+</div>
+
+<%# Notes list %>
+<% if @notes.any? %>
+  <div class="d-flex flex-column gap-2">
+    <% @notes.each do |note| %>
+      <div class="card-item">
+        <div class="d-flex justify-content-between align-items-start gap-2">
+          <div class="min-w-0">
+            <%= link_to note.title, note, class: "fw-semibold text-decoration-none table-link" %>
+            <div class="small text-normal mt-1"><%= note.preview %></div>
+            <div class="d-flex flex-wrap gap-1 mt-2">
+              <span class="badge text-bg-secondary"><%= note.typed? ? "Typed" : "Handwritten" %></span>
+              <% note.tags.reject(&:blank?).each do |tag| %>
+                <%= link_to "##{tag}", notes_path(tag: tag), class: "badge text-bg-primary text-decoration-none" %>
+              <% end %>
+            </div>
+          </div>
+          <div class="text-nowrap small text-normal"><%= note.created_at.strftime("%d %b %Y") %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="card card-box">
+    <p class="mb-0 text-normal">
+      <% if params[:q].present? || params[:tag].present? || params[:type].present? %>
+        No notes match your search. Try a different term or tag.
+      <% else %>
+        No notes yet. Create your first note with <%= link_to "New Note", new_note_path, class: "table-link" %>.
+      <% end %>
+    </p>
+  </div>
+<% end %>

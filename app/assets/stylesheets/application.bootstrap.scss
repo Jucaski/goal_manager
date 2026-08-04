@@ -341,3 +341,16 @@ font-style: normal;}
   -webkit-user-select: none;
   user-select: none;
 }
+
+// ----- NOTES (drawing canvas) ------
+.note-canvas {
+  touch-action: none;
+  width: 100%;
+  min-height: 50vh;
+  background-color: var(--bg-card);
+  border: 1px solid var(--input-line);
+  border-radius: 0.75rem;
+  cursor: crosshair;
+  color: var(--table-text);
+}
+

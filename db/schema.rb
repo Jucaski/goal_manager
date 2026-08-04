@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_01_000011) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_04_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -156,6 +156,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000011) do
     t.index ["user_id"], name: "index_monthly_plans_on_user_id"
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.jsonb "drawing_data", default: []
+    t.string "note_type", default: "typed", null: false
+    t.text "ocr_text"
+    t.string "tags", default: [], null: false, array: true
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["tags"], name: "index_notes_on_tags", using: :gin
+    t.index ["user_id", "note_type"], name: "index_notes_on_user_id_and_note_type"
+    t.index ["user_id"], name: "index_notes_on_user_id"
+  end
+
   create_table "planned_books", force: :cascade do |t|
     t.bigint "book_id", null: false
     t.datetime "created_at", null: false
@@ -269,6 +284,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_01_000011) do
   add_foreign_key "flashcards", "users"
   add_foreign_key "habits", "users"
   add_foreign_key "monthly_plans", "users"
+  add_foreign_key "notes", "users"
   add_foreign_key "planned_books", "books"
   add_foreign_key "planned_books", "monthly_plans"
   add_foreign_key "planned_books", "users"
