@@ -1,0 +1,8 @@
+<% content_for :title, "Edit Template" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold m-0">Edit Template</h1>
+  <%= link_to "Back", task_templates_path, class: "text-decoration-none table-link" %>
+</div>
+
+<%= render "form", template: @template %>

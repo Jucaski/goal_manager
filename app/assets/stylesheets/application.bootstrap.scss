@@ -354,3 +354,53 @@ font-style: normal;}
   color: var(--table-text);
 }
 
+// ----- SCHEDULER ------
+.scheduler-week-cell {
+  min-height: 140px;
+  vertical-align: top;
+  padding: 0.5rem;
+}
+
+.scheduler-week-event {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border-radius: 0.4rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.scheduler-month-cell {
+  height: 96px;
+  vertical-align: top;
+  padding: 0.4rem;
+}
+
+.scheduler-month-cell.other-month {
+  opacity: 0.45;
+}
+
+.scheduler-dot-badge {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 0.7rem;
+  font-weight: 500;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ringtone-player {
+  height: 32px;
+  max-width: 180px;
+}
+
+@keyframes scheduler-alarm-flash {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(239, 68, 68, 0.25); }
+}
+
+.scheduler-alarm-flash {
+  animation: scheduler-alarm-flash 1s ease-in-out infinite;
+  border: 1px solid var(--text-outcome) !important;
+}
+

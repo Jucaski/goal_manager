@@ -1,0 +1,82 @@
+<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+  <h2 class="h4 fw-bold m-0">Stats</h2>
+  <div class="d-flex align-items-center gap-2">
+    <%= form_with url: scheduler_path(view: "stats"), method: :get, class: "d-flex align-items-center gap-2", data: { turbo_frame: "scheduler-view" } do %>
+      <%= label_tag :from, "From", class: "form-label small text-uppercase fw-semibold m-0" %>
+      <%= date_field_tag :from, @from, class: "form-control form-control-sm" %>
+      <%= label_tag :to, "To", class: "form-label small text-uppercase fw-semibold m-0" %>
+      <%= date_field_tag :to, @to, class: "form-control form-control-sm" %>
+      <%= submit_tag "Filter", class: "theme-btn btn-sm" %>
+    <% end %>
+  </div>
+</div>
+
+<div data-controller="scheduler-stats"
+     data-scheduler-stats-by-day-labels="<%= (@from..@to).to_a.map { |d| d.strftime("%m/%d") }.to_json %>"
+     data-scheduler-stats-by-day-values="<%= (@from..@to).to_a.map { |d| @by_day[d].to_i }.to_json %>"
+     data-scheduler-stats-by-tag-labels="<%= @by_tag.keys.to_json %>"
+     data-scheduler-stats-by-tag-values="<%= @by_tag.values.to_json %>"
+     data-scheduler-stats-by-template-labels="<%= @by_template.keys.map(&:name).to_json %>"
+     data-scheduler-stats-by-template-values="<%= @by_template.values.to_json %>">
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= (@total_minutes / 60.0).round(1) %>h</div>
+      <div class="stat-label">Total time</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @by_template.size %></div>
+      <div class="stat-label">Templates used</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @by_tag.size %></div>
+      <div class="stat-label">Tags</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-value"><%= @by_day.size %></div>
+      <div class="stat-label">Days active</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    <div class="card card-box">
+      <h3 class="h6 fw-bold mb-3">Minutes per day</h3>
+      <canvas data-scheduler-stats-target="byDay" height="220"></canvas>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card card-box">
+      <h3 class="h6 fw-bold mb-3">Minutes by tag</h3>
+      <canvas data-scheduler-stats-target="byTag" height="220"></canvas>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card card-box">
+      <h3 class="h6 fw-bold mb-3">Minutes by template</h3>
+      <canvas data-scheduler-stats-target="byTemplate" height="220"></canvas>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card card-box">
+      <h3 class="h6 fw-bold mb-3">Logged sessions</h3>
+      <div class="d-flex flex-column gap-2">
+        <% @by_template.each do |template, minutes| %>
+          <div class="d-flex justify-content-between align-items-center">
+            <span><%= template.name %></span>
+            <span class="fw-semibold"><%= (minutes / 60.0).round(1) %>h (<%= minutes %> min)</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

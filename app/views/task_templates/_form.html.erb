@@ -1,0 +1,74 @@
+<div class="card card-box mb-4">
+  <%= form_with model: template, data: { controller: "schedule-builder" }, class: "row g-3" do |f| %>
+    <% if template.errors.any? %>
+      <div class="col-12">
+        <div class="alert alert-danger py-2 small mb-0">
+          <ul class="mb-0 ps-3">
+            <% template.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="col-12">
+      <h2 class="h5 fw-bold mb-2">Template</h2>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <%= f.label :name, "Template name", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.text_field :name, class: "form-control", placeholder: "e.g. Morning routine" %>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <%= f.label :start_date, "Starts", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.date_field :start_date, class: "form-control" %>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <%= f.label :end_date, "Until (optional)", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.date_field :end_date, class: "form-control" %>
+    </div>
+
+    <div class="col-12">
+      <span class="form-label text-uppercase small fw-semibold d-block mb-1">Days of the week</span>
+      <p class="small text-normal mb-2">All tasks in this template run on these days, between the start and end dates.</p>
+      <div class="d-flex flex-wrap gap-3">
+        <% Date::DAYNAMES.rotate(1).each_with_index do |name, i| %>
+          <% value = (i + 1) % 7 %>
+          <div class="form-check">
+            <%= f.check_box :days_of_week, { multiple: true, class: "form-check-input" }, value, nil %>
+            <%= f.label "days_of_week_#{value}", name, class: "form-check-label" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Tasks %>
+    <div class="col-12 mt-4">
+      <span class="form-label text-uppercase small fw-semibold d-block mb-2">Tasks</span>
+      <p class="small text-normal mb-3">
+        Each task has its own title, tag, ringtone, alarm and schedule time.
+      </p>
+
+      <div data-schedule-builder-target="schedules" class="d-flex flex-column gap-3">
+        <%= f.fields_for :tasks do |task_form| %>
+          <%= render "task_templates/task_fields", f: task_form %>
+        <% end %>
+      </div>
+
+      <template data-schedule-builder-target="template">
+        <%= f.fields_for :tasks, template.tasks.build, child_index: "NEW_RECORD" do |task_form| %>
+          <%= render "task_templates/task_fields", f: task_form %>
+        <% end %>
+      </template>
+
+      <button type="button" class="theme-btn btn-sm mt-2" data-action="schedule-builder#add">+ Add task</button>
+    </div>
+
+    <div class="col-12">
+      <%= f.submit template.persisted? ? "Save Template" : "Create Template", class: "theme-btn" %>
+    </div>
+  <% end %>
+</div>

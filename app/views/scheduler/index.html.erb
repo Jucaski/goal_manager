@@ -1,0 +1,120 @@
+<% content_for :title, "Schedule" %>
+<% content_for :head do %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<% end %>
+
+<div data-controller="scheduler">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold m-0">Schedule</h1>
+    <div class="d-flex gap-2 align-items-center">
+      <button type="button" class="theme-btn btn-sm" data-action="scheduler#enableNotifications">Enable alarm notifications</button>
+      <%= link_to "Templates", task_templates_path, class: "theme-btn btn-sm text-decoration-none" %>
+    </div>
+  </div>
+
+<%# View switcher %>
+<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+  <div class="d-flex gap-2">
+    <nav class="nav nav-pills">
+      <%= link_to "Day", scheduler_path(date: @date, view: "day"), class: "nav-link #{'active' if @view == 'day'}", data: { turbo_frame: "scheduler-view" } %>
+      <%= link_to "Week", scheduler_path(date: @date, view: "week"), class: "nav-link #{'active' if @view == 'week'}", data: { turbo_frame: "scheduler-view" } %>
+      <%= link_to "Month", scheduler_path(date: @date, view: "month"), class: "nav-link #{'active' if @view == 'month'}", data: { turbo_frame: "scheduler-view" } %>
+      <%= link_to "Stats", scheduler_path(date: @date, view: "stats"), class: "nav-link #{'active' if @view == 'stats'}", data: { turbo_frame: "scheduler-view" } %>
+    </nav>
+  </div>
+</div>
+
+<%= turbo_frame_tag "scheduler-view" do %>
+  <% case @view %>
+  <% when "week" then render "week" %>
+  <% when "month" then render "month" %>
+  <% when "stats" then render "stats" %>
+  <% else render "day" %>
+  <% end %>
+<% end %>
+
+<%# Templates & ringtones section %>
+<div class="row mt-4 g-3">
+  <div class="col-12 col-lg-6" id="templates">
+    <div class="card card-box h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 fw-bold m-0">Templates</h2>
+        <%= link_to "Manage", task_templates_path, class: "text-decoration-none table-link" %>
+      </div>
+      <% if @templates.any? %>
+        <div class="d-flex flex-column gap-2">
+          <% @templates.each do |template| %>
+            <div class="card-item d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold"><%= template.name %></div>
+                <div class="small text-normal">
+                  <%= template.days_labels.join(", ") %> ·
+                  <%= template.start_date.strftime("%d %b %Y") %>
+                  <%= template.end_date ? "→ #{template.end_date.strftime('%d %b %Y')}" : "" %> ·
+                  <%= pluralize(template.tasks.count, "task") %>
+                </div>
+                <% if template.tasks.any? %>
+                  <div class="small text-normal mt-1">
+                    <% template.tasks.ordered.each do |task| %>
+                      <div>
+                        <%= task.title %> · <%= task.start_time.strftime("%H:%M") %> · <%= task.duration_minutes %> min
+                        <% if task.tag.present? %>
+                          · <span class="badge text-bg-primary">#<%= task.tag %></span>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="text-nowrap">
+                <%= link_to "Edit", edit_task_template_path(template), class: "text-decoration-none table-link me-2" %>
+                <%= button_to "Delete", template, method: :delete, data: { turbo_confirm: "Delete this template and its schedules?" }, class: "btn btn-sm btn-outline-danger" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No templates yet. <%= link_to "Create one", new_task_template_path, class: "table-link" %> to start scheduling your day.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6" id="ringtones">
+    <div class="card card-box h-100">
+      <h2 class="h5 fw-bold mb-3">Ringtones</h2>
+
+      <%= form_with model: @new_ringtone, url: ringtones_path, multipart: true, class: "row g-2 mb-3" do |f| %>
+        <div class="col-12">
+          <%= f.label :name, "Name", class: "form-label text-uppercase small fw-semibold" %>
+          <%= f.text_field :name, class: "form-control form-control-sm", placeholder: "e.g. Morning chime" %>
+        </div>
+        <div class="col-12">
+          <%= f.label :audio, "Audio file", class: "form-label text-uppercase small fw-semibold" %>
+          <%= f.file_field :audio, accept: "audio/*", class: "form-control form-control-sm" %>
+        </div>
+        <div class="col-12">
+          <%= f.submit "Upload", class: "theme-btn btn-sm" %>
+        </div>
+      <% end %>
+
+      <% if @ringtones.any? %>
+        <div class="d-flex flex-column gap-2">
+          <% @ringtones.each do |ringtone| %>
+            <div class="card-item d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold"><%= ringtone.name %></div>
+              </div>
+              <div class="text-nowrap d-flex align-items-center gap-2">
+                <audio controls preload="none" src="<%= ringtone.audio_url %>" class="ringtone-player"></audio>
+                <%= button_to "Delete", ringtone, method: :delete, data: { turbo_confirm: "Delete this ringtone?" }, class: "btn btn-sm btn-outline-danger" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No ringtones yet. Upload an audio file and assign it to a template.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+</div>

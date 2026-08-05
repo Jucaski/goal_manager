@@ -55,6 +55,16 @@ Rails.application.routes.draw do
 
   resources :notes
 
+  get "scheduler", to: "scheduler#index"
+  get "scheduler/alarms", to: "scheduler#alarms"
+
+  resources :task_templates
+  resources :ringtones, only: [ :index, :create, :destroy ]
+  resources :time_logs, only: [] do
+    post :start, on: :collection
+    patch :stop, on: :member
+  end
+
   resources :flashcard_decks do
     member do
       post :generate_cards

@@ -1,0 +1,46 @@
+<% content_for :title, "Templates" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold m-0">Templates</h1>
+  <%= link_to scheduler_path, class: "text-decoration-none table-link me-2" do %>← Schedule<% end %>
+  <%= link_to "New Template", new_task_template_path, class: "theme-btn text-decoration-none" %>
+</div>
+
+<div class="card card-box">
+  <h2 class="h5 fw-bold mb-3">Your Templates</h2>
+  <% if @templates.any? %>
+    <div class="d-flex flex-column gap-2">
+      <% @templates.each do |template| %>
+        <div class="card-item d-flex justify-content-between align-items-start gap-2">
+          <div>
+            <div class="fw-semibold"><%= template.name %></div>
+            <div class="small text-normal">
+              <%= template.days_labels.join(", ") %> ·
+              <%= template.start_date.strftime("%d %b %Y") %>
+              <%= template.end_date ? "until #{template.end_date.strftime('%d %b %Y')}" : "(no end date)" %> ·
+              <%= pluralize(template.tasks.count, "task") %>
+            </div>
+            <% if template.tasks.any? %>
+              <div class="small text-normal mt-1">
+                <% template.tasks.ordered.each do |task| %>
+                  <div>
+                    <%= task.title %> · <%= task.start_time.strftime("%H:%M") %> for <%= task.duration_minutes %> min
+                    <% if task.tag.present? %>
+                      · <span class="badge text-bg-primary">#<%= task.tag %></span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+          <div class="text-nowrap">
+            <%= link_to "Edit", edit_task_template_path(template), class: "theme-btn btn-sm text-decoration-none me-2" %>
+            <%= button_to "Delete", template, method: :delete, data: { turbo_confirm: "Delete this template and its tasks?" }, class: "btn btn-sm btn-outline-danger" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="small text-normal mb-0">No templates yet. <%= link_to "Create one", new_task_template_path, class: "table-link" %>.</p>
+  <% end %>
+</div>

@@ -29,7 +29,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body data-controller="alarm-checker">
     <div class="container-fluid body-container">
       <div class="row flex-nowrap">
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 py-5 side-bar vh-100 sticky-top d-flex flex-column">
@@ -96,6 +96,12 @@
                   <%= link_to notes_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(notes_path) || current_page?(new_note_path)}" do %>
                     <span class="material-symbols-outlined">edit_note</span>
                     <span class="ms-1 d-none d-sm-inline">Notes</span>
+                  <% end %>
+                </li>
+                <li class="nav-item nav-design">
+                  <%= link_to scheduler_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(scheduler_path)}" do %>
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span class="ms-1 d-none d-sm-inline">Schedule</span>
                   <% end %>
                 </li>
                 <li class="flex-grow-1"></li>

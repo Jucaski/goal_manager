@@ -1,0 +1,50 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div class="d-flex align-items-center gap-2">
+    <%= link_to scheduler_path(date: @week_start - 1.day, view: "week"), class: "theme-btn btn-sm text-decoration-none", data: { turbo_frame: "scheduler-view" } do %>
+      <span class="material-symbols-outlined fs-6">chevron_left</span>
+    <% end %>
+    <h2 class="h4 fw-bold m-0">
+      Week of <%= @week_start.strftime("%b %d") %> – <%= (@week_start + 6).strftime("%b %d, %Y") %>
+    </h2>
+    <%= link_to scheduler_path(date: @week_start + 7.days, view: "week"), class: "theme-btn btn-sm text-decoration-none", data: { turbo_frame: "scheduler-view" } do %>
+      <span class="material-symbols-outlined fs-6">chevron_right</span>
+    <% end %>
+  </div>
+</div>
+
+<div class="card card-box">
+  <div class="table-responsive">
+    <table class="table table-bordered theme-table align-middle scheduler-week-table">
+      <thead>
+        <tr>
+          <% @days.each do |day| %>
+            <th class="text-center <%= 'bg-table-active' if day == Date.current %>">
+              <div><%= day.strftime("%a") %></div>
+              <div class="small fw-normal"><%= day.day %></div>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <% @days.each do |day| %>
+            <td class="scheduler-week-cell <%= 'table-active' if day == Date.current %>">
+              <% if @week_schedules[day].any? %>
+                <div class="d-flex flex-column gap-1">
+                  <% @week_schedules[day].each do |task| %>
+                    <div class="scheduler-week-event">
+                      <div class="fw-semibold small text-truncate"><%= task.title %></div>
+                      <div class="small text-normal"><%= task.start_time.strftime("%H:%M") %></div>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <span class="small text-normal">&nbsp;</span>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

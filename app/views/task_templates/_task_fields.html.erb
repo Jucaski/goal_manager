@@ -1,0 +1,41 @@
+<div class="card-item schedule-fields" data-schedule-builder-target="schedule">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <span class="small fw-semibold text-uppercase text-normal">Task</span>
+    <button type="button" class="btn btn-sm btn-outline-danger" data-action="schedule-builder#remove">Remove</button>
+  </div>
+
+  <div class="row g-2">
+    <div class="col-12 col-md-4">
+      <%= f.label :title, "Title", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.text_field :title, class: "form-control", placeholder: "e.g. Gym" %>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <%= f.label :tag, "Tag", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.text_field :tag, class: "form-control", placeholder: "e.g. health, work, study" %>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <%= f.label :ringtone_id, "Ringtone", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.collection_select :ringtone_id, current_user.ringtones.ordered, :id, :name,
+                              { include_blank: "Default beep" }, class: "form-select" %>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <%= f.label :start_time, "Starts at", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.time_field :start_time, class: "form-control" %>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <%= f.label :duration_minutes, "Duration (min)", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.number_field :duration_minutes, min: 1, value: f.object.duration_minutes || 60, class: "form-control" %>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <%= f.label :alarm_minutes_before, "Alarm", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.select :alarm_minutes_before, Task::ALARM_OPTIONS, {}, class: "form-select" %>
+    </div>
+  </div>
+
+  <%= f.hidden_field :_destroy, value: "0" %>
+</div>

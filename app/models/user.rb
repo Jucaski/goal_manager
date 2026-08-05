@@ -18,4 +18,8 @@ class User < ApplicationRecord
   has_many :flashcards, dependent: :destroy
   has_many :review_logs, dependent: :destroy
   has_many :notes, dependent: :destroy
+  has_many :ringtones, dependent: :destroy
+  has_many :task_templates, dependent: :destroy
+  has_many :tasks, dependent: :destroy
+  has_many :time_logs, dependent: :destroy
 end
