@@ -64,17 +64,54 @@ class SchedulerController < ApplicationController
   end
 
   def load_stats
-    @from = params[:from].presence&.to_date || 30.days.ago.to_date
-    @to = params[:to].presence&.to_date || Date.current
+    @period = %w[day week month year].include?(params[:period]) ? params[:period] : "week"
+
+    if params[:from].present? || params[:to].present?
+      @from = params[:from].presence&.to_date || Date.current
+      @to = params[:to].presence&.to_date || Date.current
+    else
+      @from, @to = range_for_period(@period)
+    end
 
     logs = current_user.time_logs.for_range(@from, @to).where.not(ended_at: nil)
-    @by_day = logs.group_by { |l| l.started_at.to_date }
-                  .transform_values { |day_logs| day_logs.sum(&:duration_minutes) }
+    @total_minutes = logs.sum(&:duration_minutes)
+
+    @by_task = logs.group_by { |l| l.task }
+                   .transform_values { |tl| tl.sum(&:duration_minutes) }
+                   .sort_by { |_task, minutes| -minutes }
+                   .to_h
     @by_tag = logs.group_by { |l| l.task&.tag }
                   .transform_values { |tl| tl.sum(&:duration_minutes) }
-    @by_template = logs.group_by { |l| l.task_template }
-                       .transform_values { |tl| tl.sum(&:duration_minutes) }
-    @total_minutes = logs.sum(&:duration_minutes)
+                  .sort_by { |_tag, minutes| -minutes }
+                  .to_h
+    @sessions = logs.includes(:task).ordered.limit(50)
+
+    @time_labels, @time_values = time_series(logs)
+  end
+
+  def range_for_period(period)
+    case period
+    when "day"   then [ Date.current, Date.current ]
+    when "month" then [ Date.current.beginning_of_month, Date.current.end_of_month ]
+    when "year"  then [ Date.current.beginning_of_year, Date.current.end_of_year ]
+    else              [ Date.current.beginning_of_week, Date.current.end_of_week ]
+    end
+  end
+
+  def time_series(logs)
+    case @period
+    when "day"
+      labels = (0..23).map { |h| format("%02d:00", h) }
+      values = labels.map { |label| logs.sum { |l| l.started_at.hour == label.to_i ? l.duration_minutes : 0 } }
+    when "year"
+      labels = Date::MONTHNAMES.compact
+      values = labels.map.with_index { |_name, i| logs.sum { |l| l.started_at.month == i + 1 ? l.duration_minutes : 0 } }
+    else
+      labels = (@from..@to).to_a.map(&:to_s)
+      by_day = logs.group_by { |l| l.started_at.to_date }.transform_values { |dl| dl.sum(&:duration_minutes) }
+      values = labels.map { |date_str| by_day[Date.parse(date_str)].to_i }
+    end
+    [ labels, values ]
   end
 
   def schedules_for(date)

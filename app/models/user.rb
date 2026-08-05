@@ -22,4 +22,22 @@ class User < ApplicationRecord
   has_many :task_templates, dependent: :destroy
   has_many :tasks, dependent: :destroy
   has_many :time_logs, dependent: :destroy
+
+  # Returns the user's "Run" task (title "Run"), creating a Running template
+  # with that task on first use so running workouts show up in the stats.
+  def find_or_create_run_task
+    run_task = tasks.find_by("lower(title) = ?", "run")
+    return run_task if run_task
+
+    template = task_templates.find_by("lower(name) = ?", "running") ||
+               task_templates.create!(name: "Running", start_date: Date.current, days_of_week: (0..6).to_a)
+
+    template.tasks.create!(
+      title: "Run",
+      tag: "running",
+      alarm_minutes_before: 0,
+      start_time: Time.current,
+      duration_minutes: 30
+    )
+  end
 end

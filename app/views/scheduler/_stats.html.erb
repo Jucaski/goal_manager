@@ -1,23 +1,24 @@
 <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
   <h2 class="h4 fw-bold m-0">Stats</h2>
+
   <div class="d-flex align-items-center gap-2">
-    <%= form_with url: scheduler_path(view: "stats"), method: :get, class: "d-flex align-items-center gap-2", data: { turbo_frame: "scheduler-view" } do %>
-      <%= label_tag :from, "From", class: "form-label small text-uppercase fw-semibold m-0" %>
+    <nav class="nav nav-pills">
+      <% { "day" => "Day", "week" => "Week", "month" => "Month", "year" => "Year" }.each do |value, label| %>
+        <%= link_to label, scheduler_path(view: "stats", period: value),
+                    class: "nav-link btn-sm #{'active' if @period == value}",
+                    data: { turbo_frame: "scheduler-view" } %>
+      <% end %>
+    </nav>
+
+    <%= form_with url: scheduler_path(view: "stats", period: @period), method: :get,
+                  class: "d-flex align-items-center gap-2 ms-2", data: { turbo_frame: "scheduler-view" } do %>
       <%= date_field_tag :from, @from, class: "form-control form-control-sm" %>
-      <%= label_tag :to, "To", class: "form-label small text-uppercase fw-semibold m-0" %>
+      <span class="text-normal small">→</span>
       <%= date_field_tag :to, @to, class: "form-control form-control-sm" %>
       <%= submit_tag "Filter", class: "theme-btn btn-sm" %>
     <% end %>
   </div>
 </div>
-
-<div data-controller="scheduler-stats"
-     data-scheduler-stats-by-day-labels="<%= (@from..@to).to_a.map { |d| d.strftime("%m/%d") }.to_json %>"
-     data-scheduler-stats-by-day-values="<%= (@from..@to).to_a.map { |d| @by_day[d].to_i }.to_json %>"
-     data-scheduler-stats-by-tag-labels="<%= @by_tag.keys.to_json %>"
-     data-scheduler-stats-by-tag-values="<%= @by_tag.values.to_json %>"
-     data-scheduler-stats-by-template-labels="<%= @by_template.keys.map(&:name).to_json %>"
-     data-scheduler-stats-by-template-values="<%= @by_template.values.to_json %>">
 
 <div class="row g-3 mb-3">
   <div class="col-6 col-md-3">
@@ -28,8 +29,8 @@
   </div>
   <div class="col-6 col-md-3">
     <div class="stat-card">
-      <div class="stat-value"><%= @by_template.size %></div>
-      <div class="stat-label">Templates used</div>
+      <div class="stat-value"><%= @by_task.size %></div>
+      <div class="stat-label">Tasks</div>
     </div>
   </div>
   <div class="col-6 col-md-3">
@@ -40,43 +41,107 @@
   </div>
   <div class="col-6 col-md-3">
     <div class="stat-card">
-      <div class="stat-value"><%= @by_day.size %></div>
-      <div class="stat-label">Days active</div>
+      <div class="stat-value"><%= @sessions.size %></div>
+      <div class="stat-label">Sessions</div>
     </div>
   </div>
 </div>
 
 <div class="row g-3">
-  <div class="col-12 col-lg-6">
+  <div class="col-12 col-lg-7">
     <div class="card card-box">
-      <h3 class="h6 fw-bold mb-3">Minutes per day</h3>
-      <canvas data-scheduler-stats-target="byDay" height="220"></canvas>
+      <h3 class="h6 fw-bold mb-3">
+        <%= { "day" => "Minutes by hour", "year" => "Minutes by month", "week" => "Minutes per day", "month" => "Minutes per day" }[@period] %>
+      </h3>
+      <% max = @time_values.max.to_f %>
+      <% if @time_values.any?(&:positive?) %>
+        <div class="d-flex flex-column gap-2">
+          <% @time_labels.each_with_index do |label, i| %>
+            <% value = @time_values[i] %>
+            <% if value.positive? %>
+              <div class="stat-bar-row">
+                <span class="stat-bar-label"><%= label %></span>
+                <div class="stat-bar-track">
+                  <div class="stat-bar-fill" style="width: <%= (value / max * 100).round %>%;"></div>
+                </div>
+                <span class="stat-bar-value"><%= value %> min</span>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No logged time in this period.</p>
+      <% end %>
     </div>
   </div>
-  <div class="col-12 col-lg-6">
+
+  <div class="col-12 col-lg-5">
+    <div class="card card-box">
+      <h3 class="h6 fw-bold mb-3">Minutes by task</h3>
+      <% if @by_task.any? %>
+        <% task_max = @by_task.values.max.to_f %>
+        <div class="d-flex flex-column gap-2">
+          <% @by_task.each do |task, minutes| %>
+            <div class="stat-bar-row">
+              <span class="stat-bar-label"><%= task&.title || "Unknown" %></span>
+              <div class="stat-bar-track">
+                <div class="stat-bar-fill" style="width: <%= (minutes / task_max * 100).round %>%;"></div>
+              </div>
+              <span class="stat-bar-value"><%= minutes %> min</span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No logged time in this period.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-5">
     <div class="card card-box">
       <h3 class="h6 fw-bold mb-3">Minutes by tag</h3>
-      <canvas data-scheduler-stats-target="byTag" height="220"></canvas>
+      <% if @by_tag.any? %>
+        <% tag_max = @by_tag.values.max.to_f %>
+        <div class="d-flex flex-column gap-2">
+          <% @by_tag.each do |tag, minutes| %>
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">#<%= tag %></span>
+              <div class="stat-bar-track">
+                <div class="stat-bar-fill" style="width: <%= (minutes / tag_max * 100).round %>%;"></div>
+              </div>
+              <span class="stat-bar-value"><%= minutes %> min</span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No logged time in this period.</p>
+      <% end %>
     </div>
   </div>
-  <div class="col-12 col-lg-6">
-    <div class="card card-box">
-      <h3 class="h6 fw-bold mb-3">Minutes by template</h3>
-      <canvas data-scheduler-stats-target="byTemplate" height="220"></canvas>
-    </div>
-  </div>
-  <div class="col-12 col-lg-6">
+
+  <div class="col-12 col-lg-7">
     <div class="card card-box">
       <h3 class="h6 fw-bold mb-3">Logged sessions</h3>
-      <div class="d-flex flex-column gap-2">
-        <% @by_template.each do |template, minutes| %>
-          <div class="d-flex justify-content-between align-items-center">
-            <span><%= template.name %></span>
-            <span class="fw-semibold"><%= (minutes / 60.0).round(1) %>h (<%= minutes %> min)</span>
-          </div>
-        <% end %>
-      </div>
+      <% if @sessions.any? %>
+        <div class="d-flex flex-column gap-2">
+          <% @sessions.each do |log| %>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="min-w-0">
+                <div class="fw-semibold text-truncate"><%= log.task&.title || "Unknown task" %></div>
+                <div class="small text-normal">
+                  <%= log.started_at.strftime("%b %d, %H:%M") %>
+                  <% if log.task&.tag.present? %>
+                    · <span class="badge text-bg-primary">#<%= log.task.tag %></span>
+                  <% end %>
+                </div>
+              </div>
+              <span class="fw-semibold text-nowrap ms-2"><%= log.duration_minutes %> min</span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No logged sessions in this period. Use the Start button on a scheduled task to record time.</p>
+      <% end %>
     </div>
   </div>
-</div>
 </div>

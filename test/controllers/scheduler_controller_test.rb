@@ -47,13 +47,44 @@ class SchedulerControllerTest < ActionDispatch::IntegrationTest
     assert_select ".scheduler-month-table"
   end
 
-  test "stats view renders charts" do
+  test "stats view renders bar charts" do
     template = make_template(users(:one))
     users(:one).time_logs.create!(task: template.tasks.first, started_at: 2.hours.ago, ended_at: 1.hour.ago)
 
     get scheduler_url, params: { view: "stats" }
     assert_response :success
-    assert_select "canvas"
+    assert_select ".stat-bar-row", minimum: 1
+    assert_select "h3", text: "Minutes by task"
+    assert_select "h3", text: "Minutes by tag"
+    assert_select "h3", text: "Logged sessions"
+  end
+
+  test "stats shows minutes by task not template" do
+    template = make_template(users(:one))
+    gym = template.tasks.find_by(title: "Gym")
+    yoga = template.tasks.find_by(title: "Yoga")
+    users(:one).time_logs.create!(task: gym, started_at: 2.hours.ago, ended_at: 1.hour.ago)
+    users(:one).time_logs.create!(task: yoga, started_at: 3.hours.ago, ended_at: 2.hours.ago)
+
+    get scheduler_url, params: { view: "stats" }
+    assert_response :success
+    assert_includes response.body, "Gym"
+    assert_includes response.body, "Yoga"
+    refute_includes response.body, "Minutes by template"
+  end
+
+  test "stats shows a message when no time is logged" do
+    get scheduler_url, params: { view: "stats" }
+    assert_response :success
+    assert_includes response.body, "No logged time in this period."
+    assert_includes response.body, "No logged sessions in this period."
+  end
+
+  test "stats supports day/week/month/year periods" do
+    %w[day week month year].each do |period|
+      get scheduler_url, params: { view: "stats", period: period }
+      assert_response :success
+    end
   end
 
   test "alarms endpoint returns today's tasks with wall-clock start" do

@@ -10,6 +10,7 @@ class WorkoutSessionsController < ApplicationController
     @workout_session = current_user.workout_sessions.build(session_params)
     @workout_session.date = Date.current
     if @workout_session.save
+      log_run_time! if @workout_session.is_running
       session.delete(:completed_workout)
       redirect_to history_path, notice: "Workout logged!"
     else
@@ -26,6 +27,20 @@ class WorkoutSessionsController < ApplicationController
   end
 
   private
+
+  # Running workouts also count toward the "Run" scheduled task so they show
+  # up in the schedule stats graphs.
+  def log_run_time!
+    task = current_user.find_or_create_run_task
+    duration = @workout_session.total_seconds
+    return if duration <= 0
+
+    current_user.time_logs.create!(
+      task: task,
+      started_at: Time.current - duration.seconds,
+      ended_at: Time.current
+    )
+  end
 
   def session_params
   params.require(:workout_session).permit(
