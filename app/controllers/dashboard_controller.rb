@@ -47,6 +47,15 @@ class DashboardController < ApplicationController
       @pages_per_day = 0
     end
 
+    # Water intake
+    @water_today = WaterEntry.total_ml_for(Date.current)
+    @water_today_entries = current_user.water_entries.for_date(Date.current).ordered
+
+    @water_week = current_user.water_entries.for_range(Date.current.beginning_of_week, Date.current.end_of_week)
+                                          .group(:date).sum(:amount_ml)
+    @water_month = current_user.water_entries.for_range(Date.current.beginning_of_month, Date.current.end_of_month)
+                                            .group(:date).sum(:amount_ml)
+
     # Flashcards summary per deck
     decks = current_user.flashcard_decks
     cards_by_deck = Flashcard.where(flashcard_deck_id: decks.ids).group_by(&:flashcard_deck_id)

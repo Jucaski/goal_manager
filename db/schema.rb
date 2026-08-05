@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_05_050001) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -298,6 +298,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_050001) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "water_entries", force: :cascade do |t|
+    t.integer "amount_ml", null: false
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "date"], name: "index_water_entries_on_user_id_and_date"
+    t.index ["user_id"], name: "index_water_entries_on_user_id"
+  end
+
   create_table "weight_entries", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date"
@@ -375,6 +385,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_050001) do
   add_foreign_key "tasks", "users"
   add_foreign_key "time_logs", "tasks"
   add_foreign_key "time_logs", "users"
+  add_foreign_key "water_entries", "users"
   add_foreign_key "weight_entries", "users"
   add_foreign_key "workout_sessions", "users"
   add_foreign_key "workout_sessions", "workout_templates"

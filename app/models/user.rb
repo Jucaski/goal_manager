@@ -22,6 +22,7 @@ class User < ApplicationRecord
   has_many :task_templates, dependent: :destroy
   has_many :tasks, dependent: :destroy
   has_many :time_logs, dependent: :destroy
+  has_many :water_entries, dependent: :destroy
 
   # Returns the user's "Run" task (title "Run"), creating a Running template
   # with that task on first use so running workouts show up in the stats.

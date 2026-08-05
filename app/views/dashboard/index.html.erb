@@ -34,6 +34,81 @@
   </div>
 </div>
 
+<%# Water intake %>
+<div class="card card-box mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold m-0">💧 Water</h2>
+    <div class="small text-normal">
+      Today: <span class="fw-bold text-primary"><%= @water_today %> ml</span>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <div class="small text-uppercase fw-semibold text-normal mb-2">Add water</div>
+      <%= form_with model: WaterEntry.new, url: water_entries_path, class: "d-flex gap-2" do |f| %>
+        <%= f.number_field :amount_ml, min: 1, placeholder: "ml e.g. 250", class: "form-control form-control-sm", required: true %>
+        <%= f.submit "Add", class: "theme-btn btn-sm" %>
+      <% end %>
+
+      <% if @water_today_entries.any? %>
+        <div class="d-flex flex-column gap-1 mt-2">
+          <% @water_today_entries.each do |entry| %>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="small"><%= entry.amount_ml %> ml</span>
+              <%= button_to "×", water_entry_path(entry), method: :delete,
+                            data: { turbo_confirm: "Remove this water entry?" },
+                            class: "btn btn-sm btn-outline-danger py-0 px-1" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="small text-uppercase fw-semibold text-normal mb-2">This week</div>
+      <% week_max = @water_week.values.max.to_f %>
+      <% if @water_week.any? %>
+        <div class="d-flex flex-column gap-2">
+          <% (Date.current.beginning_of_week..Date.current.end_of_week).each do |day| %>
+            <% ml = @water_week[day].to_i %>
+            <div class="stat-bar-row">
+              <span class="stat-bar-label"><%= day.strftime("%a") %></span>
+              <div class="stat-bar-track">
+                <div class="stat-bar-fill" style="width: <%= week_max.positive? ? (ml / week_max * 100).round : 0 %>%;"></div>
+              </div>
+              <span class="stat-bar-value"><%= ml %> ml</span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No water logged this week yet.</p>
+      <% end %>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="small text-uppercase fw-semibold text-normal mb-2">This month</div>
+      <% month_max = @water_month.values.max.to_f %>
+      <% if @water_month.any? %>
+        <div class="d-flex flex-column gap-2" style="max-height: 220px; overflow-y: auto;">
+          <% (@water_month.keys.min..@water_month.keys.max).each do |day| %>
+            <% ml = @water_month[day].to_i %>
+            <div class="stat-bar-row">
+              <span class="stat-bar-label"><%= day.strftime("%b %d") %></span>
+              <div class="stat-bar-track">
+                <div class="stat-bar-fill" style="width: <%= month_max.positive? ? (ml / month_max * 100).round : 0 %>%;"></div>
+              </div>
+              <span class="stat-bar-value"><%= ml %> ml</span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No water logged this month yet.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
 <%# Current Goal counter %>
 <% if @current_goal %>
   <div class="card card-box mb-4">

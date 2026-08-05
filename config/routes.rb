@@ -65,6 +65,8 @@ Rails.application.routes.draw do
     patch :stop, on: :member
   end
 
+  resources :water_entries, only: [ :create, :destroy ]
+
   resources :flashcard_decks do
     member do
       post :generate_cards
