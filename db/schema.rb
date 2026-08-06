@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_05_090001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "body_measurements", force: :cascade do |t|
+    t.decimal "arm_length"
+    t.decimal "back_width"
+    t.decimal "bicep"
+    t.decimal "bust"
+    t.decimal "calf"
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.decimal "forearm"
+    t.decimal "full_hip"
+    t.decimal "head"
+    t.decimal "high_hip"
+    t.decimal "inseam"
+    t.decimal "knee"
+    t.decimal "neck"
+    t.decimal "outseam"
+    t.decimal "shoulder"
+    t.decimal "shoulder_to_waist"
+    t.decimal "sleeve_length"
+    t.decimal "thigh"
+    t.decimal "torso_length"
+    t.decimal "under_bust"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.decimal "waist"
+    t.decimal "wrist"
+    t.index ["user_id", "date"], name: "index_body_measurements_on_user_id_and_date"
+    t.index ["user_id"], name: "index_body_measurements_on_user_id"
+  end
+
+  create_table "body_profiles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "gender"
+    t.decimal "height_cm"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_body_profiles_on_user_id"
   end
 
   create_table "books", force: :cascade do |t|
@@ -248,6 +287,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
     t.index ["user_id"], name: "index_ringtones_on_user_id"
   end
 
+  create_table "task_completions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.bigint "task_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["task_id", "date"], name: "index_task_completions_on_task_id_and_date", unique: true
+    t.index ["task_id"], name: "index_task_completions_on_task_id"
+    t.index ["user_id"], name: "index_task_completions_on_user_id"
+  end
+
   create_table "task_templates", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "days_of_week", default: [], null: false, array: true
@@ -287,6 +337,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "api_token"
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -294,6 +345,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.datetime "updated_at", null: false
+    t.index ["api_token"], name: "index_users_on_api_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -359,6 +411,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "body_measurements", "users"
+  add_foreign_key "body_profiles", "users"
   add_foreign_key "books", "users"
   add_foreign_key "counters", "users"
   add_foreign_key "day_habits", "habits"
@@ -379,6 +433,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_060001) do
   add_foreign_key "review_logs", "flashcards"
   add_foreign_key "review_logs", "users"
   add_foreign_key "ringtones", "users"
+  add_foreign_key "task_completions", "tasks"
+  add_foreign_key "task_completions", "users"
   add_foreign_key "task_templates", "users"
   add_foreign_key "tasks", "ringtones"
   add_foreign_key "tasks", "task_templates"

@@ -4,6 +4,7 @@ class Task < ApplicationRecord
   belongs_to :ringtone, optional: true
 
   has_many :time_logs, dependent: :destroy
+  has_many :task_completions, dependent: :destroy
 
   ALARM_OPTIONS = [ [ "At the start", 0 ], [ "5 minutes before", 5 ], [ "10 minutes before", 10 ], [ "15 minutes before", 15 ] ].freeze
 
@@ -37,6 +38,10 @@ class Task < ApplicationRecord
 
   def total_minutes_between(from, to)
     time_logs.for_range(from, to).sum(&:duration_minutes)
+  end
+
+  def completed_on?(date)
+    task_completions.exists?(date: date)
   end
 
   private

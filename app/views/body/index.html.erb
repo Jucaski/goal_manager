@@ -1,0 +1,226 @@
+<% content_for :title, "Body" %>
+
+<h1 class="fw-bold mb-4">Body</h1>
+
+<%# Body profile (once) %>
+<div class="card card-box mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold m-0">Body profile</h2>
+    <% if @profile.complete? %>
+      <span class="badge text-bg-success">Saved</span>
+    <% end %>
+  </div>
+
+  <% if @profile.complete? %>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <span class="badge text-bg-primary">Body type: <%= @profile.gender_label %></span>
+      <span class="badge text-bg-secondary">Height: <%= @profile.height_cm %> cm</span>
+    </div>
+  <% end %>
+
+  <p class="small text-normal mb-3">Set your body type and height once. Height stays fixed; the other measurements are tracked over time below.</p>
+
+  <%= form_with model: @profile, url: @profile.persisted? ? body_profile_path(@profile) : body_profile_path, class: "row g-3" do |f| %>
+    <div class="col-6 col-md-3">
+      <%= f.label :gender, "Body type", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.select :gender, BodyProfile::GENDERS, { include_blank: "Select…" }, class: "form-select" %>
+    </div>
+    <div class="col-6 col-md-3">
+      <%= f.label :height_cm, "Height (cm)", class: "form-label text-uppercase small fw-semibold" %>
+      <%= f.number_field :height_cm, min: 50, max: 250, step: "0.5", class: "form-control", placeholder: "e.g. 170" %>
+    </div>
+    <div class="col-12 col-md-2 d-flex align-items-end">
+      <%= f.submit @profile.persisted? ? "Update" : "Save", class: "theme-btn" %>
+    </div>
+  <% end %>
+</div>
+
+<%# Weight %>
+<div class="card card-box mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold m-0">Weight</h2>
+    <div class="small text-normal">
+      Latest: <span class="fw-bold text-primary"><%= @weight_entries.first&.weight.to_s %> kg</span>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-md-3">
+      <div class="small text-uppercase fw-semibold text-normal mb-2">Log weight</div>
+      <%= form_with model: @new_weight, url: weight_entries_path, class: "d-flex flex-column gap-2" do |f| %>
+        <%= f.label :weight, "Weight (kg)", class: "form-label text-uppercase small fw-semibold" %>
+        <%= f.number_field :weight, min: 20, max: 500, step: "0.1", class: "form-control", placeholder: "e.g. 70.5", required: true %>
+        <%= f.label :date, "Date", class: "form-label text-uppercase small fw-semibold" %>
+        <%= f.date_field :date, class: "form-control" %>
+        <%= f.submit "Save", class: "theme-btn btn-sm mt-1" %>
+      <% end %>
+    </div>
+
+    <div class="col-12 col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="small text-uppercase fw-semibold text-normal">Variation</div>
+        <nav class="nav nav-pills">
+          <%= link_to "Week", body_path(period: "week"), class: "nav-link btn-sm #{'active' if @period == 'week'}", data: { turbo_frame: "body-graph" } %>
+          <%= link_to "Month", body_path(period: "month"), class: "nav-link btn-sm #{'active' if @period == 'month'}", data: { turbo_frame: "body-graph" } %>
+          <%= link_to "Year", body_path(period: "year"), class: "nav-link btn-sm #{'active' if @period == 'year'}", data: { turbo_frame: "body-graph" } %>
+        </nav>
+      </div>
+
+      <%= turbo_frame_tag "body-graph" do %>
+        <% max = @weight_values.compact.max.to_f %>
+        <% if @weight_values.any?(&:present?) %>
+          <div class="d-flex flex-column gap-2" style="max-height: 260px; overflow-y: auto;">
+            <% @weight_labels.each_with_index do |label, i| %>
+              <% value = @weight_values[i] %>
+              <% if value.present? %>
+                <div class="stat-bar-row">
+                  <span class="stat-bar-label"><%= label %></span>
+                  <div class="stat-bar-track">
+                    <div class="stat-bar-fill" style="width: <%= max.positive? ? (value / max * 100).round : 0 %>%;"></div>
+                  </div>
+                  <span class="stat-bar-value"><%= value %> kg</span>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="small text-normal mb-0">No weight logged for this period.</p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @weight_entries.any? %>
+    <hr>
+    <div class="d-flex flex-wrap gap-2">
+      <% @weight_entries.limit(10).each do |entry| %>
+        <div class="card-item d-flex align-items-center gap-2 py-1 px-2">
+          <span class="small"><%= entry.date.strftime("%b %d") %>: <strong><%= entry.weight %> kg</strong></span>
+          <%= button_to "×", weight_entry_path(entry), method: :delete,
+                        data: { turbo_confirm: "Remove this weight entry?" },
+                        class: "btn btn-sm btn-outline-danger py-0 px-1" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<%# Measurements %>
+<div class="card card-box">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold m-0">Measurements</h2>
+    <div class="small text-normal">Logged weekly</div>
+  </div>
+
+  <p class="small text-normal mb-3">
+    Record your body measurements each week to track changes over time. Only fill in the ones you took.
+    Use the diagram to see where to measure each part — the letter on each field matches the diagram.
+  </p>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-3">
+      <div class="small text-uppercase fw-semibold text-normal mb-2">Measuring guide</div>
+      <% image_name = @profile.male? ? "male_body.jpg" : "female_body.jpg" %>
+      <%= image_tag image_name, class: "img-fluid rounded border", alt: "#{@profile.gender_label || 'Body'} measurement diagram" %>
+      <p class="small text-normal mt-2 mb-0">
+        <%= @profile.gender.present? ? "#{@profile.gender_label} body reference." : "Set your body type above to show the right diagram." %>
+        Letters match the measurement fields.
+      </p>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="small text-uppercase fw-semibold text-normal mb-2">Add measurements</div>
+      <%= form_with model: @new_measurement, url: body_measurements_path, class: "d-flex flex-column gap-2" do |f| %>
+        <div class="col-12">
+          <%= f.label :date, "Date", class: "form-label text-uppercase small fw-semibold" %>
+          <%= f.date_field :date, class: "form-control form-control-sm" %>
+        </div>
+
+        <% BodyMeasurement::MEASUREMENTS.each do |key, label| %>
+          <div class="d-flex align-items-center gap-2">
+            <span class="measure-letter-badge" title="Match this letter on the diagram"><%= BodyMeasurement.letter_for(key) %></span>
+            <%= f.label key, label, class: "form-label text-uppercase small fw-semibold m-0 w-50" %>
+            <%= f.number_field key, min: 1, max: 300, step: "0.1", class: "form-control form-control-sm", placeholder: "cm" %>
+          </div>
+        <% end %>
+
+        <%= f.submit "Save measurements", class: "theme-btn btn-sm mt-2" %>
+      <% end %>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <%# Measurement variation graph %>
+      <div class="card-item mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+          <div class="small text-uppercase fw-semibold text-normal">Variation</div>
+          <div class="d-flex align-items-center gap-2">
+            <%= form_with url: body_path, method: :get, class: "d-flex align-items-center gap-2", data: { turbo_frame: "body-measurement-graph" } do %>
+              <%= select_tag :measurement,
+                             options_for_select(BodyMeasurement::MEASUREMENTS.to_a.map { |k, v| [ v, k.to_s ] }, @measurement_key),
+                             class: "form-select form-select-sm", onchange: "this.form.requestSubmit()" %>
+              <%= hidden_field_tag :period, @period %>
+            <% end %>
+            <nav class="nav nav-pills">
+              <%= link_to "Week", body_path(period: "week", measurement: @measurement_key), class: "nav-link btn-sm #{'active' if @period == 'week'}", data: { turbo_frame: "body-measurement-graph" } %>
+              <%= link_to "Month", body_path(period: "month", measurement: @measurement_key), class: "nav-link btn-sm #{'active' if @period == 'month'}", data: { turbo_frame: "body-measurement-graph" } %>
+              <%= link_to "Year", body_path(period: "year", measurement: @measurement_key), class: "nav-link btn-sm #{'active' if @period == 'year'}", data: { turbo_frame: "body-measurement-graph" } %>
+            </nav>
+          </div>
+        </div>
+
+        <%= turbo_frame_tag "body-measurement-graph" do %>
+          <% max = @measurement_values.max.to_f %>
+          <% if @measurement_values.any? %>
+            <div class="d-flex flex-column gap-2" style="max-height: 260px; overflow-y: auto;">
+              <% @measurement_labels.each_with_index do |label, i| %>
+                <div class="stat-bar-row">
+                  <span class="stat-bar-label"><%= label %></span>
+                  <div class="stat-bar-track">
+                    <div class="stat-bar-fill" style="width: <%= max.positive? ? (@measurement_values[i] / max * 100).round : 0 %>%;"></div>
+                  </div>
+                  <span class="stat-bar-value"><%= @measurement_values[i] %> cm</span>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="small text-normal mb-0">No <%= BodyMeasurement::MEASUREMENTS[@measurement_key.to_sym] %> measurements logged yet.</p>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%# Measurements table %>
+      <% if @measurements.any? %>
+        <div class="table-responsive">
+          <table class="table table-sm theme-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <% BodyMeasurement::MEASUREMENTS.each do |key, label| %>
+                  <th class="text-center small"><%= label %></th>
+                <% end %>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @measurements.limit(8).each do |m| %>
+                <tr>
+                  <td class="text-nowrap small"><%= m.date.strftime("%b %d") %></td>
+                  <% BodyMeasurement::MEASUREMENTS.each do |key, _label| %>
+                    <td class="text-center small"><%= m[key] %></td>
+                  <% end %>
+                  <td>
+                    <%= button_to "×", body_measurement_path(m), method: :delete,
+                                  data: { turbo_confirm: "Remove this entry?" },
+                                  class: "btn btn-sm btn-outline-danger py-0 px-1" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="small text-normal mb-0">No measurements yet. Add your first set above.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

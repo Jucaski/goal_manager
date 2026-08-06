@@ -1,0 +1,31 @@
+<% content_for :title, "Settings" %>
+
+<h1 class="fw-bold mb-4">Settings</h1>
+
+<div class="card card-box mb-4">
+  <h2 class="h5 fw-bold mb-3">API Token</h2>
+  <p class="small text-normal mb-3">
+    Use this token to connect Android widgets to your app. Enter it together with your server address
+    (<code>http://goal.local</code>) in the widget configuration.
+  </p>
+
+  <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+    <code class="api-token-display" data-controller="clipboard" data-clipboard-target="token">
+      <%= current_user.api_token || "Generate a token to begin" %>
+    </code>
+    <button type="button"
+            class="btn btn-sm btn-outline-secondary"
+            data-action="clipboard#copy"
+            data-clipboard-copy="<%= current_user.api_token %>">
+      Copy
+    </button>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= button_to current_user.api_token ? "Regenerate token" : "Generate token",
+                  regenerate_api_token_path,
+                  method: :post,
+                  data: { turbo_confirm: "This will invalidate the current token. Continue?" },
+                  class: "theme-btn btn-sm" %>
+  </div>
+</div>

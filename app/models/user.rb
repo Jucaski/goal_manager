@@ -3,6 +3,12 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+
+  has_secure_token :api_token
+
+  def regenerate_api_token!
+    update!(api_token: self.class.generate_unique_secure_token)
+  end
   has_many :habits, dependent: :destroy
   has_many :day_habits, dependent: :destroy
   has_many :financial_entries, dependent: :destroy
@@ -22,7 +28,11 @@ class User < ApplicationRecord
   has_many :task_templates, dependent: :destroy
   has_many :tasks, dependent: :destroy
   has_many :time_logs, dependent: :destroy
+  has_many :task_completions, dependent: :destroy
   has_many :water_entries, dependent: :destroy
+  has_one :body_profile, dependent: :destroy
+  has_many :body_measurements, dependent: :destroy
+  has_many :weight_entries, dependent: :destroy
 
   # Returns the user's "Run" task (title "Run"), creating a Running template
   # with that task on first use so running workouts show up in the stats.

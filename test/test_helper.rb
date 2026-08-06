@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require_relative "support/api_token_test_helper"
 
 # The database role used locally cannot disable referential integrity
 # (it is not a superuser), so fixture inserts rely on deferrable constraints
@@ -14,6 +15,8 @@ module ActiveSupport
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
+
+    include ApiTokenTestHelper
 
     # Add more helper methods to be used by all tests here...
   end

@@ -104,6 +104,12 @@
                     <span class="ms-1 d-none d-sm-inline">Schedule</span>
                   <% end %>
                 </li>
+                <li class="nav-item nav-design">
+                  <%= link_to body_path, class: "nav-link px-2 py-3 d-flex align-items-center #{'active' if current_page?(body_path)}" do %>
+                    <span class="material-symbols-outlined">monitor_weight</span>
+                    <span class="ms-1 d-none d-sm-inline">Body</span>
+                  <% end %>
+                </li>
                 <li class="flex-grow-1"></li>
                 <li class="nav-item nav-design">
                   <hr class="w-100">

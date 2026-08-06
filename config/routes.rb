@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   # get "dashboard/best_to"
   root "dashboard#index"
   get 'dashboard', to: 'dashboard#index', as: 'dashboard'
-  get 'settings', to: 'dashboard#settings'
   get 'best', to: 'dashboard#best_to'
 
   get 'balance', to: 'balances#index', as: 'balance'
@@ -32,6 +31,7 @@ Rails.application.routes.draw do
   get "timers", to: "timers#index"
   get "history", to: "histories#index"
   get "settings", to: "settings#index"
+  post "settings/regenerate_api_token", to: "settings#regenerate_api_token", as: :regenerate_api_token
 
   # Focus screen receives parameters (quick or template)
   get "focus", to: "focus#show"
@@ -67,6 +67,11 @@ Rails.application.routes.draw do
 
   resources :water_entries, only: [ :create, :destroy ]
 
+  get "body", to: "body#index", as: :body
+  resources :weight_entries, only: [ :create, :destroy ]
+  resource :body_profile, only: [ :create, :update ]
+  resources :body_measurements, only: [ :create, :destroy ]
+
   resources :flashcard_decks do
     member do
       post :generate_cards
@@ -83,6 +88,22 @@ Rails.application.routes.draw do
   end
 
   get "hanzi/:character", to: "hanzi#show", as: :hanzi
+
+  namespace :api do
+    namespace :v1 do
+      get "me", to: "me#show"
+      get "schedule/today", to: "schedule#today"
+      post "schedule/tasks/:id/complete", to: "schedule#complete", as: :schedule_task_complete
+      delete "schedule/tasks/:id/complete", to: "schedule#uncomplete", as: :schedule_task_uncomplete
+      get "habits/today", to: "habits#today"
+      patch "habits/:id/rating", to: "habits#update_rating", as: :habit_rating
+      get "water", to: "water#show"
+      post "water", to: "water#create"
+      get "weight", to: "weight#show"
+      post "weight", to: "weight#create"
+      get "counters", to: "counters#index"
+    end
+  end
 
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
